@@ -1,6 +1,6 @@
 # SO-FIB
-[![HitCount](http://hits.dwyl.io/mrrobb/roberto.me.svg)]()
-[![Github Stars](http://githubbadges.com/star.svg?user=mrrobb&repo=roberto.me&style=flat&color=fff&background=000)](https://github.com/mrrobb/roberto.me)
+[![HitCount](http://hits.dwyl.io/mrrobb/SO-FIB.svg)]()
+[![Github Stars](http://githubbadges.com/star.svg?user=mrrobb&repo=SO-FIB&style=flat&color=fff&background=000)](https://github.com/MrRobb/SO-FIB)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
 
