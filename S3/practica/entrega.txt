@@ -1,0 +1,192 @@
+PREGUNTA 18:
+Para saber el PID de sus hijos,  no se puede hacer directamente puesto que en el PCB solo se almacena el PID del padre. Sin embargo, en C, un proceso puede guardar el valor del return que da la función fork(), ya que retorna el PID del hijo creado. Para saber su propio PID puede usar la función getpid(), incluyendo la librería “unistd.h”.
+
+
+PREGUNTA 19:
+Solamente se ejecutará en caso de que no se ejecute la linea execlp y por lo tanto su código no mute, es decir, solamente en caso de que execlp falle.
+
+PREGUNTA 20:
+Dentro del /proc/PID_PADRE hay los directorios attr, cwd, fd, fdinfo, map_files, net, ns, root y task.
+
+PREGUNTA 21:
+-status:
+
+Name:	myPS
+State:	R (running)
+Tgid:	4142
+Ngid:	0
+Pid:	4142
+PPid:	3124
+TracerPid:	0
+Uid:	1001	1001	1001	1001
+Gid:	1001	1001	1001	1001
+FDSize:	256
+Groups:	4 24 27 30 46 113 128 1001 
+NStgid:	4142
+NSpid:	4142
+NSpgid:	4142
+NSsid:	3124
+VmPeak:	    4324 kB
+VmSize:	    4228 kB
+VmLck:	       0 kB
+VmPin:	       0 kB
+VmHWM:	     644 kB
+VmRSS:	     644 kB
+VmData:	      56 kB
+VmStk:	     136 kB
+VmExe:	       4 kB
+VmLib:	    1944 kB
+VmPTE:	      28 kB
+VmPMD:	      12 kB
+VmSwap:	       0 kB
+HugetlbPages:	       0 kB
+Threads:	1
+SigQ:	0/31338
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	0000000000000000
+SigIgn:	0000000000000000
+SigCgt:	0000000000000000
+CapInh:	0000000000000000
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	0000003fffffffff
+CapAmb:	0000000000000000
+Seccomp:	0
+Cpus_allowed:	ff
+Cpus_allowed_list:	0-7
+Mems_allowed:	00000000,00000001
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	0
+nonvoluntary_ctxt_switches:	157
+
+-cmdline:
+2e2f 6d79 5053 0072 6f62 00
+
+-environ:
+Son les mateixes que a l'env.
+
+-estado de myPSC:
+State:	R (running)
+
+-tiempo de CPU consumido:
+
+
+PREGUNTA 22:
+lrwxrwxrwx 1 alumne alumne 0 oct  6 17:34 cwd -> /home/alumne/Desktop
+
+Es decir cwd apunta donde está el proceso.
+
+lrwxrwxrwx 1 alumne alumne 0 oct  6 17:34 exe -> /home/alumne/Desktop/myPS
+
+Es decir exe apunta cual es el ejecutable que se está ejecutando.
+
+Current Working Directory y Executable.
+
+PREGUNTA 23:
+XDG_VTNR=7LC_PAPER=es_ES.UTF-8LC_ADDRESS=es_ES.UTF-8XDG_SESSION_ID=c2XDG_GREETER_DATA_DIR=/var/lib/lightdm-data/alumneLC_MONETARY=es_ES.UTF-8CLUTTER_IM_MODULE=ximSESSION=ubuntuGPG_AGENT_INFO=/home/alumne/.gnupg/S.gpg-agent:0:1TERM=xterm-256colorVTE_VERSION=4205XDG_MENU_PREFIX=gnome-SHELL=QT_LINUX_ACCESSIBILITY_ALWAYS_ON=1WINDOWID=54525962LC_NUMERIC=es_ES.UTF-8UPSTART_SESSION=unix:abstract=/com/ubuntu/upstart-session/1001/1728GNOME_KEYRING_CONTROL=GTK_MODULES=gail:atk-bridge:unity-gtk-moduleUSER=alumneLS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:QT_ACCESSIBILITY=1LC_TELEPHONE=es_ES.UTF-8XDG_SESSION_PATH=/org/freedesktop/DisplayManager/Session0XDG_SEAT_PATH=/org/freedesktop/DisplayManager/Seat0SSH_AUTH_SOCK=/run/user/1001/keyring/sshSESSION_MANAGER=local/a5s103pc33:@/tmp/.ICE-unix/1969,unix/a5s103pc33:/tmp/.ICE-unix/1969DEFAULTS_PATH=/usr/share/gconf/ubuntu.default.pathXDG_CONFIG_DIRS=/etc/xdg/xdg-ubuntu:/usr/share/upstart/xdg:/etc/xdgDESKTOP_SESSION=ubuntuPATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/opt/eines-sisa/bin:/opt/eines-sisa/sisa_emuQT_IM_MODULE=ibusQT_QPA_PLATFORMTHEME=appmenu-qt5LC_IDENTIFICATION=es_ES.UTF-8XDG_SESSION_TYPE=x11PWD=/home/alumne/DesktopJOB=unity-settings-daemonXMODIFIERS=@im=ibusGNOME_KEYRING_PID=LANG=en_US.UTF-8GDM_LANG=en_USMANDATORY_PATH=/usr/share/gconf/ubuntu.mandatory.pathLC_MEASUREMENT=es_ES.UTF-8COMPIZ_CONFIG_PROFILE=ubuntuIM_CONFIG_PHASE=1GDMSESSION=ubuntuSESSIONTYPE=gnome-sessionGTK2_MODULES=overlay-scrollbarSHLVL=1HOME=/home/alumneXDG_SEAT=seat0LANGUAGE=en_USGNOME_DESKTOP_SESSION_ID=this-is-deprecatedUPSTART_INSTANCE=UPSTART_EVENTS=xsession startedXDG_SESSION_DESKTOP=ubuntuLOGNAME=alumneCOMPIZ_BIN_PATH=/usr/bin/DBUS_SESSION_BUS_ADDRESS=unix:abstract=/tmp/dbus-y2wtVsRK9UXDG_DATA_DIRS=/usr/share/ubuntu:/usr/share/gnome:/usr/local/share/:/usr/share/:/var/lib/snapd/desktopQT4_IM_MODULE=ximLESSOPEN=| /usr/bin/lesspipe %sINSTANCE=UPSTART_JOB=unity7XDG_RUNTIME_DIR=/run/user/1001DISPLAY=:0XDG_CURRENT_DESKTOP=UnityGTK_IM_MODULE=ibusLESSCLOSE=/usr/bin/lesspipe %s %sLC_TIME=es_ES.UTF-8LC_NAME=es_ES.UTF-8XAUTHORITY=/home/alumne/.Xauthority_=./myPSOLDPWD=/home/alumne
+
+Name:	myPS
+State:	R (running)
+Tgid:	4143
+Ngid:	0
+Pid:	4143
+PPid:	4142
+TracerPid:	0
+Uid:	1001	1001	1001	1001
+Gid:	1001	1001	1001	1001
+FDSize:	64
+Groups:	4 24 27 30 46 113 128 1001 
+NStgid:	4143
+NSpid:	4143
+NSpgid:	4142
+NSsid:	3124
+VmPeak:	    4228 kB
+VmSize:	    4228 kB
+VmLck:	       0 kB
+VmPin:	       0 kB
+VmHWM:	      84 kB
+VmRSS:	      84 kB
+VmData:	      56 kB
+VmStk:	     136 kB
+VmExe:	       4 kB
+VmLib:	    1944 kB
+VmPTE:	      28 kB
+VmPMD:	      12 kB
+VmSwap:	       0 kB
+HugetlbPages:	       0 kB
+Threads:	1
+SigQ:	0/31338
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	0000000000000000
+SigIgn:	0000000000000000
+SigCgt:	0000000000000000
+CapInh:	0000000000000000
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	0000003fffffffff
+CapAmb:	0000000000000000
+Seccomp:	0
+Cpus_allowed:	ff
+Cpus_allowed_list:	0-7
+Mems_allowed:	00000000,00000001
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	0
+nonvoluntary_ctxt_switches:	717
+
+
+2e2f 6d79 5053 0072 6f62 00
+
+PREGUNTA 24:
+Me sale permission denied, porque está zombie, pero supongo que cwd debería apuntar al mismo que el proceso padre, exe sería el mismo ejecutable que el ejecutable padre.
+
+He editado el código y efectivamente, ocurre eso.
+
+PREGUNTA 25:
+Name:	ps
+State:	Z (zombie)
+Tgid:	5390
+Ngid:	0
+Pid:	5390
+PPid:	5389
+TracerPid:	0
+Uid:	1001	1001	1001	1001
+Gid:	1001	1001	1001	1001
+FDSize:	0
+Groups:	4 24 27 30 46 113 128 1001 
+NStgid:	5390
+NSpid:	5390
+NSpgid:	5389
+NSsid:	3124
+Threads:	1
+SigQ:	0/31338
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	0000000000000000
+SigIgn:	0000000000000000
+SigCgt:	00000001f3d1fef9
+CapInh:	0000000000000000
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	0000003fffffffff
+CapAmb:	0000000000000000
+Seccomp:	0
+Cpus_allowed:	ff
+Cpus_allowed_list:	0-7
+Mems_allowed:	00000000,00000001
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	1
+nonvoluntary_ctxt_switches:	1
+
+cat: environ: permission denied (porque está zombie)
+
+No hay salida si ejecuto "cat cmdline"
+
+Se encuentra en estado zombie. Está esperando a que el padre haga waitpid y pueda eliminar el PCB de la memoria. 
+
+PREGUNTA 26:
+Está en estado waiting.
+
+PREGUNTA 27:
+Después de escribir el comando del ejecutable he puesto “\> test1” cambiando el 1 por el número de test que era.

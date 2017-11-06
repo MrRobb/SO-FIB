@@ -1,0 +1,74 @@
+EJEMPLO_FORK1:
+Aparecen dos procesos ya que el primer proceso hace un fork, y se escriben los PID de cada proceso. En mi caso, en pantalla aparece:
+
+Soy el proceso 7998
+Soy el proceso 7999
+
+Siendo el 7998 el padre y el 7999 el hijo.
+
+EJEMPLO_FORK2:
+En mi caso aparece:
+
+Antes del fork: Soy el proceso 9123
+PADRE: Soy el proceso 9123
+Los DOS: Soy el proceso 9123
+HIJO: Soy el proceso 9124
+Los DOS: Soy el proceso 9124
+
+Siendo 9123 el padre y 9124 el hijo. Porque así lo dice el programa. Y la parte que hacen los dos, se ejecuta en ambos procesos.
+
+EJEMPLO_FORK3:
+En mi caso aparece:
+
+Antes del fork: Soy el proceso 9249
+PADRE: Soy el proceso 9249
+Solo lo ejecuta el padre: Soy el proceso 9249
+HIJO: Soy el proceso 9250
+
+Siendo 9249 el proceso padre y 9250 el proceso hijo. Porque así lo dice el programa. Sin embargo en este ejemplo hay un fragmento de codigo que solo lo ejecuta el padre, puesto que si es un hijo, el proceso se termina con exit().
+
+EJEMPLO_FORK4:
+Primero se ejecuta el proceso padre luego el hijo, porque la cpu así lo decide. Los mensajes aparecen en este orden en pantalla:
+
+Antes del fork: Soy el proceso 9386
+PADRE: Soy el proceso 9386
+Solo lo ejecuta el padre: Soy el proceso 9386
+HIJO: Soy el proceso 9387
+HIJO acaba: Soy el proceso 9387
+
+El proceso padre termina antes su ejecución.
+
+EJEMPLO_FORK5:
+En mi caso aparece:
+
+Antes del fork: Soy el proceso 9993
+PADRE: Soy el proceso 9993
+HIJO: Soy el proceso 9994
+HIJO:La variable_global vale A y la local a
+PADRE:La variable_global vale A y la local a
+Solo lo ejecuta el padre: Soy el proceso 9993
+
+Las primeras dos líneas son del padre, las siguientes dos, del hijo. Finalmente, las dos últimas líneas son del padre. Cada uno tiene sus propias variables, tanto globales como locales, por lo tanto, sus códigos no se afectan entre sí.
+
+
+EJEMPLO_FORK6:
+El padre hace un fork, y crea un hijo, en la salida cada uno imprime 100.000 veces el estado de su variable_global, la CPU va alternando qué proceso ejecuta en cada momento, para que uno de ellos no acapare toda la "atención".
+
+No, no podemos asegurarlo porque no sabemos a ciencia cierta si la CPU va ejecutar los mismos procesos en el mismo orden. Lo más probable es que no.
+
+EJEMPLO_FORK7:
+No, no tiene nada que ver con la creación de procesos, el problema es que la función Escribe_variables no sabe qué es variable_local puesto que no está en su scope, es decir, en su entorno de visibilidad.
+
+EJEMPLO_EXEC1:
+En pantalla veo "Soy el proceso: 11995" en mi caso y la misma salida que si hiciera el comando ls -l.
+Una sola vez, se debe a que el código del proceso es reemplazado por el código del proceso llamado con execlp.
+
+EJEMPLO_EXEC2:
+Aparecen los siguientes mensajes:
+Soy el proceso: 12144
+Soy el proceso 12144
+Soy el proceso 12145
+
+La primera línea pertenece al ejecutable ejemplo_exec2 que luego muta (reemplaza todo su código, datos y pila) por el del ejecutable ejemplo_fork1 que imprime las siguientes dos líneas. El padre tiene el mismo PCB cuando muta, por lo tanto sólo se ejecutan dos procesos:
+1. El de ejemplo_exec2 que luego muta a ejemplo_fork1.
+2. El hijo que crea el primer proceso.

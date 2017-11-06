@@ -1,0 +1,21 @@
+all:ejemplo_fork1 ejemplo_fork2 ejemplo_fork3 ejemplo_fork4 ejemplo_fork5 ejemplo_fork6 ejemplo_exec1 ejemplo_exec2
+
+ejemplo_fork1:ejemplo_fork1.c
+	gcc -o ejemplo_fork1 ejemplo_fork1.c
+ejemplo_fork2:ejemplo_fork2.c
+	gcc -o ejemplo_fork2 ejemplo_fork2.c
+ejemplo_fork3:ejemplo_fork3.c
+	gcc -o ejemplo_fork3 ejemplo_fork3.c
+ejemplo_fork4:ejemplo_fork4.c
+	gcc -o ejemplo_fork4 ejemplo_fork4.c
+ejemplo_fork5:ejemplo_fork5.c
+	gcc -o ejemplo_fork5 ejemplo_fork5.c
+ejemplo_fork6:ejemplo_fork6.c
+	gcc -o ejemplo_fork6 ejemplo_fork6.c
+ejemplo_exec1:ejemplo_exec1.c
+	gcc -o ejemplo_exec1 ejemplo_exec1.c
+ejemplo_exec2:ejemplo_exec2.c
+	gcc -o ejemplo_exec2 ejemplo_exec2.c
+clean:
+	rm -f  ejemplo_fork1 ejemplo_fork2 ejemplo_fork3 \
+	ejemplo_fork4 ejemplo_fork5 ejemplo_fork6 ejemplo_exec1 ejemplo_exec2

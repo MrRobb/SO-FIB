@@ -1,0 +1,13 @@
+LISTADO DE EJEMPLOS
+-------------------
+ejemplo_fork1.c : fork/getpid. Los dos procesos ejecutan el mismo codigo
+ejemplo_fork2.c : fork/getpid. Cada proceso ejecuta un trozo de codigo diferente y al final otra vez el mismo.
+ejemplo_fork3.c : fork/exit/getpid. El proceso hijo ejecuta un trozo de codigo diferente al del padre. 
+ejemplo_fork4.c : fork/exit/getpid. Comprobamos la herencia del espacio de direcciones. 
+ejemplo_fork5.c : No todos los problemas tienen que ver con el fork
+ejemplo_fork6.c : fork/exit/getpid. Comprobamos el efecto del scheduler. 
+
+COMO COMPILAR
+-------------
+
+make -f Makefile.ejemplos
