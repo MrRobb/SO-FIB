@@ -1,0 +1,153 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Checking for Pending Signals</title>
+
+<meta name="description" content="The GNU C Library: Checking for Pending Signals">
+<meta name="keywords" content="The GNU C Library: Checking for Pending Signals">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Blocking-Signals.html#Blocking-Signals" rel="up" title="Blocking Signals">
+<link href="Remembering-a-Signal.html#Remembering-a-Signal" rel="next" title="Remembering a Signal">
+<link href="Blocking-for-Handler.html#Blocking-for-Handler" rel="prev" title="Blocking for Handler">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Checking-for-Pending-Signals"></a>
+<div class="header">
+<p>
+Next: <a href="Remembering-a-Signal.html#Remembering-a-Signal" accesskey="n" rel="next">Remembering a Signal</a>, Previous: <a href="Blocking-for-Handler.html#Blocking-for-Handler" accesskey="p" rel="prev">Blocking for Handler</a>, Up: <a href="Blocking-Signals.html#Blocking-Signals" accesskey="u" rel="up">Blocking Signals</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Checking-for-Pending-Signals-1"></a>
+<h4 class="subsection">24.7.6 Checking for Pending Signals</h4>
+<a name="index-pending-signals_002c-checking-for"></a>
+<a name="index-blocked-signals_002c-checking-for"></a>
+<a name="index-checking-for-pending-signals"></a>
+
+<p>You can find out which signals are pending at any time by calling
+<code>sigpending</code>.  This function is declared in <samp>signal.h</samp>.
+<a name="index-signal_002eh-9"></a>
+</p>
+<dl>
+<dt><a name="index-sigpending"></a>Function: <em>int</em> <strong>sigpending</strong> <em>(sigset_t *<var>set</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Unsafe lock/hurd
+| AC-Unsafe lock/hurd
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>sigpending</code> function stores information about pending signals
+in <var>set</var>.  If there is a pending signal that is blocked from
+delivery, then that signal is a member of the returned set.  (You can
+test whether a particular signal is a member of this set using
+<code>sigismember</code>; see <a href="Signal-Sets.html#Signal-Sets">Signal Sets</a>.)
+</p>
+<p>The return value is <code>0</code> if successful, and <code>-1</code> on failure.
+</p></dd></dl>
+
+<p>Testing whether a signal is pending is not often useful.  Testing when
+that signal is not blocked is almost certainly bad design.
+</p>
+<p>Here is an example.
+</p>
+<div class="smallexample">
+<pre class="smallexample">#include &lt;signal.h&gt;
+#include &lt;stddef.h&gt;
+
+sigset_t base_mask, waiting_mask;
+
+sigemptyset (&amp;base_mask);
+sigaddset (&amp;base_mask, SIGINT);
+sigaddset (&amp;base_mask, SIGTSTP);
+
+/* <span class="roman">Block user interrupts while doing other processing.</span> */
+sigprocmask (SIG_SETMASK, &amp;base_mask, NULL);
+&hellip;
+
+/* <span class="roman">After a while, check to see whether any signals are pending.</span> */
+sigpending (&amp;waiting_mask);
+if (sigismember (&amp;waiting_mask, SIGINT)) {
+  /* <span class="roman">User has tried to kill the process.</span> */
+}
+else if (sigismember (&amp;waiting_mask, SIGTSTP)) {
+  /* <span class="roman">User has tried to stop the process.</span> */
+}
+</pre></div>
+
+<p>Remember that if there is a particular signal pending for your process,
+additional signals of that same type that arrive in the meantime might
+be discarded.  For example, if a <code>SIGINT</code> signal is pending when
+another <code>SIGINT</code> signal arrives, your program will probably only
+see one of them when you unblock this signal.
+</p>
+<p><strong>Portability Note:</strong> The <code>sigpending</code> function is new in
+POSIX.1.  Older systems have no equivalent facility.
+</p>
+<hr>
+<div class="header">
+<p>
+Next: <a href="Remembering-a-Signal.html#Remembering-a-Signal" accesskey="n" rel="next">Remembering a Signal</a>, Previous: <a href="Blocking-for-Handler.html#Blocking-for-Handler" accesskey="p" rel="prev">Blocking for Handler</a>, Up: <a href="Blocking-Signals.html#Blocking-Signals" accesskey="u" rel="up">Blocking Signals</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

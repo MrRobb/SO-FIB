@@ -1,0 +1,185 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Block Input/Output</title>
+
+<meta name="description" content="The GNU C Library: Block Input/Output">
+<meta name="keywords" content="The GNU C Library: Block Input/Output">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="I_002fO-on-Streams.html#I_002fO-on-Streams" rel="up" title="I/O on Streams">
+<link href="Formatted-Output.html#Formatted-Output" rel="next" title="Formatted Output">
+<link href="How-Unread.html#How-Unread" rel="prev" title="How Unread">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Block-Input_002fOutput"></a>
+<div class="header">
+<p>
+Next: <a href="Formatted-Output.html#Formatted-Output" accesskey="n" rel="next">Formatted Output</a>, Previous: <a href="Unreading.html#Unreading" accesskey="p" rel="prev">Unreading</a>, Up: <a href="I_002fO-on-Streams.html#I_002fO-on-Streams" accesskey="u" rel="up">I/O on Streams</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Block-Input_002fOutput-1"></a>
+<h3 class="section">12.11 Block Input/Output</h3>
+
+<p>This section describes how to do input and output operations on blocks
+of data.  You can use these functions to read and write binary data, as
+well as to read and write text in fixed-size blocks instead of by
+characters or lines.
+<a name="index-binary-I_002fO-to-a-stream"></a>
+<a name="index-block-I_002fO-to-a-stream"></a>
+<a name="index-reading-from-a-stream_002c-by-blocks"></a>
+<a name="index-writing-to-a-stream_002c-by-blocks"></a>
+</p>
+<p>Binary files are typically used to read and write blocks of data in the
+same format as is used to represent the data in a running program.  In
+other words, arbitrary blocks of memory&mdash;not just character or string
+objects&mdash;can be written to a binary file, and meaningfully read in
+again by the same program.
+</p>
+<p>Storing data in binary form is often considerably more efficient than
+using the formatted I/O functions.  Also, for floating-point numbers,
+the binary form avoids possible loss of precision in the conversion
+process.  On the other hand, binary files can&rsquo;t be examined or modified
+easily using many standard file utilities (such as text editors), and
+are not portable between different implementations of the language, or
+different kinds of computers.
+</p>
+<p>These functions are declared in <samp>stdio.h</samp>.
+<a name="index-stdio_002eh-5"></a>
+</p>
+<dl>
+<dt><a name="index-fread"></a>Function: <em>size_t</em> <strong>fread</strong> <em>(void *<var>data</var>, size_t <var>size</var>, size_t <var>count</var>, FILE *<var>stream</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Unsafe corrupt
+| AC-Unsafe lock corrupt
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function reads up to <var>count</var> objects of size <var>size</var> into
+the array <var>data</var>, from the stream <var>stream</var>.  It returns the
+number of objects actually read, which might be less than <var>count</var> if
+a read error occurs or the end of the file is reached.  This function
+returns a value of zero (and doesn&rsquo;t read anything) if either <var>size</var>
+or <var>count</var> is zero.
+</p>
+<p>If <code>fread</code> encounters end of file in the middle of an object, it
+returns the number of complete objects read, and discards the partial
+object.  Therefore, the stream remains at the actual end of the file.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-fread_005funlocked"></a>Function: <em>size_t</em> <strong>fread_unlocked</strong> <em>(void *<var>data</var>, size_t <var>size</var>, size_t <var>count</var>, FILE *<var>stream</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe race:stream
+| AS-Unsafe corrupt
+| AC-Unsafe corrupt
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>fread_unlocked</code> function is equivalent to the <code>fread</code>
+function except that it does not implicitly lock the stream.
+</p>
+<p>This function is a GNU extension.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-fwrite"></a>Function: <em>size_t</em> <strong>fwrite</strong> <em>(const void *<var>data</var>, size_t <var>size</var>, size_t <var>count</var>, FILE *<var>stream</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Unsafe corrupt
+| AC-Unsafe lock corrupt
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function writes up to <var>count</var> objects of size <var>size</var> from
+the array <var>data</var>, to the stream <var>stream</var>.  The return value is
+normally <var>count</var>, if the call succeeds.  Any other value indicates
+some sort of error, such as running out of space.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-fwrite_005funlocked"></a>Function: <em>size_t</em> <strong>fwrite_unlocked</strong> <em>(const void *<var>data</var>, size_t <var>size</var>, size_t <var>count</var>, FILE *<var>stream</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe race:stream
+| AS-Unsafe corrupt
+| AC-Unsafe corrupt
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>fwrite_unlocked</code> function is equivalent to the <code>fwrite</code>
+function except that it does not implicitly lock the stream.
+</p>
+<p>This function is a GNU extension.
+</p></dd></dl>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Formatted-Output.html#Formatted-Output" accesskey="n" rel="next">Formatted Output</a>, Previous: <a href="Unreading.html#Unreading" accesskey="p" rel="prev">Unreading</a>, Up: <a href="I_002fO-on-Streams.html#I_002fO-on-Streams" accesskey="u" rel="up">I/O on Streams</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

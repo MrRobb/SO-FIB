@@ -1,0 +1,452 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Contributors</title>
+
+<meta name="description" content="The GNU C Library: Contributors">
+<meta name="keywords" content="The GNU C Library: Contributors">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="index.html#Top" rel="up" title="Top">
+<link href="Free-Manuals.html#Free-Manuals" rel="next" title="Free Manuals">
+<link href="PowerPC.html#PowerPC" rel="prev" title="PowerPC">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Contributors"></a>
+<div class="header">
+<p>
+Next: <a href="Free-Manuals.html#Free-Manuals" accesskey="n" rel="next">Free Manuals</a>, Previous: <a href="Platform.html#Platform" accesskey="p" rel="prev">Platform</a>, Up: <a href="index.html#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Contributors-to-the-GNU-C-Library"></a>
+<h2 class="appendix">Appendix F Contributors to the GNU C Library</h2>
+
+<p>The GNU C Library project would like to thank its many contributors.
+Without them the project would not have been nearly as successful as
+it has been.  Any omissions in this list are accidental.  Feel free to
+file a bug in bugzilla if you have been left out or some of your
+contributions are not listed.  Please keep this list in alphabetical
+order.
+</p>
+<ul>
+<li> Nick Alcock for contributing fixes to allow the GNU C Library to be built with the
+stack smashing protector enabled.
+
+</li><li> John David Anglin for various fixes to the hppa port.
+
+</li><li> Ryan S. Arnold for his improvements for Linux on PowerPC and his direction
+as FSF Project Steward for the GNU C Library.
+
+</li><li> Miles Bader for writing the <code>argp</code> argument-parsing package, and the
+<code>argz</code>/<code>envz</code> interfaces.
+
+</li><li> Jeff Bailey for his maintainership of the HPPA architecture.
+
+</li><li> Petr Baudis for bug fixes and testing.
+
+</li><li> Stephen R. van den Berg for contributing a highly-optimized
+<code>strstr</code> function.
+
+</li><li> Ondrej Bilka for contributing optimized string routines for x64 and various
+fixes.
+
+</li><li> Eric Blake for adding O(n) implementations of <code>memmem</code>,
+<code>strstr</code> and <code>strcasestr</code>.
+
+</li><li> Philip Blundell for the ports to Linux/ARM
+(<code>arm-<var>ANYTHING</var>-linuxaout</code>) and ARM standalone
+(<code>arm-<var>ANYTHING</var>-none</code>), as well as for parts of the IPv6
+support code.
+
+</li><li> Per Bothner for the implementation of the <code>libio</code> library which
+is used to implement <code>stdio</code> functions.
+
+</li><li> Mark Brown for his direction as part of the GNU C Library steering
+committee.
+
+</li><li> Thomas Bushnell for his contributions to Hurd.
+
+</li><li> DJ Delorie for various fixes.
+
+</li><li> Wilco Dijkstra for various fixes.
+
+</li><li> Liubov Dmitrieva for optimized string and math functions on x86-64 and
+x86.
+
+</li><li> Ulrich Drepper for his many contributions in almost all parts of
+the GNU C Library, including:
+<ul>
+<li> internationalization support, including the <code>locale</code> and
+<code>localedef</code> utilities.
+</li><li> Linux i386/ELF support
+</li><li> the <code>hsearch</code> and <code>drand48</code> families of functions,
+reentrant &lsquo;<samp>&hellip;<code>_r</code></samp>&rsquo; versions of the <code>random</code>
+family; System V shared memory and IPC support code
+</li><li> several highly-optimized string functions for i<var>x</var>86
+processors
+</li><li> many math functions
+</li><li> the character conversion functions (<code>iconv</code>)
+</li><li> the <code>ftw</code> and <code>nftw</code> functions
+</li><li> the floating-point printing function used by <code>printf</code> and friends
+and the floating-point reading function used by <code>scanf</code>,
+<code>strtod</code> and friends
+</li><li> the <code>catgets</code> support and the entire suite of multi-byte
+and wide-character support functions (<samp>wctype.h</samp>, <samp>wchar.h</samp>, etc.).
+</li><li> versioning of objects on the symbol level
+</li></ul>
+
+</li><li> Wilco Dijkstra for various fixes.
+
+</li><li> Richard Earnshaw for continued support and fixes to the various ARM
+machine files.
+
+</li><li> Paul Eggert for the <code>mktime</code> function and for his direction as
+part of the GNU C Library steering committee.
+
+</li><li> Steve Ellcey for various fixes.
+
+</li><li> 
+Mike FABIAN for various fixes to locales.
+
+</li><li> Tulio Magno Quites Machado Filho for adding a new class of installed
+headers for low-level platform-specific functionality and one such for
+PowerPC and various fixes.
+
+</li><li> Mike Frysinger for his maintaining of the IA64 architecture and for
+testing and bug fixing.
+
+</li><li> Martin Galvan for contributing gdb pretty printer support to glibc and adding
+an initial set of pretty printers for structures in the POSIX Threads library.
+
+</li><li> Michael Glad for the DES encryption function <code>crypt</code> and related
+functions.
+
+</li><li> Wolfram Gloger for contributing the memory allocation functions
+functions <code>malloc</code>, <code>realloc</code> and <code>free</code> and related
+code.
+
+</li><li> Torbj&ouml;rn Granlund for fast implementations of many of the string
+functions (<code>memcpy</code>, <code>strlen</code>, etc.).
+
+</li><li> Michael J. Haertel for writing the merge sort function <code>qsort</code>
+and malloc checking functions like <code>mcheck</code>.
+
+</li><li> Bruno Haible for his improvements to the <code>iconv</code> and locale
+implementations.
+
+</li><li> Richard Henderson for the port to Linux on Alpha
+(<code>alpha-<var>anything</var>-linux</code>).
+
+</li><li> David Holsgrove for the port to Linux on MicroBlaze.
+
+</li><li> Daniel Jacobowitz for various fixes and enhancements.
+
+</li><li> Andreas Jaeger for the port to Linux on x86-64
+(<code>x86_64-<var>anything</var>-linux</code> and his work on Linux for MIPS
+(<code>mips-<var>anything</var>-linux</code>), implementing the <samp>ldconfig</samp>
+program, providing a test suite for the math library and for his
+direction as part of the GNU C Library steering committee.
+
+</li><li> Aurelien Jarno for various fixes.
+
+</li><li> Rical Jasan for contributing various fixes in the GNU C Library manual.
+
+</li><li> Jakub Jelinek for implementing a number of checking functions and for
+his direction as part of the GNU C Library steering committee.
+
+</li><li> Geoffrey Keating for the port to Linux on PowerPC
+(<code>powerpc-<var>anything</var>-linux</code>).
+
+</li><li> Brendan Kehoe for contributing the port to the MIPS DECStation running
+Ultrix 4 (<code>mips-dec-ultrix4</code>) and the port to the DEC Alpha
+running OSF/1 (<code>alpha-dec-osf1</code>).
+
+</li><li> Mark Kettenis for implementing the <code>utmpx</code> interface and a utmp
+daemon, and for a Hesiod NSS module.
+
+</li><li> Andi Kleen for implementing pthreads lock elision with TSX.
+
+</li><li> Kazumoto Kojima for the port of the Mach and Hurd code to the MIPS
+architecture (<code>mips-<var>anything</var>-gnu</code>) and for his work on the
+SH architecture.
+
+</li><li> Maxim Kuvyrkov for various fixes.
+
+</li><li> Andreas Krebbel for his work on Linux for s390 and s390x.
+
+</li><li> Thorsten Kukuk for providing an implementation for NIS (YP) and NIS+,
+securelevel 0, 1 and 2 and for the implementation for a caching daemon
+for NSS (<samp>nscd</samp>).
+
+</li><li> Akhilesh Kumar for various fixes to locales.
+
+</li><li> Jeff Law for various fixes.
+
+</li><li> Doug Lea for contributing the memory allocation functions
+<code>malloc</code>, <code>realloc</code> and <code>free</code> and related
+code.
+
+</li><li> Chris Leonard for various fixes and enhancements to localedata.
+
+</li><li> Stefan Liebler for various fixes.
+
+</li><li> Hongjiu Lu for providing the support for a Linux 32-bit runtime
+environment under x86-64 (x32), for porting to Linux on IA64, for
+improved string functions, a framework for testing IFUNC
+implementations, and many bug fixes.
+
+</li><li> Rafal Luzynski for various fixes to locales.
+
+</li><li> Luis Machado for optimized functions on PowerPC.
+
+</li><li> David J. MacKenzie for his contribution to the <code>getopt</code>
+function and writing the <samp>tar.h</samp> header.
+
+</li><li> Greg McGary for adding runtime support for bounds checking.
+
+</li><li> Roland McGrath for writing most of the GNU C Library originally, for his
+work on the Hurd port, his direction as part of the GNU C Library steering
+committee and as FSF Project Steward for the GNU C Library, and for many bug
+fixes and reviewing of contributions.
+
+</li><li> Allan McRae for various fixes.
+
+</li><li> Jason Merrill for the port to the Sequent Symmetry running Dynix
+version 3 (<code>i386-sequent-bsd</code>).
+
+</li><li> Chris Metcalf for the port to Linux/Tile
+(<code>tilegx-<var>anything</var>-linux</code> and
+<code>tilepro-<var>anything</var>-linux</code>).
+
+</li><li> David Miller for contributing the port to Linux/Sparc
+(<code>sparc*-<var>anything</var>-linux</code>).
+
+</li><li> Alan Modra for his improvements for Linux on PowerPC.
+
+</li><li> David Mosberger-Tang for contributing the port to Linux/Alpha
+(<code>alpha-<var>anything</var>-linux</code>).
+
+</li><li> Wainer dos Santos Moschetta for various fixes to powerpc.
+
+</li><li> Stephen Moshier for implementing some 128-bit long double format math
+functions.
+
+</li><li> Stephen Munroe for his port to Linux on PowerPC64
+(<code>powerpc64-<var>anything</var>-linux</code>) and for adding optimized
+implementations for PowerPC.
+
+</li><li> Paul E. Murphy for various fixes on PowerPC.
+
+</li><li> Joseph S. Myers for numerous bug fixes for the libm functions, for
+his maintainership of the ARM and MIPS architectures, improving
+cross-compilation and cross-testing of the GNU C Library, expanded
+coverage of conformtest, merging the ports/ subdirectory
+into the GNU C Library main repository and his direction as FSF Project
+Steward for the GNU C Library.
+
+</li><li> Marko Myllynen for various fixes.
+
+</li><li> Szabolcs Nagy for various fixes.
+
+</li><li> Will Newton for contributing some optimized string functions and pointer
+encryption support for ARM and various fixes.
+
+</li><li> Carlos O&rsquo;Donell for his maintainership of the HPPA architecture, for
+maintaining the GNU C Library web pages and wiki, for his direction as FSF
+Project Steward for the GNU C Library and various bug fixes.
+
+</li><li> Alexandre Oliva for adding TLS descriptors for LD and GD on x86 and
+x86-64, for the am33 port, for completing the MIPS n64/n32/o32 multilib
+port, for thread-safety, async-signal safety and async-cancellation
+safety documentation in the manual, for his direction as FSF Project
+Maintainer and for various fixes.
+
+</li><li> Paul Pluzhnikov for various fixes.
+
+</li><li> Marek Polacek for various fixes.
+
+</li><li> Siddhesh Poyarekar for various fixes, an implementation of a framework for
+performance benchmarking of functions and implementing the tunables
+infrastructure.
+
+</li><li> Tom Quinn for contributing the startup code to support SunOS shared
+libraries and the port to SGI machines running Irix 4
+(<code>mips-sgi-irix4</code>).
+
+</li><li> Torvald Riegel for the implementation of new algorithms for semaphores,
+pthread_rwlock and condition variables.
+
+</li><li> Maciej W. Rozycki for various fixes.
+
+</li><li> Pravin Satpute for writing sorting rules for some Indian languages.
+
+</li><li> Douglas C. Schmidt for writing the quick sort function used as a
+fallback by <code>qsort</code>.
+
+</li><li> Will Schmidt for optimized string functions on PowerPC.
+
+</li><li> Andreas Schwab for the port to Linux/m68k
+(<code>m68k-<var>anything</var>-linux</code>) and for his direction as part of
+the GNU C Library steering committee.
+
+</li><li> Martin Schwidefsky for porting to Linux on s390
+(<code>s390-<var>anything</var>-linux</code>) and s390x
+(<code>s390x-<var>anything</var>-linux</code>).
+
+</li><li> Thomas Schwinge for his contribution to Hurd and the SH architecture.
+
+</li><li> Andrew Senkevich for contributing vector math function implementations for x86.
+
+</li><li> Carlos Eduardo Seo for optimized functions on PowerPC.
+
+</li><li> Marcus Shawcroft for contributing the AArch64 port.
+
+</li><li> Franz Sirl for various fixes.
+
+</li><li> Jes Sorensen for porting to Linux on IA64 (<code>ia64-<var>anything</var>-linux</code>).
+
+</li><li> Rajalakshmi Srinivasaraghavan for various fixes and optimizations on PowerPC.
+
+</li><li> Richard Stallman for his contribution to the <code>getopt</code> function.
+
+</li><li> Alfred M. Szmidt for various fixes.
+
+</li><li> Chung-Lin Tang for contributing the Nios II port.
+
+</li><li> Ian Lance Taylor for contributing the port to the MIPS DECStation
+running Ultrix 4 (<code>mips-dec-ultrix4</code>).
+
+</li><li> Samuel Thibault for improving the Hurd port.
+
+</li><li> Pino Toscano for various fixes.
+
+</li><li> Tim Waugh for the implementation of the POSIX.2 <code>wordexp</code>
+function family.
+
+</li><li> Zack Weinberg for the <code>explicit_bzero</code> implementation and for various
+fixes.
+
+</li><li> Eric Youngdale for implementing versioning of objects on the symbol level.
+
+</li><li> Adhemerval Zanella for optimized functions on PowerPC and various fixes.
+
+</li></ul>
+
+<p>Some code in the GNU C Library comes from other projects and might be under
+a different license:
+</p>
+<ul>
+<li> The timezone support code is derived from the public-domain timezone
+package by Arthur David Olson and his many contributors.
+
+</li><li> Some of the support code for Mach is taken from Mach 3.0 by CMU;
+the file <samp>if_ppp.h</samp> is also copyright by CMU, but under a different license;
+see the file <samp>LICENSES</samp> for the text of the licenses.
+
+</li><li> The random number generation functions <code>random</code>, <code>srandom</code>,
+<code>setstate</code> and <code>initstate</code>, which are also the basis for the
+<code>rand</code> and <code>srand</code> functions, were written by Earl T. Cohen
+for the University of California at Berkeley and are copyrighted by the
+Regents of the University of California.  They have undergone minor
+changes to fit into the GNU C Library and to fit the ISO&nbsp;C<!-- /@w --> standard,
+but the functional code is Berkeley&rsquo;s.
+
+</li><li> The Internet-related code (most of the <samp>inet</samp> subdirectory) and
+several other miscellaneous functions and header files have been
+included from 4.4 BSD with little or no modification.  The copying
+permission notice for this code can be found in the file <samp>LICENSES</samp>
+in the source distribution.
+
+</li><li> The <code>getaddrinfo</code> and <code>getnameinfo</code> functions and supporting
+code were written by Craig Metz; see the file <samp>LICENSES</samp> for
+details on their licensing.
+
+</li><li> The DNS resolver code is taken directly from BIND 4.9.5, which
+includes copyrighted code from UC Berkeley and from Digital Equipment
+Corporation.  See the file <samp>LICENSES</samp> for the text of the DEC license.
+
+</li><li> The code to support Sun RPC is taken verbatim from Sun&rsquo;s
+<small><span class="nolinebreak">RPCSRC-4.0</span></small><!-- /@w --> distribution; see the file <samp>LICENSES</samp> for the
+text of the license.
+
+</li><li> The math functions are taken from <code>fdlibm-5.1</code> by Sun
+Microsystems, as modified by J.T. Conklin, Ian Lance Taylor,
+Ulrich Drepper, Andreas Schwab, and Roland McGrath.
+
+</li><li> Many of the IEEE 64-bit double precision math functions
+(in the <samp>sysdeps/ieee754/dbl-64</samp> subdirectory) come
+from the IBM Accurate Mathematical Library, contributed by IBM.
+
+</li><li> Many of the IA64 math functions are taken from a collection of
+&ldquo;Highly Optimized Mathematical Functions for Itanium&rdquo; that Intel
+makes available under a free license; see the file <samp>LICENSES</samp> for
+details.
+
+</li></ul>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Free-Manuals.html#Free-Manuals" accesskey="n" rel="next">Free Manuals</a>, Previous: <a href="Platform.html#Platform" accesskey="p" rel="prev">Platform</a>, Up: <a href="index.html#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

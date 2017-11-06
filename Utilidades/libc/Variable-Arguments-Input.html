@@ -1,0 +1,191 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Variable Arguments Input</title>
+
+<meta name="description" content="The GNU C Library: Variable Arguments Input">
+<meta name="keywords" content="The GNU C Library: Variable Arguments Input">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Formatted-Input.html#Formatted-Input" rel="up" title="Formatted Input">
+<link href="EOF-and-Errors.html#EOF-and-Errors" rel="next" title="EOF and Errors">
+<link href="Formatted-Input-Functions.html#Formatted-Input-Functions" rel="prev" title="Formatted Input Functions">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Variable-Arguments-Input"></a>
+<div class="header">
+<p>
+Previous: <a href="Formatted-Input-Functions.html#Formatted-Input-Functions" accesskey="p" rel="prev">Formatted Input Functions</a>, Up: <a href="Formatted-Input.html#Formatted-Input" accesskey="u" rel="up">Formatted Input</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Variable-Arguments-Input-Functions"></a>
+<h4 class="subsection">12.14.9 Variable Arguments Input Functions</h4>
+
+<p>The functions <code>vscanf</code> and friends are provided so that you can
+define your own variadic <code>scanf</code>-like functions that make use of
+the same internals as the built-in formatted output functions.
+These functions are analogous to the <code>vprintf</code> series of output
+functions.  See <a href="Variable-Arguments-Output.html#Variable-Arguments-Output">Variable Arguments Output</a>, for important
+information on how to use them.
+</p>
+<p><strong>Portability Note:</strong> The functions listed in this section were
+introduced in ISO&nbsp;C99<!-- /@w --> and were before available as GNU extensions.
+</p>
+<dl>
+<dt><a name="index-vscanf"></a>Function: <em>int</em> <strong>vscanf</strong> <em>(const char *<var>template</var>, va_list <var>ap</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe locale
+| AS-Unsafe corrupt heap
+| AC-Unsafe mem lock corrupt
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function is similar to <code>scanf</code>, but instead of taking
+a variable number of arguments directly, it takes an argument list
+pointer <var>ap</var> of type <code>va_list</code> (see <a href="Variadic-Functions.html#Variadic-Functions">Variadic Functions</a>).
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-vwscanf"></a>Function: <em>int</em> <strong>vwscanf</strong> <em>(const wchar_t *<var>template</var>, va_list <var>ap</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe locale
+| AS-Unsafe corrupt heap
+| AC-Unsafe mem lock corrupt
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function is similar to <code>wscanf</code>, but instead of taking
+a variable number of arguments directly, it takes an argument list
+pointer <var>ap</var> of type <code>va_list</code> (see <a href="Variadic-Functions.html#Variadic-Functions">Variadic Functions</a>).
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-vfscanf"></a>Function: <em>int</em> <strong>vfscanf</strong> <em>(FILE *<var>stream</var>, const char *<var>template</var>, va_list <var>ap</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe locale
+| AS-Unsafe corrupt heap
+| AC-Unsafe mem lock corrupt
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This is the equivalent of <code>fscanf</code> with the variable argument list
+specified directly as for <code>vscanf</code>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-vfwscanf"></a>Function: <em>int</em> <strong>vfwscanf</strong> <em>(FILE *<var>stream</var>, const wchar_t *<var>template</var>, va_list <var>ap</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe locale
+| AS-Unsafe corrupt heap
+| AC-Unsafe mem lock corrupt
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This is the equivalent of <code>fwscanf</code> with the variable argument list
+specified directly as for <code>vwscanf</code>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-vsscanf"></a>Function: <em>int</em> <strong>vsscanf</strong> <em>(const char *<var>s</var>, const char *<var>template</var>, va_list <var>ap</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe locale
+| AS-Unsafe heap
+| AC-Unsafe mem
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This is the equivalent of <code>sscanf</code> with the variable argument list
+specified directly as for <code>vscanf</code>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-vswscanf"></a>Function: <em>int</em> <strong>vswscanf</strong> <em>(const wchar_t *<var>s</var>, const wchar_t *<var>template</var>, va_list <var>ap</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe locale
+| AS-Unsafe heap
+| AC-Unsafe mem
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This is the equivalent of <code>swscanf</code> with the variable argument list
+specified directly as for <code>vwscanf</code>.
+</p></dd></dl>
+
+<p>In GNU C, there is a special construct you can use to let the compiler
+know that a function uses a <code>scanf</code>-style format string.  Then it
+can check the number and types of arguments in each call to the
+function, and warn you when they do not match the format string.
+For details, see <a href="http://gcc.gnu.org/onlinedocs/gcc/Function-Attributes.html#Function-Attributes">Declaring Attributes of Functions</a> in <cite>Using GNU CC</cite>.
+</p>
+<hr>
+<div class="header">
+<p>
+Previous: <a href="Formatted-Input-Functions.html#Formatted-Input-Functions" accesskey="p" rel="prev">Formatted Input Functions</a>, Up: <a href="Formatted-Input.html#Formatted-Input" accesskey="u" rel="up">Formatted Input</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

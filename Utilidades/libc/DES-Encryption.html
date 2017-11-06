@@ -1,0 +1,343 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: DES Encryption</title>
+
+<meta name="description" content="The GNU C Library: DES Encryption">
+<meta name="keywords" content="The GNU C Library: DES Encryption">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Cryptographic-Functions.html#Cryptographic-Functions" rel="up" title="Cryptographic Functions">
+<link href="Unpredictable-Bytes.html#Unpredictable-Bytes" rel="next" title="Unpredictable Bytes">
+<link href="crypt.html#crypt" rel="prev" title="crypt">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="DES-Encryption"></a>
+<div class="header">
+<p>
+Next: <a href="Unpredictable-Bytes.html#Unpredictable-Bytes" accesskey="n" rel="next">Unpredictable Bytes</a>, Previous: <a href="crypt.html#crypt" accesskey="p" rel="prev">crypt</a>, Up: <a href="Cryptographic-Functions.html#Cryptographic-Functions" accesskey="u" rel="up">Cryptographic Functions</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="DES-Encryption-1"></a>
+<h3 class="section">33.4 DES Encryption</h3>
+
+<a name="index-FIPS-46_002d3"></a>
+<p>The Data Encryption Standard is described in the US Government Federal
+Information Processing Standards (FIPS) 46-3 published by the National
+Institute of Standards and Technology.  The DES has been very thoroughly
+analyzed since it was developed in the late 1970s, and no new
+significant flaws have been found.
+</p>
+<p>However, the DES uses only a 56-bit key (plus 8 parity bits), and a
+machine has been built in 1998 which can search through all possible
+keys in about 6 days, which cost about US$200000; faster searches would
+be possible with more money.  This makes simple DES insecure for most
+purposes, and NIST no longer permits new US government systems
+to use simple DES.
+</p>
+<p>For serious encryption functionality, it is recommended that one of the
+many free encryption libraries be used instead of these routines.
+</p>
+<p>The DES is a reversible operation which takes a 64-bit block and a
+64-bit key, and produces another 64-bit block.  Usually the bits are
+numbered so that the most-significant bit, the first bit, of each block
+is numbered 1.
+</p>
+<p>Under that numbering, every 8th bit of the key (the 8th, 16th, and so
+on) is not used by the encryption algorithm itself.  But the key must
+have odd parity; that is, out of bits 1 through 8, and 9 through 16, and
+so on, there must be an odd number of &lsquo;1&rsquo; bits, and this completely
+specifies the unused bits.
+</p>
+<dl>
+<dt><a name="index-setkey"></a>Function: <em>void</em> <strong>setkey</strong> <em>(const char *<var>key</var>)</em></dt>
+<dd>
+
+<p>Preliminary:
+| MT-Unsafe race:crypt
+| AS-Unsafe corrupt lock
+| AC-Unsafe lock
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+
+<p>The <code>setkey</code> function sets an internal data structure to be an
+expanded form of <var>key</var>.  <var>key</var> is specified as an array of 64
+bits each stored in a <code>char</code>, the first bit is <code>key[0]</code> and
+the 64th bit is <code>key[63]</code>.  The <var>key</var> should have the correct
+parity.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-encrypt"></a>Function: <em>void</em> <strong>encrypt</strong> <em>(char *<var>block</var>, int <var>edflag</var>)</em></dt>
+<dd>
+
+<p>Preliminary:
+| MT-Unsafe race:crypt
+| AS-Unsafe corrupt lock
+| AC-Unsafe lock
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+
+<p>The <code>encrypt</code> function encrypts <var>block</var> if
+<var>edflag</var> is 0, otherwise it decrypts <var>block</var>, using a key
+previously set by <code>setkey</code>.  The result is
+placed in <var>block</var>.
+</p>
+<p>Like <code>setkey</code>, <var>block</var> is specified as an array of 64 bits each
+stored in a <code>char</code>, but there are no parity bits in <var>block</var>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-setkey_005fr"></a>Function: <em>void</em> <strong>setkey_r</strong> <em>(const char *<var>key</var>, struct crypt_data * <var>data</var>)</em></dt>
+<dt><a name="index-encrypt_005fr"></a>Function: <em>void</em> <strong>encrypt_r</strong> <em>(char *<var>block</var>, int <var>edflag</var>, struct crypt_data * <var>data</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Unsafe corrupt lock
+| AC-Unsafe lock
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+
+<p>These are reentrant versions of <code>setkey</code> and <code>encrypt</code>.  The
+only difference is the extra parameter, which stores the expanded
+version of <var>key</var>.  Before calling <code>setkey_r</code> the first time,
+<code>data-&gt;initialized</code> must be cleared to zero.
+</p></dd></dl>
+
+<p>The <code>setkey_r</code> and <code>encrypt_r</code> functions are GNU extensions.
+<code>setkey</code>, <code>encrypt</code>, <code>setkey_r</code>, and <code>encrypt_r</code> are
+defined in <samp>crypt.h</samp>.
+</p>
+<dl>
+<dt><a name="index-ecb_005fcrypt"></a>Function: <em>int</em> <strong>ecb_crypt</strong> <em>(char *<var>key</var>, char *<var>blocks</var>, unsigned int <var>len</var>, unsigned int <var>mode</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+
+<p>The function <code>ecb_crypt</code> encrypts or decrypts one or more blocks
+using DES.  Each block is encrypted independently.
+</p>
+<p>The <var>blocks</var> and the <var>key</var> are stored packed in 8-bit bytes, so
+that the first bit of the key is the most-significant bit of
+<code>key[0]</code> and the 63rd bit of the key is stored as the
+least-significant bit of <code>key[7]</code>.  The <var>key</var> should have the
+correct parity.
+</p>
+<p><var>len</var> is the number of bytes in <var>blocks</var>.  It should be a
+multiple of 8 (so that there are a whole number of blocks to encrypt).
+<var>len</var> is limited to a maximum of <code>DES_MAXDATA</code> bytes.
+</p>
+<p>The result of the encryption replaces the input in <var>blocks</var>.
+</p>
+<p>The <var>mode</var> parameter is the bitwise OR of two of the following:
+</p>
+<dl compact="compact">
+<dt><code>DES_ENCRYPT</code>
+<a name="index-DES_005fENCRYPT"></a>
+</dt>
+<dd>
+<p>This constant, used in the <var>mode</var> parameter, specifies that
+<var>blocks</var> is to be encrypted.
+</p>
+</dd>
+<dt><code>DES_DECRYPT</code>
+<a name="index-DES_005fDECRYPT"></a>
+</dt>
+<dd>
+<p>This constant, used in the <var>mode</var> parameter, specifies that
+<var>blocks</var> is to be decrypted.
+</p>
+</dd>
+<dt><code>DES_HW</code>
+<a name="index-DES_005fHW"></a>
+</dt>
+<dd>
+<p>This constant, used in the <var>mode</var> parameter, asks to use a hardware
+device.  If no hardware device is available, encryption happens anyway,
+but in software.
+</p>
+</dd>
+<dt><code>DES_SW</code>
+<a name="index-DES_005fSW"></a>
+</dt>
+<dd>
+<p>This constant, used in the <var>mode</var> parameter, specifies that no
+hardware device is to be used.
+</p></dd>
+</dl>
+
+<p>The result of the function will be one of these values:
+</p>
+<dl compact="compact">
+<dt><code>DESERR_NONE</code>
+<a name="index-DESERR_005fNONE"></a>
+</dt>
+<dd>
+<p>The encryption succeeded.
+</p>
+</dd>
+<dt><code>DESERR_NOHWDEVICE</code>
+<a name="index-DESERR_005fNOHWDEVICE"></a>
+</dt>
+<dd>
+<p>The encryption succeeded, but there was no hardware device available.
+</p>
+</dd>
+<dt><code>DESERR_HWERROR</code>
+<a name="index-DESERR_005fHWERROR"></a>
+</dt>
+<dd>
+<p>The encryption failed because of a hardware problem.
+</p>
+</dd>
+<dt><code>DESERR_BADPARAM</code>
+<a name="index-DESERR_005fBADPARAM"></a>
+</dt>
+<dd>
+<p>The encryption failed because of a bad parameter, for instance <var>len</var>
+is not a multiple of 8 or <var>len</var> is larger than <code>DES_MAXDATA</code>.
+</p></dd>
+</dl>
+</dd></dl>
+
+<dl>
+<dt><a name="index-DES_005fFAILED"></a>Function: <em>int</em> <strong>DES_FAILED</strong> <em>(int <var>err</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This macro returns 1 if <var>err</var> is a &lsquo;success&rsquo; result code from
+<code>ecb_crypt</code> or <code>cbc_crypt</code>, and 0 otherwise.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-cbc_005fcrypt"></a>Function: <em>int</em> <strong>cbc_crypt</strong> <em>(char *<var>key</var>, char *<var>blocks</var>, unsigned int <var>len</var>, unsigned int <var>mode</var>, char *<var>ivec</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+
+<p>The function <code>cbc_crypt</code> encrypts or decrypts one or more blocks
+using DES in Cipher Block Chaining mode.
+</p>
+<p>For encryption in CBC mode, each block is exclusive-ored with <var>ivec</var>
+before being encrypted, then <var>ivec</var> is replaced with the result of
+the encryption, then the next block is processed.  Decryption is the
+reverse of this process.
+</p>
+<p>This has the advantage that blocks which are the same before being
+encrypted are very unlikely to be the same after being encrypted, making
+it much harder to detect patterns in the data.
+</p>
+<p>Usually, <var>ivec</var> is set to 8 random bytes before encryption starts.
+Then the 8 random bytes are transmitted along with the encrypted data
+(without themselves being encrypted), and passed back in as <var>ivec</var>
+for decryption.  Another possibility is to set <var>ivec</var> to 8 zeroes
+initially, and have the first block encrypted consist of 8 random
+bytes.
+</p>
+<p>Otherwise, all the parameters are similar to those for <code>ecb_crypt</code>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-des_005fsetparity"></a>Function: <em>void</em> <strong>des_setparity</strong> <em>(char *<var>key</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+
+<p>The function <code>des_setparity</code> changes the 64-bit <var>key</var>, stored
+packed in 8-bit bytes, to have odd parity by altering the low bits of
+each byte.
+</p></dd></dl>
+
+<p>The <code>ecb_crypt</code>, <code>cbc_crypt</code>, and <code>des_setparity</code>
+functions and their accompanying macros are all defined in the header
+<samp>rpc/des_crypt.h</samp>.
+</p>
+<hr>
+<div class="header">
+<p>
+Next: <a href="Unpredictable-Bytes.html#Unpredictable-Bytes" accesskey="n" rel="next">Unpredictable Bytes</a>, Previous: <a href="crypt.html#crypt" accesskey="p" rel="prev">crypt</a>, Up: <a href="Cryptographic-Functions.html#Cryptographic-Functions" accesskey="u" rel="up">Cryptographic Functions</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

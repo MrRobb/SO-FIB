@@ -1,0 +1,303 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: CPU Affinity</title>
+
+<meta name="description" content="The GNU C Library: CPU Affinity">
+<meta name="keywords" content="The GNU C Library: CPU Affinity">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Priority.html#Priority" rel="up" title="Priority">
+<link href="Memory-Resources.html#Memory-Resources" rel="next" title="Memory Resources">
+<link href="Traditional-Scheduling-Functions.html#Traditional-Scheduling-Functions" rel="prev" title="Traditional Scheduling Functions">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="CPU-Affinity"></a>
+<div class="header">
+<p>
+Previous: <a href="Traditional-Scheduling.html#Traditional-Scheduling" accesskey="p" rel="prev">Traditional Scheduling</a>, Up: <a href="Priority.html#Priority" accesskey="u" rel="up">Priority</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Limiting-execution-to-certain-CPUs"></a>
+<h4 class="subsection">22.3.5 Limiting execution to certain CPUs</h4>
+
+<p>On a multi-processor system the operating system usually distributes
+the different processes which are runnable on all available CPUs in a
+way which allows the system to work most efficiently.  Which processes
+and threads run can be to some extend be control with the scheduling
+functionality described in the last sections.  But which CPU finally
+executes which process or thread is not covered.
+</p>
+<p>There are a number of reasons why a program might want to have control
+over this aspect of the system as well:
+</p>
+<ul>
+<li> One thread or process is responsible for absolutely critical work
+which under no circumstances must be interrupted or hindered from
+making progress by other processes or threads using CPU resources.  In
+this case the special process would be confined to a CPU which no
+other process or thread is allowed to use.
+
+</li><li> The access to certain resources (RAM, I/O ports) has different costs
+from different CPUs.  This is the case in NUMA (Non-Uniform Memory
+Architecture) machines.  Preferably memory should be accessed locally
+but this requirement is usually not visible to the scheduler.
+Therefore forcing a process or thread to the CPUs which have local
+access to the most-used memory helps to significantly boost the
+performance.
+
+</li><li> In controlled runtimes resource allocation and book-keeping work (for
+instance garbage collection) is performance local to processors.  This
+can help to reduce locking costs if the resources do not have to be
+protected from concurrent accesses from different processors.
+</li></ul>
+
+<p>The POSIX standard up to this date is of not much help to solve this
+problem.  The Linux kernel provides a set of interfaces to allow
+specifying <em>affinity sets</em> for a process.  The scheduler will
+schedule the thread or process on CPUs specified by the affinity
+masks.  The interfaces which the GNU C Library define follow to some
+extent the Linux kernel interface.
+</p>
+<dl>
+<dt><a name="index-cpu_005fset_005ft"></a>Data Type: <strong>cpu_set_t</strong></dt>
+<dd>
+<p>This data set is a bitset where each bit represents a CPU.  How the
+system&rsquo;s CPUs are mapped to bits in the bitset is system dependent.
+The data type has a fixed size; in the unlikely case that the number
+of bits are not sufficient to describe the CPUs of the system a
+different interface has to be used.
+</p>
+<p>This type is a GNU extension and is defined in <samp>sched.h</samp>.
+</p></dd></dl>
+
+<p>To manipulate the bitset, to set and reset bits, a number of macros are
+defined.  Some of the macros take a CPU number as a parameter.  Here
+it is important to never exceed the size of the bitset.  The following
+macro specifies the number of bits in the <code>cpu_set_t</code> bitset.
+</p>
+<dl>
+<dt><a name="index-CPU_005fSETSIZE"></a>Macro: <em>int</em> <strong>CPU_SETSIZE</strong></dt>
+<dd>
+<p>The value of this macro is the maximum number of CPUs which can be
+handled with a <code>cpu_set_t</code> object.
+</p></dd></dl>
+
+<p>The type <code>cpu_set_t</code> should be considered opaque; all
+manipulation should happen via the next four macros.
+</p>
+<dl>
+<dt><a name="index-CPU_005fZERO"></a>Macro: <em>void</em> <strong>CPU_ZERO</strong> <em>(cpu_set_t *<var>set</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This macro initializes the CPU set <var>set</var> to be the empty set.
+</p>
+<p>This macro is a GNU extension and is defined in <samp>sched.h</samp>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-CPU_005fSET"></a>Macro: <em>void</em> <strong>CPU_SET</strong> <em>(int <var>cpu</var>, cpu_set_t *<var>set</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This macro adds <var>cpu</var> to the CPU set <var>set</var>.
+</p>
+<p>The <var>cpu</var> parameter must not have side effects since it is
+evaluated more than once.
+</p>
+<p>This macro is a GNU extension and is defined in <samp>sched.h</samp>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-CPU_005fCLR"></a>Macro: <em>void</em> <strong>CPU_CLR</strong> <em>(int <var>cpu</var>, cpu_set_t *<var>set</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This macro removes <var>cpu</var> from the CPU set <var>set</var>.
+</p>
+<p>The <var>cpu</var> parameter must not have side effects since it is
+evaluated more than once.
+</p>
+<p>This macro is a GNU extension and is defined in <samp>sched.h</samp>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-CPU_005fISSET"></a>Macro: <em>int</em> <strong>CPU_ISSET</strong> <em>(int <var>cpu</var>, const cpu_set_t *<var>set</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This macro returns a nonzero value (true) if <var>cpu</var> is a member
+of the CPU set <var>set</var>, and zero (false) otherwise.
+</p>
+<p>The <var>cpu</var> parameter must not have side effects since it is
+evaluated more than once.
+</p>
+<p>This macro is a GNU extension and is defined in <samp>sched.h</samp>.
+</p></dd></dl>
+
+
+<p>CPU bitsets can be constructed from scratch or the currently installed
+affinity mask can be retrieved from the system.
+</p>
+<dl>
+<dt><a name="index-sched_005fgetaffinity"></a>Function: <em>int</em> <strong>sched_getaffinity</strong> <em>(pid_t <var>pid</var>, size_t <var>cpusetsize</var>, cpu_set_t *<var>cpuset</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+
+<p>This function stores the CPU affinity mask for the process or thread
+with the ID <var>pid</var> in the <var>cpusetsize</var> bytes long bitmap
+pointed to by <var>cpuset</var>.  If successful, the function always
+initializes all bits in the <code>cpu_set_t</code> object and returns zero.
+</p>
+<p>If <var>pid</var> does not correspond to a process or thread on the system
+the or the function fails for some other reason, it returns <code>-1</code>
+and <code>errno</code> is set to represent the error condition.
+</p>
+<dl compact="compact">
+<dt><code>ESRCH</code></dt>
+<dd><p>No process or thread with the given ID found.
+</p>
+</dd>
+<dt><code>EFAULT</code></dt>
+<dd><p>The pointer <var>cpuset</var> does not point to a valid object.
+</p></dd>
+</dl>
+
+<p>This function is a GNU extension and is declared in <samp>sched.h</samp>.
+</p></dd></dl>
+
+<p>Note that it is not portably possible to use this information to
+retrieve the information for different POSIX threads.  A separate
+interface must be provided for that.
+</p>
+<dl>
+<dt><a name="index-sched_005fsetaffinity"></a>Function: <em>int</em> <strong>sched_setaffinity</strong> <em>(pid_t <var>pid</var>, size_t <var>cpusetsize</var>, const cpu_set_t *<var>cpuset</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+
+<p>This function installs the <var>cpusetsize</var> bytes long affinity mask
+pointed to by <var>cpuset</var> for the process or thread with the ID <var>pid</var>.
+If successful the function returns zero and the scheduler will in the future
+take the affinity information into account.
+</p>
+<p>If the function fails it will return <code>-1</code> and <code>errno</code> is set
+to the error code:
+</p>
+<dl compact="compact">
+<dt><code>ESRCH</code></dt>
+<dd><p>No process or thread with the given ID found.
+</p>
+</dd>
+<dt><code>EFAULT</code></dt>
+<dd><p>The pointer <var>cpuset</var> does not point to a valid object.
+</p>
+</dd>
+<dt><code>EINVAL</code></dt>
+<dd><p>The bitset is not valid.  This might mean that the affinity set might
+not leave a processor for the process or thread to run on.
+</p></dd>
+</dl>
+
+<p>This function is a GNU extension and is declared in <samp>sched.h</samp>.
+</p></dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Previous: <a href="Traditional-Scheduling.html#Traditional-Scheduling" accesskey="p" rel="prev">Traditional Scheduling</a>, Up: <a href="Priority.html#Priority" accesskey="u" rel="up">Priority</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

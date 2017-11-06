@@ -1,0 +1,137 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Sending Datagrams</title>
+
+<meta name="description" content="The GNU C Library: Sending Datagrams">
+<meta name="keywords" content="The GNU C Library: Sending Datagrams">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Datagrams.html#Datagrams" rel="up" title="Datagrams">
+<link href="Receiving-Datagrams.html#Receiving-Datagrams" rel="next" title="Receiving Datagrams">
+<link href="Datagrams.html#Datagrams" rel="prev" title="Datagrams">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Sending-Datagrams"></a>
+<div class="header">
+<p>
+Next: <a href="Receiving-Datagrams.html#Receiving-Datagrams" accesskey="n" rel="next">Receiving Datagrams</a>, Up: <a href="Datagrams.html#Datagrams" accesskey="u" rel="up">Datagrams</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Sending-Datagrams-1"></a>
+<h4 class="subsection">16.10.1 Sending Datagrams</h4>
+<a name="index-sending-a-datagram"></a>
+<a name="index-transmitting-datagrams"></a>
+<a name="index-datagrams_002c-transmitting"></a>
+
+<a name="index-sys_002fsocket_002eh-12"></a>
+<p>The normal way of sending data on a datagram socket is by using the
+<code>sendto</code> function, declared in <samp>sys/socket.h</samp>.
+</p>
+<p>You can call <code>connect</code> on a datagram socket, but this only
+specifies a default destination for further data transmission on the
+socket.  When a socket has a default destination you can use
+<code>send</code> (see <a href="Sending-Data.html#Sending-Data">Sending Data</a>) or even <code>write</code> (see <a href="I_002fO-Primitives.html#I_002fO-Primitives">I/O Primitives</a>) to send a packet there.  You can cancel the default
+destination by calling <code>connect</code> using an address format of
+<code>AF_UNSPEC</code> in the <var>addr</var> argument.  See <a href="Connecting.html#Connecting">Connecting</a>, for
+more information about the <code>connect</code> function.
+</p>
+<dl>
+<dt><a name="index-sendto"></a>Function: <em>ssize_t</em> <strong>sendto</strong> <em>(int <var>socket</var>, const void *<var>buffer</var>, size_t <var>size</var>, int <var>flags</var>, struct sockaddr *<var>addr</var>, socklen_t <var>length</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>sendto</code> function transmits the data in the <var>buffer</var>
+through the socket <var>socket</var> to the destination address specified
+by the <var>addr</var> and <var>length</var> arguments.  The <var>size</var> argument
+specifies the number of bytes to be transmitted.
+</p>
+<p>The <var>flags</var> are interpreted the same way as for <code>send</code>; see
+<a href="Socket-Data-Options.html#Socket-Data-Options">Socket Data Options</a>.
+</p>
+<p>The return value and error conditions are also the same as for
+<code>send</code>, but you cannot rely on the system to detect errors and
+report them; the most common error is that the packet is lost or there
+is no-one at the specified address to receive it, and the operating
+system on your machine usually does not know this.
+</p>
+<p>It is also possible for one call to <code>sendto</code> to report an error
+owing to a problem related to a previous call.
+</p>
+<p>This function is defined as a cancellation point in multi-threaded
+programs, so one has to be prepared for this and make sure that
+allocated resources (like memory, file descriptors, semaphores or
+whatever) are freed even if the thread is canceled.
+</p></dd></dl>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Receiving-Datagrams.html#Receiving-Datagrams" accesskey="n" rel="next">Receiving Datagrams</a>, Up: <a href="Datagrams.html#Datagrams" accesskey="u" rel="up">Datagrams</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

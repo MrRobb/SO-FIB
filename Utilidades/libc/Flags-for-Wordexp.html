@@ -1,0 +1,157 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Flags for Wordexp</title>
+
+<meta name="description" content="The GNU C Library: Flags for Wordexp">
+<meta name="keywords" content="The GNU C Library: Flags for Wordexp">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Word-Expansion.html#Word-Expansion" rel="up" title="Word Expansion">
+<link href="Wordexp-Example.html#Wordexp-Example" rel="next" title="Wordexp Example">
+<link href="Calling-Wordexp.html#Calling-Wordexp" rel="prev" title="Calling Wordexp">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Flags-for-Wordexp"></a>
+<div class="header">
+<p>
+Next: <a href="Wordexp-Example.html#Wordexp-Example" accesskey="n" rel="next">Wordexp Example</a>, Previous: <a href="Calling-Wordexp.html#Calling-Wordexp" accesskey="p" rel="prev">Calling Wordexp</a>, Up: <a href="Word-Expansion.html#Word-Expansion" accesskey="u" rel="up">Word Expansion</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Flags-for-Word-Expansion"></a>
+<h4 class="subsection">10.4.3 Flags for Word Expansion</h4>
+
+<p>This section describes the flags that you can specify in the
+<var>flags</var> argument to <code>wordexp</code>.  Choose the flags you want,
+and combine them with the C operator <code>|</code>.
+</p>
+<dl compact="compact">
+<dt><code>WRDE_APPEND</code>
+<a name="index-WRDE_005fAPPEND"></a>
+</dt>
+<dd>
+<p>Append the words from this expansion to the vector of words produced by
+previous calls to <code>wordexp</code>.  This way you can effectively expand
+several words as if they were concatenated with spaces between them.
+</p>
+<p>In order for appending to work, you must not modify the contents of the
+word vector structure between calls to <code>wordexp</code>.  And, if you set
+<code>WRDE_DOOFFS</code> in the first call to <code>wordexp</code>, you must also
+set it when you append to the results.
+</p>
+</dd>
+<dt><code>WRDE_DOOFFS</code>
+<a name="index-WRDE_005fDOOFFS"></a>
+</dt>
+<dd>
+<p>Leave blank slots at the beginning of the vector of words.
+The <code>we_offs</code> field says how many slots to leave.
+The blank slots contain null pointers.
+</p>
+</dd>
+<dt><code>WRDE_NOCMD</code>
+<a name="index-WRDE_005fNOCMD"></a>
+</dt>
+<dd>
+<p>Don&rsquo;t do command substitution; if the input requests command substitution,
+report an error.
+</p>
+</dd>
+<dt><code>WRDE_REUSE</code>
+<a name="index-WRDE_005fREUSE"></a>
+</dt>
+<dd>
+<p>Reuse a word vector made by a previous call to <code>wordexp</code>.
+Instead of allocating a new vector of words, this call to <code>wordexp</code>
+will use the vector that already exists (making it larger if necessary).
+</p>
+<p>Note that the vector may move, so it is not safe to save an old pointer
+and use it again after calling <code>wordexp</code>.  You must fetch
+<code>we_pathv</code> anew after each call.
+</p>
+</dd>
+<dt><code>WRDE_SHOWERR</code>
+<a name="index-WRDE_005fSHOWERR"></a>
+</dt>
+<dd>
+<p>Do show any error messages printed by commands run by command substitution.
+More precisely, allow these commands to inherit the standard error output
+stream of the current process.  By default, <code>wordexp</code> gives these
+commands a standard error stream that discards all output.
+</p>
+</dd>
+<dt><code>WRDE_UNDEF</code>
+<a name="index-WRDE_005fUNDEF"></a>
+</dt>
+<dd>
+<p>If the input refers to a shell variable that is not defined, report an
+error.
+</p></dd>
+</dl>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Wordexp-Example.html#Wordexp-Example" accesskey="n" rel="next">Wordexp Example</a>, Previous: <a href="Calling-Wordexp.html#Calling-Wordexp" accesskey="p" rel="prev">Calling Wordexp</a>, Up: <a href="Word-Expansion.html#Word-Expansion" accesskey="u" rel="up">Word Expansion</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

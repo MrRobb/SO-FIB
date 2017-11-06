@@ -1,0 +1,283 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Setting Groups</title>
+
+<meta name="description" content="The GNU C Library: Setting Groups">
+<meta name="keywords" content="The GNU C Library: Setting Groups">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Users-and-Groups.html#Users-and-Groups" rel="up" title="Users and Groups">
+<link href="Enable_002fDisable-Setuid.html#Enable_002fDisable-Setuid" rel="next" title="Enable/Disable Setuid">
+<link href="Setting-User-ID.html#Setting-User-ID" rel="prev" title="Setting User ID">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Setting-Groups"></a>
+<div class="header">
+<p>
+Next: <a href="Enable_002fDisable-Setuid.html#Enable_002fDisable-Setuid" accesskey="n" rel="next">Enable/Disable Setuid</a>, Previous: <a href="Setting-User-ID.html#Setting-User-ID" accesskey="p" rel="prev">Setting User ID</a>, Up: <a href="Users-and-Groups.html#Users-and-Groups" accesskey="u" rel="up">Users and Groups</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Setting-the-Group-IDs"></a>
+<h3 class="section">30.7 Setting the Group IDs</h3>
+
+<p>This section describes the functions for altering the group IDs (real
+and effective) of a process.  To use these facilities, you must include
+the header files <samp>sys/types.h</samp> and <samp>unistd.h</samp>.
+<a name="index-unistd_002eh-24"></a>
+<a name="index-sys_002ftypes_002eh-6"></a>
+</p>
+<dl>
+<dt><a name="index-setegid"></a>Function: <em>int</em> <strong>setegid</strong> <em>(gid_t <var>newgid</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Unsafe lock
+| AC-Unsafe lock
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function sets the effective group ID of the process to
+<var>newgid</var>, provided that the process is allowed to change its group
+ID.  Just as with <code>seteuid</code>, if the process is privileged it may
+change its effective group ID to any value; if it isn&rsquo;t, but it has a
+file group ID, then it may change to its real group ID or file group ID;
+otherwise it may not change its effective group ID.
+</p>
+<p>Note that a process is only privileged if its effective <em>user</em> ID
+is zero.  The effective group ID only affects access permissions.
+</p>
+<p>The return values and error conditions for <code>setegid</code> are the same
+as those for <code>seteuid</code>.
+</p>
+<p>This function is only present if <code>_POSIX_SAVED_IDS</code> is defined.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-setgid"></a>Function: <em>int</em> <strong>setgid</strong> <em>(gid_t <var>newgid</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Unsafe lock
+| AC-Unsafe lock
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function sets both the real and effective group ID of the process
+to <var>newgid</var>, provided that the process is privileged.  It also
+deletes the file group ID, if any.
+</p>
+<p>If the process is not privileged, then <code>setgid</code> behaves like
+<code>setegid</code>.
+</p>
+<p>The return values and error conditions for <code>setgid</code> are the same
+as those for <code>seteuid</code>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-setregid"></a>Function: <em>int</em> <strong>setregid</strong> <em>(gid_t <var>rgid</var>, gid_t <var>egid</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Unsafe lock
+| AC-Unsafe lock
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function sets the real group ID of the process to <var>rgid</var> and
+the effective group ID to <var>egid</var>.  If <var>rgid</var> is <code>-1</code>, it
+means not to change the real group ID; likewise if <var>egid</var> is
+<code>-1</code>, it means not to change the effective group ID.
+</p>
+<p>The <code>setregid</code> function is provided for compatibility with 4.3 BSD
+Unix, which does not support file IDs.  You can use this function to
+swap the effective and real group IDs of the process.  (Privileged
+processes are not limited to this usage.)  If file IDs are supported,
+you should use that feature instead of using this function.
+See <a href="Enable_002fDisable-Setuid.html#Enable_002fDisable-Setuid">Enable/Disable Setuid</a>.
+</p>
+<p>The return values and error conditions for <code>setregid</code> are the same
+as those for <code>setreuid</code>.
+</p></dd></dl>
+
+<p><code>setuid</code> and <code>setgid</code> behave differently depending on whether
+the effective user ID at the time is zero.  If it is not zero, they
+behave like <code>seteuid</code> and <code>setegid</code>.  If it is, they change
+both effective and real IDs and delete the file ID.  To avoid confusion,
+we recommend you always use <code>seteuid</code> and <code>setegid</code> except
+when you know the effective user ID is zero and your intent is to change
+the persona permanently.  This case is rare&mdash;most of the programs that
+need it, such as <code>login</code> and <code>su</code>, have already been written.
+</p>
+<p>Note that if your program is setuid to some user other than <code>root</code>,
+there is no way to drop privileges permanently.
+</p>
+<p>The system also lets privileged processes change their supplementary
+group IDs.  To use <code>setgroups</code> or <code>initgroups</code>, your programs
+should include the header file <samp>grp.h</samp>.
+<a name="index-grp_002eh-1"></a>
+</p>
+<dl>
+<dt><a name="index-setgroups"></a>Function: <em>int</em> <strong>setgroups</strong> <em>(size_t <var>count</var>, const gid_t *<var>groups</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Unsafe lock
+| AC-Unsafe lock
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function sets the process&rsquo;s supplementary group IDs.  It can only
+be called from privileged processes.  The <var>count</var> argument specifies
+the number of group IDs in the array <var>groups</var>.
+</p>
+<p>This function returns <code>0</code> if successful and <code>-1</code> on error.
+The following <code>errno</code> error conditions are defined for this
+function:
+</p>
+<dl compact="compact">
+<dt><code>EPERM</code></dt>
+<dd><p>The calling process is not privileged.
+</p></dd>
+</dl>
+</dd></dl>
+
+<dl>
+<dt><a name="index-initgroups"></a>Function: <em>int</em> <strong>initgroups</strong> <em>(const char *<var>user</var>, gid_t <var>group</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe locale
+| AS-Unsafe dlopen plugin heap lock
+| AC-Unsafe corrupt mem fd lock
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>initgroups</code> function sets the process&rsquo;s supplementary group
+IDs to be the normal default for the user name <var>user</var>.  The group
+<var>group</var> is automatically included.
+</p>
+<p>This function works by scanning the group database for all the groups
+<var>user</var> belongs to.  It then calls <code>setgroups</code> with the list it
+has constructed.
+</p>
+<p>The return values and error conditions are the same as for
+<code>setgroups</code>.
+</p></dd></dl>
+
+<p>If you are interested in the groups a particular user belongs to, but do
+not want to change the process&rsquo;s supplementary group IDs, you can use
+<code>getgrouplist</code>.  To use <code>getgrouplist</code>, your programs should
+include the header file <samp>grp.h</samp>.
+<a name="index-grp_002eh-2"></a>
+</p>
+<dl>
+<dt><a name="index-getgrouplist"></a>Function: <em>int</em> <strong>getgrouplist</strong> <em>(const char *<var>user</var>, gid_t <var>group</var>, gid_t *<var>groups</var>, int *<var>ngroups</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe locale
+| AS-Unsafe dlopen plugin heap lock
+| AC-Unsafe corrupt mem fd lock
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>getgrouplist</code> function scans the group database for all the
+groups <var>user</var> belongs to.  Up to *<var>ngroups</var> group IDs
+corresponding to these groups are stored in the array <var>groups</var>; the
+return value from the function is the number of group IDs actually
+stored.  If *<var>ngroups</var> is smaller than the total number of groups
+found, then <code>getgrouplist</code> returns a value of <code>-1</code> and stores
+the actual number of groups in *<var>ngroups</var>.  The group <var>group</var> is
+automatically included in the list of groups returned by
+<code>getgrouplist</code>.
+</p>
+<p>Here&rsquo;s how to use <code>getgrouplist</code> to read all supplementary groups
+for <var>user</var>:
+</p>
+<div class="smallexample">
+<pre class="smallexample">gid_t *
+supplementary_groups (char *user)
+{
+  int ngroups = 16;
+  gid_t *groups
+    = (gid_t *) xmalloc (ngroups * sizeof (gid_t));
+  struct passwd *pw = getpwnam (user);
+
+  if (pw == NULL)
+    return NULL;
+
+  if (getgrouplist (pw-&gt;pw_name, pw-&gt;pw_gid, groups, &amp;ngroups) &lt; 0)
+    {
+      groups = xrealloc (ngroups * sizeof (gid_t));
+      getgrouplist (pw-&gt;pw_name, pw-&gt;pw_gid, groups, &amp;ngroups);
+    }
+  return groups;
+}
+</pre></div>
+</dd></dl>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Enable_002fDisable-Setuid.html#Enable_002fDisable-Setuid" accesskey="n" rel="next">Enable/Disable Setuid</a>, Previous: <a href="Setting-User-ID.html#Setting-User-ID" accesskey="p" rel="prev">Setting User ID</a>, Up: <a href="Users-and-Groups.html#Users-and-Groups" accesskey="u" rel="up">Users and Groups</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

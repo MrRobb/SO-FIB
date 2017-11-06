@@ -1,0 +1,240 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Locating gettext catalog</title>
+
+<meta name="description" content="The GNU C Library: Locating gettext catalog">
+<meta name="keywords" content="The GNU C Library: Locating gettext catalog">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Message-catalogs-with-gettext.html#Message-catalogs-with-gettext" rel="up" title="Message catalogs with gettext">
+<link href="Advanced-gettext-functions.html#Advanced-gettext-functions" rel="next" title="Advanced gettext functions">
+<link href="Translation-with-gettext.html#Translation-with-gettext" rel="prev" title="Translation with gettext">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Locating-gettext-catalog"></a>
+<div class="header">
+<p>
+Next: <a href="Advanced-gettext-functions.html#Advanced-gettext-functions" accesskey="n" rel="next">Advanced gettext functions</a>, Previous: <a href="Translation-with-gettext.html#Translation-with-gettext" accesskey="p" rel="prev">Translation with gettext</a>, Up: <a href="Message-catalogs-with-gettext.html#Message-catalogs-with-gettext" accesskey="u" rel="up">Message catalogs with gettext</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="How-to-determine-which-catalog-to-be-used"></a>
+<h4 class="subsubsection">8.2.1.2 How to determine which catalog to be used</h4>
+
+<p>The functions to retrieve the translations for a given message have a
+remarkable simple interface.  But to provide the user of the program
+still the opportunity to select exactly the translation s/he wants and
+also to provide the programmer the possibility to influence the way to
+locate the search for catalogs files there is a quite complicated
+underlying mechanism which controls all this.  The code is complicated
+the use is easy.
+</p>
+<p>Basically we have two different tasks to perform which can also be
+performed by the <code>catgets</code> functions:
+</p>
+<ol>
+<li> Locate the set of message catalogs.  There are a number of files for
+different languages which all belong to the package.  Usually they
+are all stored in the filesystem below a certain directory.
+
+<p>There can be arbitrarily many packages installed and they can follow
+different guidelines for the placement of their files.
+</p>
+</li><li> Relative to the location specified by the package the actual translation
+files must be searched, based on the wishes of the user.  I.e., for each
+language the user selects the program should be able to locate the
+appropriate file.
+</li></ol>
+
+<p>This is the functionality required by the specifications for
+<code>gettext</code> and this is also what the <code>catgets</code> functions are
+able to do.  But there are some problems unresolved:
+</p>
+<ul>
+<li> The language to be used can be specified in several different ways.
+There is no generally accepted standard for this and the user always
+expects the program to understand what s/he means.  E.g., to select the
+German translation one could write <code>de</code>, <code>german</code>, or
+<code>deutsch</code> and the program should always react the same.
+
+</li><li> Sometimes the specification of the user is too detailed.  If s/he, e.g.,
+specifies <code>de_DE.ISO-8859-1</code> which means German, spoken in Germany,
+coded using the ISO&nbsp;<span class="nolinebreak">8859-1</span><!-- /@w --> character set there is the possibility
+that a message catalog matching this exactly is not available.  But
+there could be a catalog matching <code>de</code> and if the character set
+used on the machine is always ISO&nbsp;<span class="nolinebreak">8859-1</span><!-- /@w --> there is no reason why this
+later message catalog should not be used.  (We call this <em>message
+inheritance</em>.)
+
+</li><li> If a catalog for a wanted language is not available it is not always the
+second best choice to fall back on the language of the developer and
+simply not translate any message.  Instead a user might be better able
+to read the messages in another language and so the user of the program
+should be able to define a precedence order of languages.
+</li></ul>
+
+<p>We can divide the configuration actions in two parts: the one is
+performed by the programmer, the other by the user.  We will start with
+the functions the programmer can use since the user configuration will
+be based on this.
+</p>
+<p>As the functions described in the last sections already mention separate
+sets of messages can be selected by a <em>domain name</em>.  This is a
+simple string which should be unique for each program part that uses a
+separate domain.  It is possible to use in one program arbitrarily many
+domains at the same time.  E.g., the GNU C Library itself uses a domain
+named <code>libc</code> while the program using the C Library could use a
+domain named <code>foo</code>.  The important point is that at any time
+exactly one domain is active.  This is controlled with the following
+function.
+</p>
+<dl>
+<dt><a name="index-textdomain"></a>Function: <em>char *</em> <strong>textdomain</strong> <em>(const char *<var>domainname</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Unsafe lock heap
+| AC-Unsafe lock mem
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>textdomain</code> function sets the default domain, which is used in
+all future <code>gettext</code> calls, to <var>domainname</var>.  Please note that
+<code>dgettext</code> and <code>dcgettext</code> calls are not influenced if the
+<var>domainname</var> parameter of these functions is not the null pointer.
+</p>
+<p>Before the first call to <code>textdomain</code> the default domain is
+<code>messages</code>.  This is the name specified in the specification of
+the <code>gettext</code> API.  This name is as good as any other name.  No
+program should ever really use a domain with this name since this can
+only lead to problems.
+</p>
+<p>The function returns the value which is from now on taken as the default
+domain.  If the system went out of memory the returned value is
+<code>NULL</code> and the global variable <var>errno</var> is set to <code>ENOMEM</code>.
+Despite the return value type being <code>char *</code> the return string must
+not be changed.  It is allocated internally by the <code>textdomain</code>
+function.
+</p>
+<p>If the <var>domainname</var> parameter is the null pointer no new default
+domain is set.  Instead the currently selected default domain is
+returned.
+</p>
+<p>If the <var>domainname</var> parameter is the empty string the default domain
+is reset to its initial value, the domain with the name <code>messages</code>.
+This possibility is questionable to use since the domain <code>messages</code>
+really never should be used.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-bindtextdomain"></a>Function: <em>char *</em> <strong>bindtextdomain</strong> <em>(const char *<var>domainname</var>, const char *<var>dirname</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Unsafe heap
+| AC-Unsafe mem
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>bindtextdomain</code> function can be used to specify the directory
+which contains the message catalogs for domain <var>domainname</var> for the
+different languages.  To be correct, this is the directory where the
+hierarchy of directories is expected.  Details are explained below.
+</p>
+<p>For the programmer it is important to note that the translations which
+come with the program have to be placed in a directory hierarchy starting
+at, say, <samp>/foo/bar</samp>.  Then the program should make a
+<code>bindtextdomain</code> call to bind the domain for the current program to
+this directory.  So it is made sure the catalogs are found.  A correctly
+running program does not depend on the user setting an environment
+variable.
+</p>
+<p>The <code>bindtextdomain</code> function can be used several times and if the
+<var>domainname</var> argument is different the previously bound domains
+will not be overwritten.
+</p>
+<p>If the program which wish to use <code>bindtextdomain</code> at some point of
+time use the <code>chdir</code> function to change the current working
+directory it is important that the <var>dirname</var> strings ought to be an
+absolute pathname.  Otherwise the addressed directory might vary with
+the time.
+</p>
+<p>If the <var>dirname</var> parameter is the null pointer <code>bindtextdomain</code>
+returns the currently selected directory for the domain with the name
+<var>domainname</var>.
+</p>
+<p>The <code>bindtextdomain</code> function returns a pointer to a string
+containing the name of the selected directory name.  The string is
+allocated internally in the function and must not be changed by the
+user.  If the system went out of core during the execution of
+<code>bindtextdomain</code> the return value is <code>NULL</code> and the global
+variable <var>errno</var> is set accordingly.
+</p></dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Advanced-gettext-functions.html#Advanced-gettext-functions" accesskey="n" rel="next">Advanced gettext functions</a>, Previous: <a href="Translation-with-gettext.html#Translation-with-gettext" accesskey="p" rel="prev">Translation with gettext</a>, Up: <a href="Message-catalogs-with-gettext.html#Message-catalogs-with-gettext" accesskey="u" rel="up">Message catalogs with gettext</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

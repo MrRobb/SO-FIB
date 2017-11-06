@@ -1,0 +1,281 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Reading/Closing Directory</title>
+
+<meta name="description" content="The GNU C Library: Reading/Closing Directory">
+<meta name="keywords" content="The GNU C Library: Reading/Closing Directory">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Accessing-Directories.html#Accessing-Directories" rel="up" title="Accessing Directories">
+<link href="Simple-Directory-Lister.html#Simple-Directory-Lister" rel="next" title="Simple Directory Lister">
+<link href="Opening-a-Directory.html#Opening-a-Directory" rel="prev" title="Opening a Directory">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Reading_002fClosing-Directory"></a>
+<div class="header">
+<p>
+Next: <a href="Simple-Directory-Lister.html#Simple-Directory-Lister" accesskey="n" rel="next">Simple Directory Lister</a>, Previous: <a href="Opening-a-Directory.html#Opening-a-Directory" accesskey="p" rel="prev">Opening a Directory</a>, Up: <a href="Accessing-Directories.html#Accessing-Directories" accesskey="u" rel="up">Accessing Directories</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Reading-and-Closing-a-Directory-Stream"></a>
+<h4 class="subsection">14.2.3 Reading and Closing a Directory Stream</h4>
+
+<a name="index-dirent_002eh-3"></a>
+<p>This section describes how to read directory entries from a directory
+stream, and how to close the stream when you are done with it.  All the
+symbols are declared in the header file <samp>dirent.h</samp>.
+</p>
+<dl>
+<dt><a name="index-readdir"></a>Function: <em>struct dirent *</em> <strong>readdir</strong> <em>(DIR *<var>dirstream</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Unsafe lock
+| AC-Unsafe lock
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function reads the next entry from the directory.  It normally
+returns a pointer to a structure containing information about the
+file.  This structure is associated with the <var>dirstream</var> handle
+and can be rewritten by a subsequent call.
+</p>
+<p><strong>Portability Note:</strong> On some systems <code>readdir</code> may not
+return entries for <samp>.</samp> and <samp>..</samp>, even though these are always
+valid file names in any directory.  See <a href="File-Name-Resolution.html#File-Name-Resolution">File Name Resolution</a>.
+</p>
+<p>If there are no more entries in the directory or an error is detected,
+<code>readdir</code> returns a null pointer.  The following <code>errno</code> error
+conditions are defined for this function:
+</p>
+<dl compact="compact">
+<dt><code>EBADF</code></dt>
+<dd><p>The <var>dirstream</var> argument is not valid.
+</p></dd>
+</dl>
+
+<p>To distinguish between an end-of-directory condition or an error, you
+must set <code>errno</code> to zero before calling <code>readdir</code>.  To avoid
+entering an infinite loop, you should stop reading from the directory
+after the first error.
+</p>
+<p><strong>Caution:</strong> The pointer returned by <code>readdir</code> points to
+a buffer within the <code>DIR</code> object.  The data in that buffer will
+be overwritten by the next call to <code>readdir</code>.  You must take care,
+for instance, to copy the <code>d_name</code> string if you need it later.
+</p>
+<p>Because of this, it is not safe to share a <code>DIR</code> object among
+multiple threads, unless you use your own locking to ensure that
+no thread calls <code>readdir</code> while another thread is still using the
+data from the previous call.  In the GNU C Library, it is safe to call
+<code>readdir</code> from multiple threads as long as each thread uses
+its own <code>DIR</code> object.  POSIX.1-2008 does not require this to
+be safe, but we are not aware of any operating systems where it
+does not work.
+</p>
+<p><code>readdir_r</code> allows you to provide your own buffer for the
+<code>struct dirent</code>, but it is less portable than <code>readdir</code>, and
+has problems with very long filenames (see below).  We recommend
+you use <code>readdir</code>, but do not share <code>DIR</code> objects.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-readdir_005fr"></a>Function: <em>int</em> <strong>readdir_r</strong> <em>(DIR *<var>dirstream</var>, struct dirent *<var>entry</var>, struct dirent **<var>result</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Unsafe lock
+| AC-Unsafe lock
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function is a version of <code>readdir</code> which performs internal
+locking.  Like <code>readdir</code> it returns the next entry from the
+directory.  To prevent conflicts between simultaneously running
+threads the result is stored inside the <var>entry</var> object.
+</p>
+<p><strong>Portability Note:</strong> <code>readdir_r</code> is deprecated.  It is
+recommended to use <code>readdir</code> instead of <code>readdir_r</code> for the
+following reasons:
+</p>
+<ul>
+<li> On systems which do not define <code>NAME_MAX</code>, it may not be possible
+to use <code>readdir_r</code> safely because the caller does not specify the
+length of the buffer for the directory entry.
+
+</li><li> On some systems, <code>readdir_r</code> cannot read directory entries with
+very long names.  If such a name is encountered, the GNU C Library
+implementation of <code>readdir_r</code> returns with an error code of
+<code>ENAMETOOLONG</code> after the final directory entry has been read.  On
+other systems, <code>readdir_r</code> may return successfully, but the
+<code>d_name</code> member may not be NUL-terminated or may be truncated.
+
+</li><li> POSIX-1.2008 does not guarantee that <code>readdir</code> is thread-safe,
+even when access to the same <var>dirstream</var> is serialized.  But in
+current implementations (including the GNU C Library), it is safe to call
+<code>readdir</code> concurrently on different <var>dirstream</var>s, so there is
+no need to use <code>readdir_r</code> in most multi-threaded programs.  In
+the rare case that multiple threads need to read from the same
+<var>dirstream</var>, it is still better to use <code>readdir</code> and external
+synchronization.
+
+</li><li> It is expected that future versions of POSIX will obsolete
+<code>readdir_r</code> and mandate the level of thread safety for
+<code>readdir</code> which is provided by the GNU C Library and other
+implementations today.
+</li></ul>
+
+<p>Normally <code>readdir_r</code> returns zero and sets <code>*<var>result</var></code>
+to <var>entry</var>.  If there are no more entries in the directory or an
+error is detected, <code>readdir_r</code> sets <code>*<var>result</var></code> to a
+null pointer and returns a nonzero error code, also stored in
+<code>errno</code>, as described for <code>readdir</code>.
+</p>
+<p>It is also important to look at the definition of the <code>struct
+dirent</code> type.  Simply passing a pointer to an object of this type for
+the second parameter of <code>readdir_r</code> might not be enough.  Some
+systems don&rsquo;t define the <code>d_name</code> element sufficiently long.  In
+this case the user has to provide additional space.  There must be room
+for at least <code>NAME_MAX + 1</code> characters in the <code>d_name</code> array.
+Code to call <code>readdir_r</code> could look like this:
+</p>
+<div class="smallexample">
+<pre class="smallexample">  union
+  {
+    struct dirent d;
+    char b[offsetof (struct dirent, d_name) + NAME_MAX + 1];
+  } u;
+
+  if (readdir_r (dir, &amp;u.d, &amp;res) == 0)
+    &hellip;
+</pre></div>
+</dd></dl>
+
+<p>To support large filesystems on 32-bit machines there are LFS variants
+of the last two functions.
+</p>
+<dl>
+<dt><a name="index-readdir64"></a>Function: <em>struct dirent64 *</em> <strong>readdir64</strong> <em>(DIR *<var>dirstream</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Unsafe lock
+| AC-Unsafe lock
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>readdir64</code> function is just like the <code>readdir</code> function
+except that it returns a pointer to a record of type <code>struct
+dirent64</code>.  Some of the members of this data type (notably <code>d_ino</code>)
+might have a different size to allow large filesystems.
+</p>
+<p>In all other aspects this function is equivalent to <code>readdir</code>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-readdir64_005fr"></a>Function: <em>int</em> <strong>readdir64_r</strong> <em>(DIR *<var>dirstream</var>, struct dirent64 *<var>entry</var>, struct dirent64 **<var>result</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Unsafe lock
+| AC-Unsafe lock
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The deprecated <code>readdir64_r</code> function is equivalent to the
+<code>readdir_r</code> function except that it takes parameters of base type
+<code>struct dirent64</code> instead of <code>struct dirent</code> in the second and
+third position.  The same precautions mentioned in the documentation of
+<code>readdir_r</code> also apply here.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-closedir"></a>Function: <em>int</em> <strong>closedir</strong> <em>(DIR *<var>dirstream</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Unsafe heap lock/hurd
+| AC-Unsafe mem fd lock/hurd
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function closes the directory stream <var>dirstream</var>.  It returns
+<code>0</code> on success and <code>-1</code> on failure.
+</p>
+<p>The following <code>errno</code> error conditions are defined for this
+function:
+</p>
+<dl compact="compact">
+<dt><code>EBADF</code></dt>
+<dd><p>The <var>dirstream</var> argument is not valid.
+</p></dd>
+</dl>
+</dd></dl>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Simple-Directory-Lister.html#Simple-Directory-Lister" accesskey="n" rel="next">Simple Directory Lister</a>, Previous: <a href="Opening-a-Directory.html#Opening-a-Directory" accesskey="p" rel="prev">Opening a Directory</a>, Up: <a href="Accessing-Directories.html#Accessing-Directories" accesskey="u" rel="up">Accessing Directories</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

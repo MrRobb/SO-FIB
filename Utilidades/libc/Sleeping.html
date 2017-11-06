@@ -1,0 +1,201 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Sleeping</title>
+
+<meta name="description" content="The GNU C Library: Sleeping">
+<meta name="keywords" content="The GNU C Library: Sleeping">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Date-and-Time.html#Date-and-Time" rel="up" title="Date and Time">
+<link href="Resource-Usage-And-Limitation.html#Resource-Usage-And-Limitation" rel="next" title="Resource Usage And Limitation">
+<link href="Setting-an-Alarm.html#Setting-an-Alarm" rel="prev" title="Setting an Alarm">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Sleeping"></a>
+<div class="header">
+<p>
+Previous: <a href="Setting-an-Alarm.html#Setting-an-Alarm" accesskey="p" rel="prev">Setting an Alarm</a>, Up: <a href="Date-and-Time.html#Date-and-Time" accesskey="u" rel="up">Date and Time</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Sleeping-1"></a>
+<h3 class="section">21.6 Sleeping</h3>
+
+<p>The function <code>sleep</code> gives a simple way to make the program wait
+for a short interval.  If your program doesn&rsquo;t use signals (except to
+terminate), then you can expect <code>sleep</code> to wait reliably throughout
+the specified interval.  Otherwise, <code>sleep</code> can return sooner if a
+signal arrives; if you want to wait for a given interval regardless of
+signals, use <code>select</code> (see <a href="Waiting-for-I_002fO.html#Waiting-for-I_002fO">Waiting for I/O</a>) and don&rsquo;t specify
+any descriptors to wait for.
+</p>
+<dl>
+<dt><a name="index-sleep"></a>Function: <em>unsigned int</em> <strong>sleep</strong> <em>(unsigned int <var>seconds</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Unsafe sig:SIGCHLD/linux
+| AS-Unsafe 
+| AC-Unsafe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>sleep</code> function waits for <var>seconds</var> seconds or until a signal
+is delivered, whichever happens first.
+</p>
+<p>If <code>sleep</code> returns because the requested interval is over,
+it returns a value of zero.  If it returns because of delivery of a
+signal, its return value is the remaining time in the sleep interval.
+</p>
+<p>The <code>sleep</code> function is declared in <samp>unistd.h</samp>.
+</p></dd></dl>
+
+<p>Resist the temptation to implement a sleep for a fixed amount of time by
+using the return value of <code>sleep</code>, when nonzero, to call
+<code>sleep</code> again.  This will work with a certain amount of accuracy as
+long as signals arrive infrequently.  But each signal can cause the
+eventual wakeup time to be off by an additional second or so.  Suppose a
+few signals happen to arrive in rapid succession by bad luck&mdash;there is
+no limit on how much this could shorten or lengthen the wait.
+</p>
+<p>Instead, compute the calendar time at which the program should stop
+waiting, and keep trying to wait until that calendar time.  This won&rsquo;t
+be off by more than a second.  With just a little more work, you can use
+<code>select</code> and make the waiting period quite accurate.  (Of course,
+heavy system load can cause additional unavoidable delays&mdash;unless the
+machine is dedicated to one application, there is no way you can avoid
+this.)
+</p>
+<p>On some systems, <code>sleep</code> can do strange things if your program uses
+<code>SIGALRM</code> explicitly.  Even if <code>SIGALRM</code> signals are being
+ignored or blocked when <code>sleep</code> is called, <code>sleep</code> might
+return prematurely on delivery of a <code>SIGALRM</code> signal.  If you have
+established a handler for <code>SIGALRM</code> signals and a <code>SIGALRM</code>
+signal is delivered while the process is sleeping, the action taken
+might be just to cause <code>sleep</code> to return instead of invoking your
+handler.  And, if <code>sleep</code> is interrupted by delivery of a signal
+whose handler requests an alarm or alters the handling of <code>SIGALRM</code>,
+this handler and <code>sleep</code> will interfere.
+</p>
+<p>On GNU systems, it is safe to use <code>sleep</code> and <code>SIGALRM</code> in
+the same program, because <code>sleep</code> does not work by means of
+<code>SIGALRM</code>.
+</p>
+<dl>
+<dt><a name="index-nanosleep"></a>Function: <em>int</em> <strong>nanosleep</strong> <em>(const struct timespec *<var>requested_time</var>, struct timespec *<var>remaining</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>If resolution to seconds is not enough the <code>nanosleep</code> function can
+be used.  As the name suggests the sleep interval can be specified in
+nanoseconds.  The actual elapsed time of the sleep interval might be
+longer since the system rounds the elapsed time you request up to the
+next integer multiple of the actual resolution the system can deliver.
+</p>
+<p>*<code>requested_time</code> is the elapsed time of the interval you want to
+sleep.
+</p>
+<p>The function returns as *<code>remaining</code> the elapsed time left in the
+interval for which you requested to sleep.  If the interval completed
+without getting interrupted by a signal, this is zero.
+</p>
+<p><code>struct timespec</code> is described in See <a href="Elapsed-Time.html#Elapsed-Time">Elapsed Time</a>.
+</p>
+<p>If the function returns because the interval is over the return value is
+zero.  If the function returns <em>-1</em> the global variable <var>errno</var>
+is set to the following values:
+</p>
+<dl compact="compact">
+<dt><code>EINTR</code></dt>
+<dd><p>The call was interrupted because a signal was delivered to the thread.
+If the <var>remaining</var> parameter is not the null pointer the structure
+pointed to by <var>remaining</var> is updated to contain the remaining
+elapsed time.
+</p>
+</dd>
+<dt><code>EINVAL</code></dt>
+<dd><p>The nanosecond value in the <var>requested_time</var> parameter contains an
+illegal value.  Either the value is negative or greater than or equal to
+1000 million.
+</p></dd>
+</dl>
+
+<p>This function is a cancellation point in multi-threaded programs.  This
+is a problem if the thread allocates some resources (like memory, file
+descriptors, semaphores or whatever) at the time <code>nanosleep</code> is
+called.  If the thread gets canceled these resources stay allocated
+until the program ends.  To avoid this calls to <code>nanosleep</code> should
+be protected using cancellation handlers.
+</p>
+<p>The <code>nanosleep</code> function is declared in <samp>time.h</samp>.
+</p></dd></dl>
+<hr>
+<div class="header">
+<p>
+Previous: <a href="Setting-an-Alarm.html#Setting-an-Alarm" accesskey="p" rel="prev">Setting an Alarm</a>, Up: <a href="Date-and-Time.html#Date-and-Time" accesskey="u" rel="up">Date and Time</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

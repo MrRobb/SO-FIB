@@ -1,0 +1,466 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: String/Array Comparison</title>
+
+<meta name="description" content="The GNU C Library: String/Array Comparison">
+<meta name="keywords" content="The GNU C Library: String/Array Comparison">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="String-and-Array-Utilities.html#String-and-Array-Utilities" rel="up" title="String and Array Utilities">
+<link href="Collation-Functions.html#Collation-Functions" rel="next" title="Collation Functions">
+<link href="Truncating-Strings.html#Truncating-Strings" rel="prev" title="Truncating Strings">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="String_002fArray-Comparison"></a>
+<div class="header">
+<p>
+Next: <a href="Collation-Functions.html#Collation-Functions" accesskey="n" rel="next">Collation Functions</a>, Previous: <a href="Truncating-Strings.html#Truncating-Strings" accesskey="p" rel="prev">Truncating Strings</a>, Up: <a href="String-and-Array-Utilities.html#String-and-Array-Utilities" accesskey="u" rel="up">String and Array Utilities</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="String_002fArray-Comparison-1"></a>
+<h3 class="section">5.7 String/Array Comparison</h3>
+<a name="index-comparing-strings-and-arrays"></a>
+<a name="index-string-comparison-functions"></a>
+<a name="index-array-comparison-functions"></a>
+<a name="index-predicates-on-strings"></a>
+<a name="index-predicates-on-arrays"></a>
+
+<p>You can use the functions in this section to perform comparisons on the
+contents of strings and arrays.  As well as checking for equality, these
+functions can also be used as the ordering functions for sorting
+operations.  See <a href="Searching-and-Sorting.html#Searching-and-Sorting">Searching and Sorting</a>, for an example of this.
+</p>
+<p>Unlike most comparison operations in C, the string comparison functions
+return a nonzero value if the strings are <em>not</em> equivalent rather
+than if they are.  The sign of the value indicates the relative ordering
+of the first part of the strings that are not equivalent:  a
+negative value indicates that the first string is &ldquo;less&rdquo; than the
+second, while a positive value indicates that the first string is
+&ldquo;greater&rdquo;.
+</p>
+<p>The most common use of these functions is to check only for equality.
+This is canonically done with an expression like &lsquo;<samp>!&nbsp;strcmp&nbsp;(s1,&nbsp;s2)</samp>&rsquo;<!-- /@w -->.
+</p>
+<p>All of these functions are declared in the header file <samp>string.h</samp>.
+<a name="index-string_002eh-3"></a>
+</p>
+<dl>
+<dt><a name="index-memcmp"></a>Function: <em>int</em> <strong>memcmp</strong> <em>(const void *<var>a1</var>, const void *<var>a2</var>, size_t <var>size</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The function <code>memcmp</code> compares the <var>size</var> bytes of memory
+beginning at <var>a1</var> against the <var>size</var> bytes of memory beginning
+at <var>a2</var>.  The value returned has the same sign as the difference
+between the first differing pair of bytes (interpreted as <code>unsigned
+char</code> objects, then promoted to <code>int</code>).
+</p>
+<p>If the contents of the two blocks are equal, <code>memcmp</code> returns
+<code>0</code>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-wmemcmp"></a>Function: <em>int</em> <strong>wmemcmp</strong> <em>(const wchar_t *<var>a1</var>, const wchar_t *<var>a2</var>, size_t <var>size</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The function <code>wmemcmp</code> compares the <var>size</var> wide characters
+beginning at <var>a1</var> against the <var>size</var> wide characters beginning
+at <var>a2</var>.  The value returned is smaller than or larger than zero
+depending on whether the first differing wide character is <var>a1</var> is
+smaller or larger than the corresponding wide character in <var>a2</var>.
+</p>
+<p>If the contents of the two blocks are equal, <code>wmemcmp</code> returns
+<code>0</code>.
+</p></dd></dl>
+
+<p>On arbitrary arrays, the <code>memcmp</code> function is mostly useful for
+testing equality.  It usually isn&rsquo;t meaningful to do byte-wise ordering
+comparisons on arrays of things other than bytes.  For example, a
+byte-wise comparison on the bytes that make up floating-point numbers
+isn&rsquo;t likely to tell you anything about the relationship between the
+values of the floating-point numbers.
+</p>
+<p><code>wmemcmp</code> is really only useful to compare arrays of type
+<code>wchar_t</code> since the function looks at <code>sizeof (wchar_t)</code> bytes
+at a time and this number of bytes is system dependent.
+</p>
+<p>You should also be careful about using <code>memcmp</code> to compare objects
+that can contain &ldquo;holes&rdquo;, such as the padding inserted into structure
+objects to enforce alignment requirements, extra space at the end of
+unions, and extra bytes at the ends of strings whose length is less
+than their allocated size.  The contents of these &ldquo;holes&rdquo; are
+indeterminate and may cause strange behavior when performing byte-wise
+comparisons.  For more predictable results, perform an explicit
+component-wise comparison.
+</p>
+<p>For example, given a structure type definition like:
+</p>
+<div class="smallexample">
+<pre class="smallexample">struct foo
+  {
+    unsigned char tag;
+    union
+      {
+        double f;
+        long i;
+        char *p;
+      } value;
+  };
+</pre></div>
+
+<p>you are better off writing a specialized comparison function to compare
+<code>struct foo</code> objects instead of comparing them with <code>memcmp</code>.
+</p>
+<dl>
+<dt><a name="index-strcmp"></a>Function: <em>int</em> <strong>strcmp</strong> <em>(const char *<var>s1</var>, const char *<var>s2</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>strcmp</code> function compares the string <var>s1</var> against
+<var>s2</var>, returning a value that has the same sign as the difference
+between the first differing pair of bytes (interpreted as
+<code>unsigned char</code> objects, then promoted to <code>int</code>).
+</p>
+<p>If the two strings are equal, <code>strcmp</code> returns <code>0</code>.
+</p>
+<p>A consequence of the ordering used by <code>strcmp</code> is that if <var>s1</var>
+is an initial substring of <var>s2</var>, then <var>s1</var> is considered to be
+&ldquo;less than&rdquo; <var>s2</var>.
+</p>
+<p><code>strcmp</code> does not take sorting conventions of the language the
+strings are written in into account.  To get that one has to use
+<code>strcoll</code>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-wcscmp"></a>Function: <em>int</em> <strong>wcscmp</strong> <em>(const wchar_t *<var>ws1</var>, const wchar_t *<var>ws2</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+
+<p>The <code>wcscmp</code> function compares the wide string <var>ws1</var>
+against <var>ws2</var>.  The value returned is smaller than or larger than zero
+depending on whether the first differing wide character is <var>ws1</var> is
+smaller or larger than the corresponding wide character in <var>ws2</var>.
+</p>
+<p>If the two strings are equal, <code>wcscmp</code> returns <code>0</code>.
+</p>
+<p>A consequence of the ordering used by <code>wcscmp</code> is that if <var>ws1</var>
+is an initial substring of <var>ws2</var>, then <var>ws1</var> is considered to be
+&ldquo;less than&rdquo; <var>ws2</var>.
+</p>
+<p><code>wcscmp</code> does not take sorting conventions of the language the
+strings are written in into account.  To get that one has to use
+<code>wcscoll</code>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-strcasecmp"></a>Function: <em>int</em> <strong>strcasecmp</strong> <em>(const char *<var>s1</var>, const char *<var>s2</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe locale
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function is like <code>strcmp</code>, except that differences in case are
+ignored, and its arguments must be multibyte strings.
+How uppercase and lowercase characters are related is
+determined by the currently selected locale.  In the standard <code>&quot;C&quot;</code>
+locale the characters &Auml; and &auml; do not match but in a locale which
+regards these characters as parts of the alphabet they do match.
+</p>
+<p><code>strcasecmp</code> is derived from BSD.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-wcscasecmp"></a>Function: <em>int</em> <strong>wcscasecmp</strong> <em>(const wchar_t *<var>ws1</var>, const wchar_t *<var>ws2</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe locale
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function is like <code>wcscmp</code>, except that differences in case are
+ignored.  How uppercase and lowercase characters are related is
+determined by the currently selected locale.  In the standard <code>&quot;C&quot;</code>
+locale the characters &Auml; and &auml; do not match but in a locale which
+regards these characters as parts of the alphabet they do match.
+</p>
+<p><code>wcscasecmp</code> is a GNU extension.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-strncmp"></a>Function: <em>int</em> <strong>strncmp</strong> <em>(const char *<var>s1</var>, const char *<var>s2</var>, size_t <var>size</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function is the similar to <code>strcmp</code>, except that no more than
+<var>size</var> bytes are compared.  In other words, if the two
+strings are the same in their first <var>size</var> bytes, the
+return value is zero.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-wcsncmp"></a>Function: <em>int</em> <strong>wcsncmp</strong> <em>(const wchar_t *<var>ws1</var>, const wchar_t *<var>ws2</var>, size_t <var>size</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function is similar to <code>wcscmp</code>, except that no more than
+<var>size</var> wide characters are compared.  In other words, if the two
+strings are the same in their first <var>size</var> wide characters, the
+return value is zero.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-strncasecmp"></a>Function: <em>int</em> <strong>strncasecmp</strong> <em>(const char *<var>s1</var>, const char *<var>s2</var>, size_t <var>n</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe locale
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function is like <code>strncmp</code>, except that differences in case
+are ignored, and the compared parts of the arguments should consist of
+valid multibyte characters.
+Like <code>strcasecmp</code>, it is locale dependent how
+uppercase and lowercase characters are related.
+</p>
+<p><code>strncasecmp</code> is a GNU extension.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-wcsncasecmp"></a>Function: <em>int</em> <strong>wcsncasecmp</strong> <em>(const wchar_t *<var>ws1</var>, const wchar_t *<var>s2</var>, size_t <var>n</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe locale
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function is like <code>wcsncmp</code>, except that differences in case
+are ignored.  Like <code>wcscasecmp</code>, it is locale dependent how
+uppercase and lowercase characters are related.
+</p>
+<p><code>wcsncasecmp</code> is a GNU extension.
+</p></dd></dl>
+
+<p>Here are some examples showing the use of <code>strcmp</code> and
+<code>strncmp</code> (equivalent examples can be constructed for the wide
+character functions).  These examples assume the use of the ASCII
+character set.  (If some other character set&mdash;say, EBCDIC&mdash;is used
+instead, then the glyphs are associated with different numeric codes,
+and the return values and ordering may differ.)
+</p>
+<div class="smallexample">
+<pre class="smallexample">strcmp (&quot;hello&quot;, &quot;hello&quot;)
+    &rArr; 0    /* <span class="roman">These two strings are the same.</span> */
+strcmp (&quot;hello&quot;, &quot;Hello&quot;)
+    &rArr; 32   /* <span class="roman">Comparisons are case-sensitive.</span> */
+strcmp (&quot;hello&quot;, &quot;world&quot;)
+    &rArr; -15  /* <span class="roman">The byte <code>'h'</code> comes before <code>'w'</code>.</span> */
+strcmp (&quot;hello&quot;, &quot;hello, world&quot;)
+    &rArr; -44  /* <span class="roman">Comparing a null byte against a comma.</span> */
+strncmp (&quot;hello&quot;, &quot;hello, world&quot;, 5)
+    &rArr; 0    /* <span class="roman">The initial 5 bytes are the same.</span> */
+strncmp (&quot;hello, world&quot;, &quot;hello, stupid world!!!&quot;, 5)
+    &rArr; 0    /* <span class="roman">The initial 5 bytes are the same.</span> */
+</pre></div>
+
+<dl>
+<dt><a name="index-strverscmp"></a>Function: <em>int</em> <strong>strverscmp</strong> <em>(const char *<var>s1</var>, const char *<var>s2</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe locale
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>strverscmp</code> function compares the string <var>s1</var> against
+<var>s2</var>, considering them as holding indices/version numbers.  The
+return value follows the same conventions as found in the
+<code>strcmp</code> function.  In fact, if <var>s1</var> and <var>s2</var> contain no
+digits, <code>strverscmp</code> behaves like <code>strcmp</code>
+(in the sense that the sign of the result is the same).
+</p>
+<p>The comparison algorithm which the <code>strverscmp</code> function implements
+differs slightly from other version-comparison algorithms.  The
+implementation is based on a finite-state machine, whose behavior is
+approximated below.
+</p>
+<ul>
+<li> The input strings are each split into sequences of non-digits and
+digits.  These sequences can be empty at the beginning and end of the
+string.  Digits are determined by the <code>isdigit</code> function and are
+thus subject to the current locale.
+
+</li><li> Comparison starts with a (possibly empty) non-digit sequence.  The first
+non-equal sequences of non-digits or digits determines the outcome of
+the comparison.
+
+</li><li> Corresponding non-digit sequences in both strings are compared
+lexicographically if their lengths are equal.  If the lengths differ,
+the shorter non-digit sequence is extended with the input string
+character immediately following it (which may be the null terminator),
+the other sequence is truncated to be of the same (extended) length, and
+these two sequences are compared lexicographically.  In the last case,
+the sequence comparison determines the result of the function because
+the extension character (or some character before it) is necessarily
+different from the character at the same offset in the other input
+string.
+
+</li><li> For two sequences of digits, the number of leading zeros is counted (which
+can be zero).  If the count differs, the string with more leading zeros
+in the digit sequence is considered smaller than the other string.
+
+</li><li> If the two sequences of digits have no leading zeros, they are compared
+as integers, that is, the string with the longer digit sequence is
+deemed larger, and if both sequences are of equal length, they are
+compared lexicographically.
+
+</li><li> If both digit sequences start with a zero and have an equal number of
+leading zeros, they are compared lexicographically if their lengths are
+the same.  If the lengths differ, the shorter sequence is extended with
+the following character in its input string, and the other sequence is
+truncated to the same length, and both sequences are compared
+lexicographically (similar to the non-digit sequence case above).
+</li></ul>
+
+<p>The treatment of leading zeros and the tie-breaking extension characters
+(which in effect propagate across non-digit/digit sequence boundaries)
+differs from other version-comparison algorithms.
+</p>
+<div class="smallexample">
+<pre class="smallexample">strverscmp (&quot;no digit&quot;, &quot;no digit&quot;)
+    &rArr; 0    /* <span class="roman">same behavior as strcmp.</span> */
+strverscmp (&quot;item#99&quot;, &quot;item#100&quot;)
+    &rArr; &lt;0   /* <span class="roman">same prefix, but 99 &lt; 100.</span> */
+strverscmp (&quot;alpha1&quot;, &quot;alpha001&quot;)
+    &rArr; &gt;0   /* <span class="roman">different number of leading zeros (0 and 2).</span> */
+strverscmp (&quot;part1_f012&quot;, &quot;part1_f01&quot;)
+    &rArr; &gt;0   /* <span class="roman">lexicographical comparison with leading zeros.</span> */
+strverscmp (&quot;foo.009&quot;, &quot;foo.0&quot;)
+    &rArr; &lt;0   /* <span class="roman">different number of leading zeros (2 and 1).</span> */
+</pre></div>
+
+<p><code>strverscmp</code> is a GNU extension.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-bcmp"></a>Function: <em>int</em> <strong>bcmp</strong> <em>(const void *<var>a1</var>, const void *<var>a2</var>, size_t <var>size</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This is an obsolete alias for <code>memcmp</code>, derived from BSD.
+</p></dd></dl>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Collation-Functions.html#Collation-Functions" accesskey="n" rel="next">Collation Functions</a>, Previous: <a href="Truncating-Strings.html#Truncating-Strings" accesskey="p" rel="prev">Truncating Strings</a>, Up: <a href="String-and-Array-Utilities.html#String-and-Array-Utilities" accesskey="u" rel="up">String and Array Utilities</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,343 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Character Input</title>
+
+<meta name="description" content="The GNU C Library: Character Input">
+<meta name="keywords" content="The GNU C Library: Character Input">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="I_002fO-on-Streams.html#I_002fO-on-Streams" rel="up" title="I/O on Streams">
+<link href="Line-Input.html#Line-Input" rel="next" title="Line Input">
+<link href="Simple-Output.html#Simple-Output" rel="prev" title="Simple Output">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Character-Input"></a>
+<div class="header">
+<p>
+Next: <a href="Line-Input.html#Line-Input" accesskey="n" rel="next">Line Input</a>, Previous: <a href="Simple-Output.html#Simple-Output" accesskey="p" rel="prev">Simple Output</a>, Up: <a href="I_002fO-on-Streams.html#I_002fO-on-Streams" accesskey="u" rel="up">I/O on Streams</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Character-Input-1"></a>
+<h3 class="section">12.8 Character Input</h3>
+
+<a name="index-reading-from-a-stream_002c-by-characters"></a>
+<p>This section describes functions for performing character-oriented
+input.  These narrow stream functions are declared in the header file
+<samp>stdio.h</samp> and the wide character functions are declared in
+<samp>wchar.h</samp>.
+<a name="index-stdio_002eh-4"></a>
+<a name="index-wchar_002eh-15"></a>
+</p>
+<p>These functions return an <code>int</code> or <code>wint_t</code> value (for narrow
+and wide stream functions respectively) that is either a character of
+input, or the special value <code>EOF</code>/<code>WEOF</code> (usually -1).  For
+the narrow stream functions it is important to store the result of these
+functions in a variable of type <code>int</code> instead of <code>char</code>, even
+when you plan to use it only as a character.  Storing <code>EOF</code> in a
+<code>char</code> variable truncates its value to the size of a character, so
+that it is no longer distinguishable from the valid character
+&lsquo;<samp>(char) -1</samp>&rsquo;.  So always use an <code>int</code> for the result of
+<code>getc</code> and friends, and check for <code>EOF</code> after the call; once
+you&rsquo;ve verified that the result is not <code>EOF</code>, you can be sure that
+it will fit in a &lsquo;<samp>char</samp>&rsquo; variable without loss of information.
+</p>
+<dl>
+<dt><a name="index-fgetc"></a>Function: <em>int</em> <strong>fgetc</strong> <em>(FILE *<var>stream</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Unsafe corrupt
+| AC-Unsafe lock corrupt
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function reads the next character as an <code>unsigned char</code> from
+the stream <var>stream</var> and returns its value, converted to an
+<code>int</code>.  If an end-of-file condition or read error occurs,
+<code>EOF</code> is returned instead.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-fgetwc"></a>Function: <em>wint_t</em> <strong>fgetwc</strong> <em>(FILE *<var>stream</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Unsafe corrupt
+| AC-Unsafe lock corrupt
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function reads the next wide character from the stream <var>stream</var>
+and returns its value.  If an end-of-file condition or read error
+occurs, <code>WEOF</code> is returned instead.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-fgetc_005funlocked"></a>Function: <em>int</em> <strong>fgetc_unlocked</strong> <em>(FILE *<var>stream</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe race:stream
+| AS-Unsafe corrupt
+| AC-Unsafe corrupt
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>fgetc_unlocked</code> function is equivalent to the <code>fgetc</code>
+function except that it does not implicitly lock the stream.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-fgetwc_005funlocked"></a>Function: <em>wint_t</em> <strong>fgetwc_unlocked</strong> <em>(FILE *<var>stream</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe race:stream
+| AS-Unsafe corrupt
+| AC-Unsafe corrupt
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>fgetwc_unlocked</code> function is equivalent to the <code>fgetwc</code>
+function except that it does not implicitly lock the stream.
+</p>
+<p>This function is a GNU extension.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-getc"></a>Function: <em>int</em> <strong>getc</strong> <em>(FILE *<var>stream</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Unsafe corrupt
+| AC-Unsafe lock corrupt
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This is just like <code>fgetc</code>, except that it is permissible (and
+typical) for it to be implemented as a macro that evaluates the
+<var>stream</var> argument more than once.  <code>getc</code> is often highly
+optimized, so it is usually the best function to use to read a single
+character.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-getwc"></a>Function: <em>wint_t</em> <strong>getwc</strong> <em>(FILE *<var>stream</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Unsafe corrupt
+| AC-Unsafe lock corrupt
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This is just like <code>fgetwc</code>, except that it is permissible for it to
+be implemented as a macro that evaluates the <var>stream</var> argument more
+than once.  <code>getwc</code> can be highly optimized, so it is usually the
+best function to use to read a single wide character.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-getc_005funlocked"></a>Function: <em>int</em> <strong>getc_unlocked</strong> <em>(FILE *<var>stream</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe race:stream
+| AS-Unsafe corrupt
+| AC-Unsafe corrupt
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>getc_unlocked</code> function is equivalent to the <code>getc</code>
+function except that it does not implicitly lock the stream.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-getwc_005funlocked"></a>Function: <em>wint_t</em> <strong>getwc_unlocked</strong> <em>(FILE *<var>stream</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe race:stream
+| AS-Unsafe corrupt
+| AC-Unsafe corrupt
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>getwc_unlocked</code> function is equivalent to the <code>getwc</code>
+function except that it does not implicitly lock the stream.
+</p>
+<p>This function is a GNU extension.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-getchar"></a>Function: <em>int</em> <strong>getchar</strong> <em>(void)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Unsafe corrupt
+| AC-Unsafe lock corrupt
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>getchar</code> function is equivalent to <code>getc</code> with <code>stdin</code>
+as the value of the <var>stream</var> argument.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-getwchar"></a>Function: <em>wint_t</em> <strong>getwchar</strong> <em>(void)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Unsafe corrupt
+| AC-Unsafe lock corrupt
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>getwchar</code> function is equivalent to <code>getwc</code> with <code>stdin</code>
+as the value of the <var>stream</var> argument.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-getchar_005funlocked"></a>Function: <em>int</em> <strong>getchar_unlocked</strong> <em>(void)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Unsafe race:stdin
+| AS-Unsafe corrupt
+| AC-Unsafe corrupt
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>getchar_unlocked</code> function is equivalent to the <code>getchar</code>
+function except that it does not implicitly lock the stream.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-getwchar_005funlocked"></a>Function: <em>wint_t</em> <strong>getwchar_unlocked</strong> <em>(void)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Unsafe race:stdin
+| AS-Unsafe corrupt
+| AC-Unsafe corrupt
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>getwchar_unlocked</code> function is equivalent to the <code>getwchar</code>
+function except that it does not implicitly lock the stream.
+</p>
+<p>This function is a GNU extension.
+</p></dd></dl>
+
+<p>Here is an example of a function that does input using <code>fgetc</code>.  It
+would work just as well using <code>getc</code> instead, or using
+<code>getchar ()</code> instead of <code>fgetc&nbsp;(stdin)</code><!-- /@w -->.  The code would
+also work the same for the wide character stream functions.
+</p>
+<div class="smallexample">
+<pre class="smallexample">int
+y_or_n_p (const char *question)
+{
+  fputs (question, stdout);
+  while (1)
+    {
+      int c, answer;
+      /* <span class="roman">Write a space to separate answer from question.</span> */
+      fputc (' ', stdout);
+      /* <span class="roman">Read the first character of the line.</span>
+	 <span class="roman">This should be the answer character, but might not be.</span> */
+      c = tolower (fgetc (stdin));
+      answer = c;
+      /* <span class="roman">Discard rest of input line.</span> */
+      while (c != '\n' &amp;&amp; c != EOF)
+	c = fgetc (stdin);
+      /* <span class="roman">Obey the answer if it was valid.</span> */
+      if (answer == 'y')
+	return 1;
+      if (answer == 'n')
+	return 0;
+      /* <span class="roman">Answer was invalid: ask for valid answer.</span> */
+      fputs (&quot;Please answer y or n:&quot;, stdout);
+    }
+}
+</pre></div>
+
+<dl>
+<dt><a name="index-getw"></a>Function: <em>int</em> <strong>getw</strong> <em>(FILE *<var>stream</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Unsafe corrupt
+| AC-Unsafe lock corrupt
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function reads a word (that is, an <code>int</code>) from <var>stream</var>.
+It&rsquo;s provided for compatibility with SVID.  We recommend you use
+<code>fread</code> instead (see <a href="Block-Input_002fOutput.html#Block-Input_002fOutput">Block Input/Output</a>).  Unlike <code>getc</code>,
+any <code>int</code> value could be a valid result.  <code>getw</code> returns
+<code>EOF</code> when it encounters end-of-file or an error, but there is no
+way to distinguish this from an input word with value -1.
+</p></dd></dl>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Line-Input.html#Line-Input" accesskey="n" rel="next">Line Input</a>, Previous: <a href="Simple-Output.html#Simple-Output" accesskey="p" rel="prev">Simple Output</a>, Up: <a href="I_002fO-on-Streams.html#I_002fO-on-Streams" accesskey="u" rel="up">I/O on Streams</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: The GNU Allocator</title>
+
+<meta name="description" content="The GNU C Library: The GNU Allocator">
+<meta name="keywords" content="The GNU C Library: The GNU Allocator">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Memory-Allocation.html#Memory-Allocation" rel="up" title="Memory Allocation">
+<link href="Unconstrained-Allocation.html#Unconstrained-Allocation" rel="next" title="Unconstrained Allocation">
+<link href="Memory-Allocation-and-C.html#Memory-Allocation-and-C" rel="prev" title="Memory Allocation and C">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="The-GNU-Allocator"></a>
+<div class="header">
+<p>
+Next: <a href="Unconstrained-Allocation.html#Unconstrained-Allocation" accesskey="n" rel="next">Unconstrained Allocation</a>, Previous: <a href="Memory-Allocation-and-C.html#Memory-Allocation-and-C" accesskey="p" rel="prev">Memory Allocation and C</a>, Up: <a href="Memory-Allocation.html#Memory-Allocation" accesskey="u" rel="up">Memory Allocation</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="The-GNU-Allocator-1"></a>
+<h4 class="subsection">3.2.2 The GNU Allocator</h4>
+<a name="index-gnu-allocator"></a>
+
+<p>The <code>malloc</code> implementation in the GNU C Library is derived from ptmalloc
+(pthreads malloc), which in turn is derived from dlmalloc (Doug Lea malloc).
+This malloc may allocate memory in two different ways depending on their size
+and certain parameters that may be controlled by users. The most common way is
+to allocate portions of memory (called chunks) from a large contiguous area of
+memory and manage these areas to optimize their use and reduce wastage in the
+form of unusable chunks. Traditionally the system heap was set up to be the one
+large memory area but the GNU C Library <code>malloc</code> implementation maintains
+multiple such areas to optimize their use in multi-threaded applications.  Each
+such area is internally referred to as an <em>arena</em>.
+</p>
+<p>As opposed to other versions, the <code>malloc</code> in the GNU C Library does not round
+up chunk sizes to powers of two, neither for large nor for small sizes.
+Neighboring chunks can be coalesced on a <code>free</code> no matter what their size
+is.  This makes the implementation suitable for all kinds of allocation
+patterns without generally incurring high memory waste through fragmentation.
+The presence of multiple arenas allows multiple threads to allocate
+memory simultaneously in separate arenas, thus improving performance.
+</p>
+<p>The other way of memory allocation is for very large blocks, i.e. much larger
+than a page. These requests are allocated with <code>mmap</code> (anonymous or via
+<samp>/dev/zero</samp>; see <a href="Memory_002dmapped-I_002fO.html#Memory_002dmapped-I_002fO">Memory-mapped I/O</a>)). This has the great advantage
+that these chunks are returned to the system immediately when they are freed.
+Therefore, it cannot happen that a large chunk becomes &ldquo;locked&rdquo; in between
+smaller ones and even after calling <code>free</code> wastes memory.  The size
+threshold for <code>mmap</code> to be used is dynamic and gets adjusted according to
+allocation patterns of the program.  <code>mallopt</code> can be used to statically
+adjust the threshold using <code>M_MMAP_THRESHOLD</code> and the use of <code>mmap</code>
+can be disabled completely with <code>M_MMAP_MAX</code>;
+see <a href="Malloc-Tunable-Parameters.html#Malloc-Tunable-Parameters">Malloc Tunable Parameters</a>.
+</p>
+<p>A more detailed technical description of the GNU Allocator is maintained in
+the GNU C Library wiki. See
+<a href="https://sourceware.org/glibc/wiki/MallocInternals">https://sourceware.org/glibc/wiki/MallocInternals</a>.
+</p>
+<p>It is possible to use your own custom <code>malloc</code> instead of the
+built-in allocator provided by the GNU C Library.  See <a href="Replacing-malloc.html#Replacing-malloc">Replacing malloc</a>.
+</p>
+<hr>
+<div class="header">
+<p>
+Next: <a href="Unconstrained-Allocation.html#Unconstrained-Allocation" accesskey="n" rel="next">Unconstrained Allocation</a>, Previous: <a href="Memory-Allocation-and-C.html#Memory-Allocation-and-C" accesskey="p" rel="prev">Memory Allocation and C</a>, Up: <a href="Memory-Allocation.html#Memory-Allocation" accesskey="u" rel="up">Memory Allocation</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

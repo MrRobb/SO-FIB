@@ -1,0 +1,285 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Asynchronous I/O</title>
+
+<meta name="description" content="The GNU C Library: Asynchronous I/O">
+<meta name="keywords" content="The GNU C Library: Asynchronous I/O">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Low_002dLevel-I_002fO.html#Low_002dLevel-I_002fO" rel="up" title="Low-Level I/O">
+<link href="Asynchronous-Reads_002fWrites.html#Asynchronous-Reads_002fWrites" rel="next" title="Asynchronous Reads/Writes">
+<link href="Synchronizing-I_002fO.html#Synchronizing-I_002fO" rel="prev" title="Synchronizing I/O">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Asynchronous-I_002fO"></a>
+<div class="header">
+<p>
+Next: <a href="Control-Operations.html#Control-Operations" accesskey="n" rel="next">Control Operations</a>, Previous: <a href="Synchronizing-I_002fO.html#Synchronizing-I_002fO" accesskey="p" rel="prev">Synchronizing I/O</a>, Up: <a href="Low_002dLevel-I_002fO.html#Low_002dLevel-I_002fO" accesskey="u" rel="up">Low-Level I/O</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Perform-I_002fO-Operations-in-Parallel"></a>
+<h3 class="section">13.10 Perform I/O Operations in Parallel</h3>
+
+<p>The POSIX.1b standard defines a new set of I/O operations which can
+significantly reduce the time an application spends waiting for I/O.  The
+new functions allow a program to initiate one or more I/O operations and
+then immediately resume normal work while the I/O operations are
+executed in parallel.  This functionality is available if the
+<samp>unistd.h</samp> file defines the symbol <code>_POSIX_ASYNCHRONOUS_IO</code>.
+</p>
+<p>These functions are part of the library with realtime functions named
+<samp>librt</samp>.  They are not actually part of the <samp>libc</samp> binary.
+The implementation of these functions can be done using support in the
+kernel (if available) or using an implementation based on threads at
+userlevel.  In the latter case it might be necessary to link applications
+with the thread library <samp>libpthread</samp> in addition to <samp>librt</samp>.
+</p>
+<p>All AIO operations operate on files which were opened previously.  There
+might be arbitrarily many operations running for one file.  The
+asynchronous I/O operations are controlled using a data structure named
+<code>struct aiocb</code> (<em>AIO control block</em>).  It is defined in
+<samp>aio.h</samp> as follows.
+</p>
+<dl>
+<dt><a name="index-struct-aiocb"></a>Data Type: <strong>struct aiocb</strong></dt>
+<dd>
+<p>The POSIX.1b standard mandates that the <code>struct aiocb</code> structure
+contains at least the members described in the following table.  There
+might be more elements which are used by the implementation, but
+depending upon these elements is not portable and is highly deprecated.
+</p>
+<dl compact="compact">
+<dt><code>int aio_fildes</code></dt>
+<dd><p>This element specifies the file descriptor to be used for the
+operation.  It must be a legal descriptor, otherwise the operation will
+fail.
+</p>
+<p>The device on which the file is opened must allow the seek operation.
+I.e., it is not possible to use any of the AIO operations on devices
+like terminals where an <code>lseek</code> call would lead to an error.
+</p>
+</dd>
+<dt><code>off_t aio_offset</code></dt>
+<dd><p>This element specifies the offset in the file at which the operation (input
+or output) is performed.  Since the operations are carried out in arbitrary
+order and more than one operation for one file descriptor can be
+started, one cannot expect a current read/write position of the file
+descriptor.
+</p>
+</dd>
+<dt><code>volatile void *aio_buf</code></dt>
+<dd><p>This is a pointer to the buffer with the data to be written or the place
+where the read data is stored.
+</p>
+</dd>
+<dt><code>size_t aio_nbytes</code></dt>
+<dd><p>This element specifies the length of the buffer pointed to by <code>aio_buf</code>.
+</p>
+</dd>
+<dt><code>int aio_reqprio</code></dt>
+<dd><p>If the platform has defined <code>_POSIX_PRIORITIZED_IO</code> and
+<code>_POSIX_PRIORITY_SCHEDULING</code>, the AIO requests are
+processed based on the current scheduling priority.  The
+<code>aio_reqprio</code> element can then be used to lower the priority of the
+AIO operation.
+</p>
+</dd>
+<dt><code>struct sigevent aio_sigevent</code></dt>
+<dd><p>This element specifies how the calling process is notified once the
+operation terminates.  If the <code>sigev_notify</code> element is
+<code>SIGEV_NONE</code>, no notification is sent.  If it is <code>SIGEV_SIGNAL</code>,
+the signal determined by <code>sigev_signo</code> is sent.  Otherwise,
+<code>sigev_notify</code> must be <code>SIGEV_THREAD</code>.  In this case, a thread
+is created which starts executing the function pointed to by
+<code>sigev_notify_function</code>.
+</p>
+</dd>
+<dt><code>int aio_lio_opcode</code></dt>
+<dd><p>This element is only used by the <code>lio_listio</code> and
+<code>lio_listio64</code> functions.  Since these functions allow an
+arbitrary number of operations to start at once, and each operation can be
+input or output (or nothing), the information must be stored in the
+control block.  The possible values are:
+</p>
+<dl compact="compact">
+<dt><code>LIO_READ</code>
+<a name="index-LIO_005fREAD"></a>
+</dt>
+<dd><p>Start a read operation.  Read from the file at position
+<code>aio_offset</code> and store the next <code>aio_nbytes</code> bytes in the
+buffer pointed to by <code>aio_buf</code>.
+</p>
+</dd>
+<dt><code>LIO_WRITE</code>
+<a name="index-LIO_005fWRITE"></a>
+</dt>
+<dd><p>Start a write operation.  Write <code>aio_nbytes</code> bytes starting at
+<code>aio_buf</code> into the file starting at position <code>aio_offset</code>.
+</p>
+</dd>
+<dt><code>LIO_NOP</code>
+<a name="index-LIO_005fNOP"></a>
+</dt>
+<dd><p>Do nothing for this control block.  This value is useful sometimes when
+an array of <code>struct aiocb</code> values contains holes, i.e., some of the
+values must not be handled although the whole array is presented to the
+<code>lio_listio</code> function.
+</p></dd>
+</dl>
+</dd>
+</dl>
+
+<p>When the sources are compiled using <code>_FILE_OFFSET_BITS == 64</code> on a
+32 bit machine, this type is in fact <code>struct aiocb64</code>, since the LFS
+interface transparently replaces the <code>struct aiocb</code> definition.
+</p></dd></dl>
+
+<p>For use with the AIO functions defined in the LFS, there is a similar type
+defined which replaces the types of the appropriate members with larger
+types but otherwise is equivalent to <code>struct aiocb</code>.  Particularly,
+all member names are the same.
+</p>
+<dl>
+<dt><a name="index-struct-aiocb64"></a>Data Type: <strong>struct aiocb64</strong></dt>
+<dd>
+<dl compact="compact">
+<dt><code>int aio_fildes</code></dt>
+<dd><p>This element specifies the file descriptor which is used for the
+operation.  It must be a legal descriptor since otherwise the operation
+fails for obvious reasons.
+</p>
+<p>The device on which the file is opened must allow the seek operation.
+I.e., it is not possible to use any of the AIO operations on devices
+like terminals where an <code>lseek</code> call would lead to an error.
+</p>
+</dd>
+<dt><code>off64_t aio_offset</code></dt>
+<dd><p>This element specifies at which offset in the file the operation (input
+or output) is performed.  Since the operation are carried in arbitrary
+order and more than one operation for one file descriptor can be
+started, one cannot expect a current read/write position of the file
+descriptor.
+</p>
+</dd>
+<dt><code>volatile void *aio_buf</code></dt>
+<dd><p>This is a pointer to the buffer with the data to be written or the place
+where the read data is stored.
+</p>
+</dd>
+<dt><code>size_t aio_nbytes</code></dt>
+<dd><p>This element specifies the length of the buffer pointed to by <code>aio_buf</code>.
+</p>
+</dd>
+<dt><code>int aio_reqprio</code></dt>
+<dd><p>If for the platform <code>_POSIX_PRIORITIZED_IO</code> and
+<code>_POSIX_PRIORITY_SCHEDULING</code> are defined the AIO requests are
+processed based on the current scheduling priority.  The
+<code>aio_reqprio</code> element can then be used to lower the priority of the
+AIO operation.
+</p>
+</dd>
+<dt><code>struct sigevent aio_sigevent</code></dt>
+<dd><p>This element specifies how the calling process is notified once the
+operation terminates.  If the <code>sigev_notify</code> element is
+<code>SIGEV_NONE</code> no notification is sent.  If it is <code>SIGEV_SIGNAL</code>,
+the signal determined by <code>sigev_signo</code> is sent.  Otherwise,
+<code>sigev_notify</code> must be <code>SIGEV_THREAD</code> in which case a thread
+is created which starts executing the function pointed to by
+<code>sigev_notify_function</code>.
+</p>
+</dd>
+<dt><code>int aio_lio_opcode</code></dt>
+<dd><p>This element is only used by the <code>lio_listio</code> and
+<code>lio_listio64</code> functions.  Since these functions allow an
+arbitrary number of operations to start at once, and since each operation can be
+input or output (or nothing), the information must be stored in the
+control block.  See the description of <code>struct aiocb</code> for a description
+of the possible values.
+</p></dd>
+</dl>
+
+<p>When the sources are compiled using <code>_FILE_OFFSET_BITS == 64</code> on a
+32 bit machine, this type is available under the name <code>struct
+aiocb64</code>, since the LFS transparently replaces the old interface.
+</p></dd></dl>
+
+<table class="menu" border="0" cellspacing="0">
+<tr><td align="left" valign="top">&bull; <a href="Asynchronous-Reads_002fWrites.html#Asynchronous-Reads_002fWrites" accesskey="1">Asynchronous Reads/Writes</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Asynchronous Read and Write Operations.
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Status-of-AIO-Operations.html#Status-of-AIO-Operations" accesskey="2">Status of AIO Operations</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Getting the Status of AIO Operations.
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Synchronizing-AIO-Operations.html#Synchronizing-AIO-Operations" accesskey="3">Synchronizing AIO Operations</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Getting into a consistent state.
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Cancel-AIO-Operations.html#Cancel-AIO-Operations" accesskey="4">Cancel AIO Operations</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Cancellation of AIO Operations.
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Configuration-of-AIO.html#Configuration-of-AIO" accesskey="5">Configuration of AIO</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">How to optimize the AIO implementation.
+</td></tr>
+</table>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Control-Operations.html#Control-Operations" accesskey="n" rel="next">Control Operations</a>, Previous: <a href="Synchronizing-I_002fO.html#Synchronizing-I_002fO" accesskey="p" rel="prev">Synchronizing I/O</a>, Up: <a href="Low_002dLevel-I_002fO.html#Low_002dLevel-I_002fO" accesskey="u" rel="up">Low-Level I/O</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

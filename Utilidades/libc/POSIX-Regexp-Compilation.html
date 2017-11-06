@@ -1,0 +1,254 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: POSIX Regexp Compilation</title>
+
+<meta name="description" content="The GNU C Library: POSIX Regexp Compilation">
+<meta name="keywords" content="The GNU C Library: POSIX Regexp Compilation">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Regular-Expressions.html#Regular-Expressions" rel="up" title="Regular Expressions">
+<link href="Flags-for-POSIX-Regexps.html#Flags-for-POSIX-Regexps" rel="next" title="Flags for POSIX Regexps">
+<link href="Regular-Expressions.html#Regular-Expressions" rel="prev" title="Regular Expressions">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="POSIX-Regexp-Compilation"></a>
+<div class="header">
+<p>
+Next: <a href="Flags-for-POSIX-Regexps.html#Flags-for-POSIX-Regexps" accesskey="n" rel="next">Flags for POSIX Regexps</a>, Up: <a href="Regular-Expressions.html#Regular-Expressions" accesskey="u" rel="up">Regular Expressions</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="POSIX-Regular-Expression-Compilation"></a>
+<h4 class="subsection">10.3.1 POSIX Regular Expression Compilation</h4>
+
+<p>Before you can actually match a regular expression, you must
+<em>compile</em> it.  This is not true compilation&mdash;it produces a special
+data structure, not machine instructions.  But it is like ordinary
+compilation in that its purpose is to enable you to &ldquo;execute&rdquo; the
+pattern fast.  (See <a href="Matching-POSIX-Regexps.html#Matching-POSIX-Regexps">Matching POSIX Regexps</a>, for how to use the
+compiled regular expression for matching.)
+</p>
+<p>There is a special data type for compiled regular expressions:
+</p>
+<dl>
+<dt><a name="index-regex_005ft"></a>Data Type: <strong>regex_t</strong></dt>
+<dd>
+<p>This type of object holds a compiled regular expression.
+It is actually a structure.  It has just one field that your programs
+should look at:
+</p>
+<dl compact="compact">
+<dt><code>re_nsub</code></dt>
+<dd><p>This field holds the number of parenthetical subexpressions in the
+regular expression that was compiled.
+</p></dd>
+</dl>
+
+<p>There are several other fields, but we don&rsquo;t describe them here, because
+only the functions in the library should use them.
+</p></dd></dl>
+
+<p>After you create a <code>regex_t</code> object, you can compile a regular
+expression into it by calling <code>regcomp</code>.
+</p>
+<dl>
+<dt><a name="index-regcomp"></a>Function: <em>int</em> <strong>regcomp</strong> <em>(regex_t *restrict <var>compiled</var>, const char *restrict <var>pattern</var>, int <var>cflags</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe locale
+| AS-Unsafe corrupt heap lock dlopen
+| AC-Unsafe corrupt lock mem fd
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The function <code>regcomp</code> &ldquo;compiles&rdquo; a regular expression into a
+data structure that you can use with <code>regexec</code> to match against a
+string.  The compiled regular expression format is designed for
+efficient matching.  <code>regcomp</code> stores it into <code>*<var>compiled</var></code>.
+</p>
+<p>It&rsquo;s up to you to allocate an object of type <code>regex_t</code> and pass its
+address to <code>regcomp</code>.
+</p>
+<p>The argument <var>cflags</var> lets you specify various options that control
+the syntax and semantics of regular expressions.  See <a href="Flags-for-POSIX-Regexps.html#Flags-for-POSIX-Regexps">Flags for POSIX Regexps</a>.
+</p>
+<p>If you use the flag <code>REG_NOSUB</code>, then <code>regcomp</code> omits from
+the compiled regular expression the information necessary to record
+how subexpressions actually match.  In this case, you might as well
+pass <code>0</code> for the <var>matchptr</var> and <var>nmatch</var> arguments when
+you call <code>regexec</code>.
+</p>
+<p>If you don&rsquo;t use <code>REG_NOSUB</code>, then the compiled regular expression
+does have the capacity to record how subexpressions match.  Also,
+<code>regcomp</code> tells you how many subexpressions <var>pattern</var> has, by
+storing the number in <code><var>compiled</var>-&gt;re_nsub</code>.  You can use that
+value to decide how long an array to allocate to hold information about
+subexpression matches.
+</p>
+<p><code>regcomp</code> returns <code>0</code> if it succeeds in compiling the regular
+expression; otherwise, it returns a nonzero error code (see the table
+below).  You can use <code>regerror</code> to produce an error message string
+describing the reason for a nonzero value; see <a href="Regexp-Cleanup.html#Regexp-Cleanup">Regexp Cleanup</a>.
+</p>
+</dd></dl>
+
+<p>Here are the possible nonzero values that <code>regcomp</code> can return:
+</p>
+<dl compact="compact">
+<dt><code>REG_BADBR</code>
+<a name="index-REG_005fBADBR"></a>
+</dt>
+<dd>
+<p>There was an invalid &lsquo;<samp>\{&hellip;\}</samp>&rsquo; construct in the regular
+expression.  A valid &lsquo;<samp>\{&hellip;\}</samp>&rsquo; construct must contain either
+a single number, or two numbers in increasing order separated by a
+comma.
+</p>
+</dd>
+<dt><code>REG_BADPAT</code>
+<a name="index-REG_005fBADPAT"></a>
+</dt>
+<dd>
+<p>There was a syntax error in the regular expression.
+</p>
+</dd>
+<dt><code>REG_BADRPT</code>
+<a name="index-REG_005fBADRPT"></a>
+</dt>
+<dd>
+<p>A repetition operator such as &lsquo;<samp>?</samp>&rsquo; or &lsquo;<samp>*</samp>&rsquo; appeared in a bad
+position (with no preceding subexpression to act on).
+</p>
+</dd>
+<dt><code>REG_ECOLLATE</code>
+<a name="index-REG_005fECOLLATE"></a>
+</dt>
+<dd>
+<p>The regular expression referred to an invalid collating element (one not
+defined in the current locale for string collation).  See <a href="Locale-Categories.html#Locale-Categories">Locale Categories</a>.
+</p>
+</dd>
+<dt><code>REG_ECTYPE</code>
+<a name="index-REG_005fECTYPE"></a>
+</dt>
+<dd>
+<p>The regular expression referred to an invalid character class name.
+</p>
+</dd>
+<dt><code>REG_EESCAPE</code>
+<a name="index-REG_005fEESCAPE"></a>
+</dt>
+<dd>
+<p>The regular expression ended with &lsquo;<samp>\</samp>&rsquo;.
+</p>
+</dd>
+<dt><code>REG_ESUBREG</code>
+<a name="index-REG_005fESUBREG"></a>
+</dt>
+<dd>
+<p>There was an invalid number in the &lsquo;<samp>\<var>digit</var></samp>&rsquo; construct.
+</p>
+</dd>
+<dt><code>REG_EBRACK</code>
+<a name="index-REG_005fEBRACK"></a>
+</dt>
+<dd>
+<p>There were unbalanced square brackets in the regular expression.
+</p>
+</dd>
+<dt><code>REG_EPAREN</code>
+<a name="index-REG_005fEPAREN"></a>
+</dt>
+<dd>
+<p>An extended regular expression had unbalanced parentheses,
+or a basic regular expression had unbalanced &lsquo;<samp>\(</samp>&rsquo; and &lsquo;<samp>\)</samp>&rsquo;.
+</p>
+</dd>
+<dt><code>REG_EBRACE</code>
+<a name="index-REG_005fEBRACE"></a>
+</dt>
+<dd>
+<p>The regular expression had unbalanced &lsquo;<samp>\{</samp>&rsquo; and &lsquo;<samp>\}</samp>&rsquo;.
+</p>
+</dd>
+<dt><code>REG_ERANGE</code>
+<a name="index-REG_005fERANGE"></a>
+</dt>
+<dd>
+<p>One of the endpoints in a range expression was invalid.
+</p>
+</dd>
+<dt><code>REG_ESPACE</code>
+<a name="index-REG_005fESPACE"></a>
+</dt>
+<dd>
+<p><code>regcomp</code> ran out of memory.
+</p></dd>
+</dl>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Flags-for-POSIX-Regexps.html#Flags-for-POSIX-Regexps" accesskey="n" rel="next">Flags for POSIX Regexps</a>, Up: <a href="Regular-Expressions.html#Regular-Expressions" accesskey="u" rel="up">Regular Expressions</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

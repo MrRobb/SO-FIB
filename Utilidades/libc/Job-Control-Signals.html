@@ -1,0 +1,205 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Job Control Signals</title>
+
+<meta name="description" content="The GNU C Library: Job Control Signals">
+<meta name="keywords" content="The GNU C Library: Job Control Signals">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Standard-Signals.html#Standard-Signals" rel="up" title="Standard Signals">
+<link href="Operation-Error-Signals.html#Operation-Error-Signals" rel="next" title="Operation Error Signals">
+<link href="Asynchronous-I_002fO-Signals.html#Asynchronous-I_002fO-Signals" rel="prev" title="Asynchronous I/O Signals">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Job-Control-Signals"></a>
+<div class="header">
+<p>
+Next: <a href="Operation-Error-Signals.html#Operation-Error-Signals" accesskey="n" rel="next">Operation Error Signals</a>, Previous: <a href="Asynchronous-I_002fO-Signals.html#Asynchronous-I_002fO-Signals" accesskey="p" rel="prev">Asynchronous I/O Signals</a>, Up: <a href="Standard-Signals.html#Standard-Signals" accesskey="u" rel="up">Standard Signals</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Job-Control-Signals-1"></a>
+<h4 class="subsection">24.2.5 Job Control Signals</h4>
+<a name="index-job-control-signals"></a>
+
+<p>These signals are used to support job control.  If your system
+doesn&rsquo;t support job control, then these macros are defined but the
+signals themselves can&rsquo;t be raised or handled.
+</p>
+<p>You should generally leave these signals alone unless you really
+understand how job control works.  See <a href="Job-Control.html#Job-Control">Job Control</a>.
+</p>
+<dl>
+<dt><a name="index-SIGCHLD"></a>Macro: <em>int</em> <strong>SIGCHLD</strong></dt>
+<dd>
+<a name="index-child-process-signal"></a>
+<p>This signal is sent to a parent process whenever one of its child
+processes terminates or stops.
+</p>
+<p>The default action for this signal is to ignore it.  If you establish a
+handler for this signal while there are child processes that have
+terminated but not reported their status via <code>wait</code> or
+<code>waitpid</code> (see <a href="Process-Completion.html#Process-Completion">Process Completion</a>), whether your new handler
+applies to those processes or not depends on the particular operating
+system.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-SIGCLD"></a>Macro: <em>int</em> <strong>SIGCLD</strong></dt>
+<dd>
+<p>This is an obsolete name for <code>SIGCHLD</code>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-SIGCONT"></a>Macro: <em>int</em> <strong>SIGCONT</strong></dt>
+<dd>
+<a name="index-continue-signal"></a>
+<p>You can send a <code>SIGCONT</code> signal to a process to make it continue.
+This signal is special&mdash;it always makes the process continue if it is
+stopped, before the signal is delivered.  The default behavior is to do
+nothing else.  You cannot block this signal.  You can set a handler, but
+<code>SIGCONT</code> always makes the process continue regardless.
+</p>
+<p>Most programs have no reason to handle <code>SIGCONT</code>; they simply
+resume execution without realizing they were ever stopped.  You can use
+a handler for <code>SIGCONT</code> to make a program do something special when
+it is stopped and continued&mdash;for example, to reprint a prompt when it
+is suspended while waiting for input.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-SIGSTOP"></a>Macro: <em>int</em> <strong>SIGSTOP</strong></dt>
+<dd>
+<p>The <code>SIGSTOP</code> signal stops the process.  It cannot be handled,
+ignored, or blocked.
+</p></dd></dl>
+<a name="index-stop-signal"></a>
+
+<dl>
+<dt><a name="index-SIGTSTP"></a>Macro: <em>int</em> <strong>SIGTSTP</strong></dt>
+<dd>
+<p>The <code>SIGTSTP</code> signal is an interactive stop signal.  Unlike
+<code>SIGSTOP</code>, this signal can be handled and ignored.
+</p>
+<p>Your program should handle this signal if you have a special need to
+leave files or system tables in a secure state when a process is
+stopped.  For example, programs that turn off echoing should handle
+<code>SIGTSTP</code> so they can turn echoing back on before stopping.
+</p>
+<p>This signal is generated when the user types the SUSP character
+(normally <kbd>C-z</kbd>).  For more information about terminal driver
+support, see <a href="Special-Characters.html#Special-Characters">Special Characters</a>.
+</p></dd></dl>
+<a name="index-interactive-stop-signal"></a>
+
+<dl>
+<dt><a name="index-SIGTTIN"></a>Macro: <em>int</em> <strong>SIGTTIN</strong></dt>
+<dd>
+<p>A process cannot read from the user&rsquo;s terminal while it is running
+as a background job.  When any process in a background job tries to
+read from the terminal, all of the processes in the job are sent a
+<code>SIGTTIN</code> signal.  The default action for this signal is to
+stop the process.  For more information about how this interacts with
+the terminal driver, see <a href="Access-to-the-Terminal.html#Access-to-the-Terminal">Access to the Terminal</a>.
+</p></dd></dl>
+<a name="index-terminal-input-signal"></a>
+
+<dl>
+<dt><a name="index-SIGTTOU"></a>Macro: <em>int</em> <strong>SIGTTOU</strong></dt>
+<dd>
+<p>This is similar to <code>SIGTTIN</code>, but is generated when a process in a
+background job attempts to write to the terminal or set its modes.
+Again, the default action is to stop the process.  <code>SIGTTOU</code> is
+only generated for an attempt to write to the terminal if the
+<code>TOSTOP</code> output mode is set; see <a href="Output-Modes.html#Output-Modes">Output Modes</a>.
+</p></dd></dl>
+<a name="index-terminal-output-signal"></a>
+
+<p>While a process is stopped, no more signals can be delivered to it until
+it is continued, except <code>SIGKILL</code> signals and (obviously)
+<code>SIGCONT</code> signals.  The signals are marked as pending, but not
+delivered until the process is continued.  The <code>SIGKILL</code> signal
+always causes termination of the process and can&rsquo;t be blocked, handled
+or ignored.  You can ignore <code>SIGCONT</code>, but it always causes the
+process to be continued anyway if it is stopped.  Sending a
+<code>SIGCONT</code> signal to a process causes any pending stop signals for
+that process to be discarded.  Likewise, any pending <code>SIGCONT</code>
+signals for a process are discarded when it receives a stop signal.
+</p>
+<p>When a process in an orphaned process group (see <a href="Orphaned-Process-Groups.html#Orphaned-Process-Groups">Orphaned Process Groups</a>) receives a <code>SIGTSTP</code>, <code>SIGTTIN</code>, or <code>SIGTTOU</code>
+signal and does not handle it, the process does not stop.  Stopping the
+process would probably not be very useful, since there is no shell
+program that will notice it stop and allow the user to continue it.
+What happens instead depends on the operating system you are using.
+Some systems may do nothing; others may deliver another signal instead,
+such as <code>SIGKILL</code> or <code>SIGHUP</code>.  On GNU/Hurd systems, the process
+dies with <code>SIGKILL</code>; this avoids the problem of many stopped,
+orphaned processes lying around the system.
+</p>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Operation-Error-Signals.html#Operation-Error-Signals" accesskey="n" rel="next">Operation Error Signals</a>, Previous: <a href="Asynchronous-I_002fO-Signals.html#Asynchronous-I_002fO-Signals" accesskey="p" rel="prev">Asynchronous I/O Signals</a>, Up: <a href="Standard-Signals.html#Standard-Signals" accesskey="u" rel="up">Standard Signals</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

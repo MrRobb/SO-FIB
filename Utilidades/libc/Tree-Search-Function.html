@@ -1,0 +1,285 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Tree Search Function</title>
+
+<meta name="description" content="The GNU C Library: Tree Search Function">
+<meta name="keywords" content="The GNU C Library: Tree Search Function">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Searching-and-Sorting.html#Searching-and-Sorting" rel="up" title="Searching and Sorting">
+<link href="Pattern-Matching.html#Pattern-Matching" rel="next" title="Pattern Matching">
+<link href="Hash-Search-Function.html#Hash-Search-Function" rel="prev" title="Hash Search Function">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Tree-Search-Function"></a>
+<div class="header">
+<p>
+Previous: <a href="Hash-Search-Function.html#Hash-Search-Function" accesskey="p" rel="prev">Hash Search Function</a>, Up: <a href="Searching-and-Sorting.html#Searching-and-Sorting" accesskey="u" rel="up">Searching and Sorting</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="The-tsearch-function_002e"></a>
+<h3 class="section">9.6 The <code>tsearch</code> function.</h3>
+
+<p>Another common form to organize data for efficient search is to use
+trees.  The <code>tsearch</code> function family provides a nice interface to
+functions to organize possibly large amounts of data by providing a mean
+access time proportional to the logarithm of the number of elements.
+The GNU C Library implementation even guarantees that this bound is
+never exceeded even for input data which cause problems for simple
+binary tree implementations.
+</p>
+<p>The functions described in the chapter are all described in the System&nbsp;V<!-- /@w --> and X/Open specifications and are therefore quite portable.
+</p>
+<p>In contrast to the <code>hsearch</code> functions the <code>tsearch</code> functions
+can be used with arbitrary data and not only zero-terminated strings.
+</p>
+<p>The <code>tsearch</code> functions have the advantage that no function to
+initialize data structures is necessary.  A simple pointer of type
+<code>void *</code> initialized to <code>NULL</code> is a valid tree and can be
+extended or searched.  The prototypes for these functions can be found
+in the header file <samp>search.h</samp>.
+</p>
+<dl>
+<dt><a name="index-tsearch"></a>Function: <em>void *</em> <strong>tsearch</strong> <em>(const void *<var>key</var>, void **<var>rootp</var>, comparison_fn_t <var>compar</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe race:rootp
+| AS-Unsafe heap
+| AC-Unsafe corrupt mem
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>tsearch</code> function searches in the tree pointed to by
+<code>*<var>rootp</var></code> for an element matching <var>key</var>.  The function
+pointed to by <var>compar</var> is used to determine whether two elements
+match.  See <a href="Comparison-Functions.html#Comparison-Functions">Comparison Functions</a>, for a specification of the functions
+which can be used for the <var>compar</var> parameter.
+</p>
+<p>If the tree does not contain a matching entry the <var>key</var> value will
+be added to the tree.  <code>tsearch</code> does not make a copy of the object
+pointed to by <var>key</var> (how could it since the size is unknown).
+Instead it adds a reference to this object which means the object must
+be available as long as the tree data structure is used.
+</p>
+<p>The tree is represented by a pointer to a pointer since it is sometimes
+necessary to change the root node of the tree.  So it must not be
+assumed that the variable pointed to by <var>rootp</var> has the same value
+after the call.  This also shows that it is not safe to call the
+<code>tsearch</code> function more than once at the same time using the same
+tree.  It is no problem to run it more than once at a time on different
+trees.
+</p>
+<p>The return value is a pointer to the matching element in the tree.  If a
+new element was created the pointer points to the new data (which is in
+fact <var>key</var>).  If an entry had to be created and the program ran out
+of space <code>NULL</code> is returned.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-tfind"></a>Function: <em>void *</em> <strong>tfind</strong> <em>(const void *<var>key</var>, void *const *<var>rootp</var>, comparison_fn_t <var>compar</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe race:rootp
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>tfind</code> function is similar to the <code>tsearch</code> function.  It
+locates an element matching the one pointed to by <var>key</var> and returns
+a pointer to this element.  But if no matching element is available no
+new element is entered (note that the <var>rootp</var> parameter points to a
+constant pointer).  Instead the function returns <code>NULL</code>.
+</p></dd></dl>
+
+<p>Another advantage of the <code>tsearch</code> functions in contrast to the
+<code>hsearch</code> functions is that there is an easy way to remove
+elements.
+</p>
+<dl>
+<dt><a name="index-tdelete"></a>Function: <em>void *</em> <strong>tdelete</strong> <em>(const void *<var>key</var>, void **<var>rootp</var>, comparison_fn_t <var>compar</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe race:rootp
+| AS-Unsafe heap
+| AC-Unsafe corrupt mem
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>To remove a specific element matching <var>key</var> from the tree
+<code>tdelete</code> can be used.  It locates the matching element using the
+same method as <code>tfind</code>.  The corresponding element is then removed
+and a pointer to the parent of the deleted node is returned by the
+function.  If there is no matching entry in the tree nothing can be
+deleted and the function returns <code>NULL</code>.  If the root of the tree
+is deleted <code>tdelete</code> returns some unspecified value not equal to
+<code>NULL</code>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-tdestroy"></a>Function: <em>void</em> <strong>tdestroy</strong> <em>(void *<var>vroot</var>, __free_fn_t <var>freefct</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Unsafe heap
+| AC-Unsafe mem
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>If the complete search tree has to be removed one can use
+<code>tdestroy</code>.  It frees all resources allocated by the <code>tsearch</code>
+functions to generate the tree pointed to by <var>vroot</var>.
+</p>
+<p>For the data in each tree node the function <var>freefct</var> is called.
+The pointer to the data is passed as the argument to the function.  If
+no such work is necessary <var>freefct</var> must point to a function doing
+nothing.  It is called in any case.
+</p>
+<p>This function is a GNU extension and not covered by the System&nbsp;V<!-- /@w --> or
+X/Open specifications.
+</p></dd></dl>
+
+<p>In addition to the functions to create and destroy the tree data
+structure, there is another function which allows you to apply a
+function to all elements of the tree.  The function must have this type:
+</p>
+<div class="smallexample">
+<pre class="smallexample">void __action_fn_t (const void *nodep, VISIT value, int level);
+</pre></div>
+
+<p>The <var>nodep</var> is the data value of the current node (once given as the
+<var>key</var> argument to <code>tsearch</code>).  <var>level</var> is a numeric value
+which corresponds to the depth of the current node in the tree.  The
+root node has the depth <em>0</em> and its children have a depth of
+<em>1</em> and so on.  The <code>VISIT</code> type is an enumeration type.
+</p>
+<dl>
+<dt><a name="index-VISIT"></a>Data Type: <strong>VISIT</strong></dt>
+<dd><p>The <code>VISIT</code> value indicates the status of the current node in the
+tree and how the function is called.  The status of a node is either
+&lsquo;leaf&rsquo; or &lsquo;internal node&rsquo;.  For each leaf node the function is called
+exactly once, for each internal node it is called three times: before
+the first child is processed, after the first child is processed and
+after both children are processed.  This makes it possible to handle all
+three methods of tree traversal (or even a combination of them).
+</p>
+<dl compact="compact">
+<dt><code>preorder</code>
+<a name="index-preorder"></a>
+</dt>
+<dd><p>The current node is an internal node and the function is called before
+the first child was processed.
+</p></dd>
+<dt><code>postorder</code>
+<a name="index-postorder"></a>
+</dt>
+<dd><p>The current node is an internal node and the function is called after
+the first child was processed.
+</p></dd>
+<dt><code>endorder</code>
+<a name="index-endorder"></a>
+</dt>
+<dd><p>The current node is an internal node and the function is called after
+the second child was processed.
+</p></dd>
+<dt><code>leaf</code>
+<a name="index-leaf"></a>
+</dt>
+<dd><p>The current node is a leaf.
+</p></dd>
+</dl>
+</dd></dl>
+
+<dl>
+<dt><a name="index-twalk"></a>Function: <em>void</em> <strong>twalk</strong> <em>(const void *<var>root</var>, __action_fn_t <var>action</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe race:root
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>For each node in the tree with a node pointed to by <var>root</var>, the
+<code>twalk</code> function calls the function provided by the parameter
+<var>action</var>.  For leaf nodes the function is called exactly once with
+<var>value</var> set to <code>leaf</code>.  For internal nodes the function is
+called three times, setting the <var>value</var> parameter or <var>action</var> to
+the appropriate value.  The <var>level</var> argument for the <var>action</var>
+function is computed while descending the tree by increasing the value
+by one for each descent to a child, starting with the value <em>0</em> for
+the root node.
+</p>
+<p>Since the functions used for the <var>action</var> parameter to <code>twalk</code>
+must not modify the tree data, it is safe to run <code>twalk</code> in more
+than one thread at the same time, working on the same tree.  It is also
+safe to call <code>tfind</code> in parallel.  Functions which modify the tree
+must not be used, otherwise the behavior is undefined.
+</p></dd></dl>
+<hr>
+<div class="header">
+<p>
+Previous: <a href="Hash-Search-Function.html#Hash-Search-Function" accesskey="p" rel="prev">Hash Search Function</a>, Up: <a href="Searching-and-Sorting.html#Searching-and-Sorting" accesskey="u" rel="up">Searching and Sorting</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

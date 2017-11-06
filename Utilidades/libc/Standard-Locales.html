@@ -1,0 +1,117 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Standard Locales</title>
+
+<meta name="description" content="The GNU C Library: Standard Locales">
+<meta name="keywords" content="The GNU C Library: Standard Locales">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Locales.html#Locales" rel="up" title="Locales">
+<link href="Locale-Names.html#Locale-Names" rel="next" title="Locale Names">
+<link href="Setting-the-Locale.html#Setting-the-Locale" rel="prev" title="Setting the Locale">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Standard-Locales"></a>
+<div class="header">
+<p>
+Next: <a href="Locale-Names.html#Locale-Names" accesskey="n" rel="next">Locale Names</a>, Previous: <a href="Setting-the-Locale.html#Setting-the-Locale" accesskey="p" rel="prev">Setting the Locale</a>, Up: <a href="Locales.html#Locales" accesskey="u" rel="up">Locales</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Standard-Locales-1"></a>
+<h3 class="section">7.5 Standard Locales</h3>
+
+<p>The only locale names you can count on finding on all operating systems
+are these three standard ones:
+</p>
+<dl compact="compact">
+<dt><code>&quot;C&quot;</code></dt>
+<dd><p>This is the standard C locale.  The attributes and behavior it provides
+are specified in the ISO&nbsp;C<!-- /@w --> standard.  When your program starts up, it
+initially uses this locale by default.
+</p>
+</dd>
+<dt><code>&quot;POSIX&quot;</code></dt>
+<dd><p>This is the standard POSIX locale.  Currently, it is an alias for the
+standard C locale.
+</p>
+</dd>
+<dt><code>&quot;&quot;</code></dt>
+<dd><p>The empty name says to select a locale based on environment variables.
+See <a href="Locale-Categories.html#Locale-Categories">Locale Categories</a>.
+</p></dd>
+</dl>
+
+<p>Defining and installing named locales is normally a responsibility of
+the system administrator at your site (or the person who installed
+the GNU C Library).  It is also possible for the user to create private
+locales.  All this will be discussed later when describing the tool to
+do so.
+</p>
+<p>If your program needs to use something other than the &lsquo;<samp>C</samp>&rsquo; locale,
+it will be more portable if you use whatever locale the user specifies
+with the environment, rather than trying to specify some non-standard
+locale explicitly by name.  Remember, different machines might have
+different sets of locales installed.
+</p>
+
+
+
+</body>
+</html>

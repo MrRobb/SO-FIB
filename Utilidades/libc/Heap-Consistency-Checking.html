@@ -1,0 +1,228 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Heap Consistency Checking</title>
+
+<meta name="description" content="The GNU C Library: Heap Consistency Checking">
+<meta name="keywords" content="The GNU C Library: Heap Consistency Checking">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Unconstrained-Allocation.html#Unconstrained-Allocation" rel="up" title="Unconstrained Allocation">
+<link href="Hooks-for-Malloc.html#Hooks-for-Malloc" rel="next" title="Hooks for Malloc">
+<link href="Malloc-Tunable-Parameters.html#Malloc-Tunable-Parameters" rel="prev" title="Malloc Tunable Parameters">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Heap-Consistency-Checking"></a>
+<div class="header">
+<p>
+Next: <a href="Hooks-for-Malloc.html#Hooks-for-Malloc" accesskey="n" rel="next">Hooks for Malloc</a>, Previous: <a href="Malloc-Tunable-Parameters.html#Malloc-Tunable-Parameters" accesskey="p" rel="prev">Malloc Tunable Parameters</a>, Up: <a href="Unconstrained-Allocation.html#Unconstrained-Allocation" accesskey="u" rel="up">Unconstrained Allocation</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Heap-Consistency-Checking-1"></a>
+<h4 class="subsubsection">3.2.3.8 Heap Consistency Checking</h4>
+
+<a name="index-heap-consistency-checking"></a>
+<a name="index-consistency-checking_002c-of-heap"></a>
+
+<p>You can ask <code>malloc</code> to check the consistency of dynamic memory by
+using the <code>mcheck</code> function.  This function is a GNU extension,
+declared in <samp>mcheck.h</samp>.
+<a name="index-mcheck_002eh"></a>
+</p>
+<dl>
+<dt><a name="index-mcheck"></a>Function: <em>int</em> <strong>mcheck</strong> <em>(void (*<var>abortfn</var>) (enum mcheck_status <var>status</var>))</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Unsafe race:mcheck const:malloc_hooks
+| AS-Unsafe corrupt
+| AC-Unsafe corrupt
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+
+<p>Calling <code>mcheck</code> tells <code>malloc</code> to perform occasional
+consistency checks.  These will catch things such as writing
+past the end of a block that was allocated with <code>malloc</code>.
+</p>
+<p>The <var>abortfn</var> argument is the function to call when an inconsistency
+is found.  If you supply a null pointer, then <code>mcheck</code> uses a
+default function which prints a message and calls <code>abort</code>
+(see <a href="Aborting-a-Program.html#Aborting-a-Program">Aborting a Program</a>).  The function you supply is called with
+one argument, which says what sort of inconsistency was detected; its
+type is described below.
+</p>
+<p>It is too late to begin allocation checking once you have allocated
+anything with <code>malloc</code>.  So <code>mcheck</code> does nothing in that
+case.  The function returns <code>-1</code> if you call it too late, and
+<code>0</code> otherwise (when it is successful).
+</p>
+<p>The easiest way to arrange to call <code>mcheck</code> early enough is to use
+the option &lsquo;<samp>-lmcheck</samp>&rsquo; when you link your program; then you don&rsquo;t
+need to modify your program source at all.  Alternatively you might use
+a debugger to insert a call to <code>mcheck</code> whenever the program is
+started, for example these gdb commands will automatically call <code>mcheck</code>
+whenever the program starts:
+</p>
+<div class="smallexample">
+<pre class="smallexample">(gdb) break main
+Breakpoint 1, main (argc=2, argv=0xbffff964) at whatever.c:10
+(gdb) command 1
+Type commands for when breakpoint 1 is hit, one per line.
+End with a line saying just &quot;end&quot;.
+&gt;call mcheck(0)
+&gt;continue
+&gt;end
+(gdb) &hellip;
+</pre></div>
+
+<p>This will however only work if no initialization function of any object
+involved calls any of the <code>malloc</code> functions since <code>mcheck</code>
+must be called before the first such function.
+</p>
+</dd></dl>
+
+<dl>
+<dt><a name="index-mprobe"></a>Function: <em>enum mcheck_status</em> <strong>mprobe</strong> <em>(void *<var>pointer</var>)</em></dt>
+<dd><p>Preliminary:
+| MT-Unsafe race:mcheck const:malloc_hooks
+| AS-Unsafe corrupt
+| AC-Unsafe corrupt
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+
+<p>The <code>mprobe</code> function lets you explicitly check for inconsistencies
+in a particular allocated block.  You must have already called
+<code>mcheck</code> at the beginning of the program, to do its occasional
+checks; calling <code>mprobe</code> requests an additional consistency check
+to be done at the time of the call.
+</p>
+<p>The argument <var>pointer</var> must be a pointer returned by <code>malloc</code>
+or <code>realloc</code>.  <code>mprobe</code> returns a value that says what
+inconsistency, if any, was found.  The values are described below.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-enum-mcheck_005fstatus"></a>Data Type: <strong>enum mcheck_status</strong></dt>
+<dd><p>This enumerated type describes what kind of inconsistency was detected
+in an allocated block, if any.  Here are the possible values:
+</p>
+<dl compact="compact">
+<dt><code>MCHECK_DISABLED</code></dt>
+<dd><p><code>mcheck</code> was not called before the first allocation.
+No consistency checking can be done.
+</p></dd>
+<dt><code>MCHECK_OK</code></dt>
+<dd><p>No inconsistency detected.
+</p></dd>
+<dt><code>MCHECK_HEAD</code></dt>
+<dd><p>The data immediately before the block was modified.
+This commonly happens when an array index or pointer
+is decremented too far.
+</p></dd>
+<dt><code>MCHECK_TAIL</code></dt>
+<dd><p>The data immediately after the block was modified.
+This commonly happens when an array index or pointer
+is incremented too far.
+</p></dd>
+<dt><code>MCHECK_FREE</code></dt>
+<dd><p>The block was already freed.
+</p></dd>
+</dl>
+</dd></dl>
+
+<p>Another possibility to check for and guard against bugs in the use of
+<code>malloc</code>, <code>realloc</code> and <code>free</code> is to set the environment
+variable <code>MALLOC_CHECK_</code>.  When <code>MALLOC_CHECK_</code> is set, a
+special (less efficient) implementation is used which is designed to be
+tolerant against simple errors, such as double calls of <code>free</code> with
+the same argument, or overruns of a single byte (off-by-one bugs).  Not
+all such errors can be protected against, however, and memory leaks can
+result.  If <code>MALLOC_CHECK_</code> is set to <code>0</code>, any detected heap
+corruption is silently ignored; if set to <code>1</code>, a diagnostic is
+printed on <code>stderr</code>; if set to <code>2</code>, <code>abort</code> is called
+immediately.  This can be useful because otherwise a crash may happen
+much later, and the true cause for the problem is then very hard to
+track down.
+</p>
+<p>There is one problem with <code>MALLOC_CHECK_</code>: in SUID or SGID binaries
+it could possibly be exploited since diverging from the normal programs
+behavior it now writes something to the standard error descriptor.
+Therefore the use of <code>MALLOC_CHECK_</code> is disabled by default for
+SUID and SGID binaries.  It can be enabled again by the system
+administrator by adding a file <samp>/etc/suid-debug</samp> (the content is
+not important it could be empty).
+</p>
+<p>So, what&rsquo;s the difference between using <code>MALLOC_CHECK_</code> and linking
+with &lsquo;<samp>-lmcheck</samp>&rsquo;?  <code>MALLOC_CHECK_</code> is orthogonal with respect to
+&lsquo;<samp>-lmcheck</samp>&rsquo;.  &lsquo;<samp>-lmcheck</samp>&rsquo; has been added for backward
+compatibility.  Both <code>MALLOC_CHECK_</code> and &lsquo;<samp>-lmcheck</samp>&rsquo; should
+uncover the same bugs - but using <code>MALLOC_CHECK_</code> you don&rsquo;t need to
+recompile your application.
+</p>
+<hr>
+<div class="header">
+<p>
+Next: <a href="Hooks-for-Malloc.html#Hooks-for-Malloc" accesskey="n" rel="next">Hooks for Malloc</a>, Previous: <a href="Malloc-Tunable-Parameters.html#Malloc-Tunable-Parameters" accesskey="p" rel="prev">Malloc Tunable Parameters</a>, Up: <a href="Unconstrained-Allocation.html#Unconstrained-Allocation" accesskey="u" rel="up">Unconstrained Allocation</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

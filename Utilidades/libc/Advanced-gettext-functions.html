@@ -1,0 +1,469 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Advanced gettext functions</title>
+
+<meta name="description" content="The GNU C Library: Advanced gettext functions">
+<meta name="keywords" content="The GNU C Library: Advanced gettext functions">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Message-catalogs-with-gettext.html#Message-catalogs-with-gettext" rel="up" title="Message catalogs with gettext">
+<link href="Charset-conversion-in-gettext.html#Charset-conversion-in-gettext" rel="next" title="Charset conversion in gettext">
+<link href="Locating-gettext-catalog.html#Locating-gettext-catalog" rel="prev" title="Locating gettext catalog">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Advanced-gettext-functions"></a>
+<div class="header">
+<p>
+Next: <a href="Charset-conversion-in-gettext.html#Charset-conversion-in-gettext" accesskey="n" rel="next">Charset conversion in gettext</a>, Previous: <a href="Locating-gettext-catalog.html#Locating-gettext-catalog" accesskey="p" rel="prev">Locating gettext catalog</a>, Up: <a href="Message-catalogs-with-gettext.html#Message-catalogs-with-gettext" accesskey="u" rel="up">Message catalogs with gettext</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Additional-functions-for-more-complicated-situations"></a>
+<h4 class="subsubsection">8.2.1.3 Additional functions for more complicated situations</h4>
+
+<p>The functions of the <code>gettext</code> family described so far (and all the
+<code>catgets</code> functions as well) have one problem in the real world
+which has been neglected completely in all existing approaches.  What
+is meant here is the handling of plural forms.
+</p>
+<p>Looking through Unix source code before the time anybody thought about
+internationalization (and, sadly, even afterwards) one can often find
+code similar to the following:
+</p>
+<div class="smallexample">
+<pre class="smallexample">   printf (&quot;%d file%s deleted&quot;, n, n == 1 ? &quot;&quot; : &quot;s&quot;);
+</pre></div>
+
+<p>After the first complaints from people internationalizing the code people
+either completely avoided formulations like this or used strings like
+<code>&quot;file(s)&quot;</code>.  Both look unnatural and should be avoided.  First
+tries to solve the problem correctly looked like this:
+</p>
+<div class="smallexample">
+<pre class="smallexample">   if (n == 1)
+     printf (&quot;%d file deleted&quot;, n);
+   else
+     printf (&quot;%d files deleted&quot;, n);
+</pre></div>
+
+<p>But this does not solve the problem.  It helps languages where the
+plural form of a noun is not simply constructed by adding an &lsquo;s&rsquo; but
+that is all.  Once again people fell into the trap of believing the
+rules their language uses are universal.  But the handling of plural
+forms differs widely between the language families.  There are two
+things we can differ between (and even inside language families);
+</p>
+<ul>
+<li> The form how plural forms are build differs.  This is a problem with
+language which have many irregularities.  German, for instance, is a
+drastic case.  Though English and German are part of the same language
+family (Germanic), the almost regular forming of plural noun forms
+(appending an &lsquo;s&rsquo;) is hardly found in German.
+
+</li><li> The number of plural forms differ.  This is somewhat surprising for
+those who only have experiences with Romanic and Germanic languages
+since here the number is the same (there are two).
+
+<p>But other language families have only one form or many forms.  More
+information on this in an extra section.
+</p></li></ul>
+
+<p>The consequence of this is that application writers should not try to
+solve the problem in their code.  This would be localization since it is
+only usable for certain, hardcoded language environments.  Instead the
+extended <code>gettext</code> interface should be used.
+</p>
+<p>These extra functions are taking instead of the one key string two
+strings and a numerical argument.  The idea behind this is that using
+the numerical argument and the first string as a key, the implementation
+can select using rules specified by the translator the right plural
+form.  The two string arguments then will be used to provide a return
+value in case no message catalog is found (similar to the normal
+<code>gettext</code> behavior).  In this case the rules for Germanic language
+are used and it is assumed that the first string argument is the singular
+form, the second the plural form.
+</p>
+<p>This has the consequence that programs without language catalogs can
+display the correct strings only if the program itself is written using
+a Germanic language.  This is a limitation but since the GNU C Library
+(as well as the GNU <code>gettext</code> package) is written as part of the
+GNU package and the coding standards for the GNU project require programs
+to be written in English, this solution nevertheless fulfills its
+purpose.
+</p>
+<dl>
+<dt><a name="index-ngettext"></a>Function: <em>char *</em> <strong>ngettext</strong> <em>(const char *<var>msgid1</var>, const char *<var>msgid2</var>, unsigned long int <var>n</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe env
+| AS-Unsafe corrupt heap lock dlopen
+| AC-Unsafe corrupt lock fd mem
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>ngettext</code> function is similar to the <code>gettext</code> function
+as it finds the message catalogs in the same way.  But it takes two
+extra arguments.  The <var>msgid1</var> parameter must contain the singular
+form of the string to be converted.  It is also used as the key for the
+search in the catalog.  The <var>msgid2</var> parameter is the plural form.
+The parameter <var>n</var> is used to determine the plural form.  If no
+message catalog is found <var>msgid1</var> is returned if <code>n == 1</code>,
+otherwise <code>msgid2</code>.
+</p>
+<p>An example for the use of this function is:
+</p>
+<div class="smallexample">
+<pre class="smallexample">  printf (ngettext (&quot;%d file removed&quot;, &quot;%d files removed&quot;, n), n);
+</pre></div>
+
+<p>Please note that the numeric value <var>n</var> has to be passed to the
+<code>printf</code> function as well.  It is not sufficient to pass it only to
+<code>ngettext</code>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-dngettext"></a>Function: <em>char *</em> <strong>dngettext</strong> <em>(const char *<var>domain</var>, const char *<var>msgid1</var>, const char *<var>msgid2</var>, unsigned long int <var>n</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe env
+| AS-Unsafe corrupt heap lock dlopen
+| AC-Unsafe corrupt lock fd mem
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>dngettext</code> is similar to the <code>dgettext</code> function in the
+way the message catalog is selected.  The difference is that it takes
+two extra parameters to provide the correct plural form.  These two
+parameters are handled in the same way <code>ngettext</code> handles them.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-dcngettext"></a>Function: <em>char *</em> <strong>dcngettext</strong> <em>(const char *<var>domain</var>, const char *<var>msgid1</var>, const char *<var>msgid2</var>, unsigned long int <var>n</var>, int <var>category</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe env
+| AS-Unsafe corrupt heap lock dlopen
+| AC-Unsafe corrupt lock fd mem
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>dcngettext</code> is similar to the <code>dcgettext</code> function in the
+way the message catalog is selected.  The difference is that it takes
+two extra parameters to provide the correct plural form.  These two
+parameters are handled in the same way <code>ngettext</code> handles them.
+</p></dd></dl>
+
+<a name="The-problem-of-plural-forms"></a>
+<h4 class="subsubheading">The problem of plural forms</h4>
+
+<p>A description of the problem can be found at the beginning of the last
+section.  Now there is the question how to solve it.  Without the input
+of linguists (which was not available) it was not possible to determine
+whether there are only a few different forms in which plural forms are
+formed or whether the number can increase with every new supported
+language.
+</p>
+<p>Therefore the solution implemented is to allow the translator to specify
+the rules of how to select the plural form.  Since the formula varies
+with every language this is the only viable solution except for
+hardcoding the information in the code (which still would require the
+possibility of extensions to not prevent the use of new languages).  The
+details are explained in the GNU <code>gettext</code> manual.  Here only a
+bit of information is provided.
+</p>
+<p>The information about the plural form selection has to be stored in the
+header entry (the one with the empty <code>msgid</code> string).  It looks
+like this:
+</p>
+<div class="smallexample">
+<pre class="smallexample">Plural-Forms: nplurals=2; plural=n == 1 ? 0 : 1;
+</pre></div>
+
+<p>The <code>nplurals</code> value must be a decimal number which specifies how
+many different plural forms exist for this language.  The string
+following <code>plural</code> is an expression using the C language
+syntax.  Exceptions are that no negative numbers are allowed, numbers
+must be decimal, and the only variable allowed is <code>n</code>.  This
+expression will be evaluated whenever one of the functions
+<code>ngettext</code>, <code>dngettext</code>, or <code>dcngettext</code> is called.  The
+numeric value passed to these functions is then substituted for all uses
+of the variable <code>n</code> in the expression.  The resulting value then
+must be greater or equal to zero and smaller than the value given as the
+value of <code>nplurals</code>.
+</p>
+<p>The following rules are known at this point.  The language with families
+are listed.  But this does not necessarily mean the information can be
+generalized for the whole family (as can be easily seen in the table
+below).<a name="DOCF2" href="#FOOT2"><sup>2</sup></a>
+</p>
+<dl compact="compact">
+<dt>Only one form:</dt>
+<dd><p>Some languages only require one single form.  There is no distinction
+between the singular and plural form.  An appropriate header entry
+would look like this:
+</p>
+<div class="smallexample">
+<pre class="smallexample">Plural-Forms: nplurals=1; plural=0;
+</pre></div>
+
+<p>Languages with this property include:
+</p>
+<dl compact="compact">
+<dt>Finno-Ugric family</dt>
+<dd><p>Hungarian
+</p></dd>
+<dt>Asian family</dt>
+<dd><p>Japanese, Korean
+</p></dd>
+<dt>Turkic/Altaic family</dt>
+<dd><p>Turkish
+</p></dd>
+</dl>
+
+</dd>
+<dt>Two forms, singular used for one only</dt>
+<dd><p>This is the form used in most existing programs since it is what English
+uses.  A header entry would look like this:
+</p>
+<div class="smallexample">
+<pre class="smallexample">Plural-Forms: nplurals=2; plural=n != 1;
+</pre></div>
+
+<p>(Note: this uses the feature of C expressions that boolean expressions
+have to value zero or one.)
+</p>
+<p>Languages with this property include:
+</p>
+<dl compact="compact">
+<dt>Germanic family</dt>
+<dd><p>Danish, Dutch, English, German, Norwegian, Swedish
+</p></dd>
+<dt>Finno-Ugric family</dt>
+<dd><p>Estonian, Finnish
+</p></dd>
+<dt>Latin/Greek family</dt>
+<dd><p>Greek
+</p></dd>
+<dt>Semitic family</dt>
+<dd><p>Hebrew
+</p></dd>
+<dt>Romance family</dt>
+<dd><p>Italian, Portuguese, Spanish
+</p></dd>
+<dt>Artificial</dt>
+<dd><p>Esperanto
+</p></dd>
+</dl>
+
+</dd>
+<dt>Two forms, singular used for zero and one</dt>
+<dd><p>Exceptional case in the language family.  The header entry would be:
+</p>
+<div class="smallexample">
+<pre class="smallexample">Plural-Forms: nplurals=2; plural=n&gt;1;
+</pre></div>
+
+<p>Languages with this property include:
+</p>
+<dl compact="compact">
+<dt>Romanic family</dt>
+<dd><p>French, Brazilian Portuguese
+</p></dd>
+</dl>
+
+</dd>
+<dt>Three forms, special case for zero</dt>
+<dd><p>The header entry would be:
+</p>
+<div class="smallexample">
+<pre class="smallexample">Plural-Forms: nplurals=3; plural=n%10==1 &amp;&amp; n%100!=11 ? 0 : n != 0 ? 1 : 2;
+</pre></div>
+
+<p>Languages with this property include:
+</p>
+<dl compact="compact">
+<dt>Baltic family</dt>
+<dd><p>Latvian
+</p></dd>
+</dl>
+
+</dd>
+<dt>Three forms, special cases for one and two</dt>
+<dd><p>The header entry would be:
+</p>
+<div class="smallexample">
+<pre class="smallexample">Plural-Forms: nplurals=3; plural=n==1 ? 0 : n==2 ? 1 : 2;
+</pre></div>
+
+<p>Languages with this property include:
+</p>
+<dl compact="compact">
+<dt>Celtic</dt>
+<dd><p>Gaeilge (Irish)
+</p></dd>
+</dl>
+
+</dd>
+<dt>Three forms, special case for numbers ending in 1[2-9]</dt>
+<dd><p>The header entry would look like this:
+</p>
+<div class="smallexample">
+<pre class="smallexample">Plural-Forms: nplurals=3; \
+    plural=n%10==1 &amp;&amp; n%100!=11 ? 0 : \
+           n%10&gt;=2 &amp;&amp; (n%100&lt;10 || n%100&gt;=20) ? 1 : 2;
+</pre></div>
+
+<p>Languages with this property include:
+</p>
+<dl compact="compact">
+<dt>Baltic family</dt>
+<dd><p>Lithuanian
+</p></dd>
+</dl>
+
+</dd>
+<dt>Three forms, special cases for numbers ending in 1 and 2, 3, 4, except those ending in 1[1-4]</dt>
+<dd><p>The header entry would look like this:
+</p>
+<div class="smallexample">
+<pre class="smallexample">Plural-Forms: nplurals=3; \
+    plural=n%100/10==1 ? 2 : n%10==1 ? 0 : (n+9)%10&gt;3 ? 2 : 1;
+</pre></div>
+
+<p>Languages with this property include:
+</p>
+<dl compact="compact">
+<dt>Slavic family</dt>
+<dd><p>Croatian, Czech, Russian, Ukrainian
+</p></dd>
+</dl>
+
+</dd>
+<dt>Three forms, special cases for 1 and 2, 3, 4</dt>
+<dd><p>The header entry would look like this:
+</p>
+<div class="smallexample">
+<pre class="smallexample">Plural-Forms: nplurals=3; \
+    plural=(n==1) ? 1 : (n&gt;=2 &amp;&amp; n&lt;=4) ? 2 : 0;
+</pre></div>
+
+<p>Languages with this property include:
+</p>
+<dl compact="compact">
+<dt>Slavic family</dt>
+<dd><p>Slovak
+</p></dd>
+</dl>
+
+</dd>
+<dt>Three forms, special case for one and some numbers ending in 2, 3, or 4</dt>
+<dd><p>The header entry would look like this:
+</p>
+<div class="smallexample">
+<pre class="smallexample">Plural-Forms: nplurals=3; \
+    plural=n==1 ? 0 : \
+           n%10&gt;=2 &amp;&amp; n%10&lt;=4 &amp;&amp; (n%100&lt;10 || n%100&gt;=20) ? 1 : 2;
+</pre></div>
+
+<p>Languages with this property include:
+</p>
+<dl compact="compact">
+<dt>Slavic family</dt>
+<dd><p>Polish
+</p></dd>
+</dl>
+
+</dd>
+<dt>Four forms, special case for one and all numbers ending in 02, 03, or 04</dt>
+<dd><p>The header entry would look like this:
+</p>
+<div class="smallexample">
+<pre class="smallexample">Plural-Forms: nplurals=4; \
+    plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3;
+</pre></div>
+
+<p>Languages with this property include:
+</p>
+<dl compact="compact">
+<dt>Slavic family</dt>
+<dd><p>Slovenian
+</p></dd>
+</dl>
+</dd>
+</dl>
+
+
+<div class="footnote">
+<hr>
+<h4 class="footnotes-heading">Footnotes</h4>
+
+<h3><a name="FOOT2" href="#DOCF2">(2)</a></h3>
+<p>Additions are welcome.  Send appropriate information to
+<a href="mailto:bug-glibc-manual@gnu.org">bug-glibc-manual@gnu.org</a>.</p>
+</div>
+<hr>
+<div class="header">
+<p>
+Next: <a href="Charset-conversion-in-gettext.html#Charset-conversion-in-gettext" accesskey="n" rel="next">Charset conversion in gettext</a>, Previous: <a href="Locating-gettext-catalog.html#Locating-gettext-catalog" accesskey="p" rel="prev">Locating gettext catalog</a>, Up: <a href="Message-catalogs-with-gettext.html#Message-catalogs-with-gettext" accesskey="u" rel="up">Message catalogs with gettext</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Locale Categories</title>
+
+<meta name="description" content="The GNU C Library: Locale Categories">
+<meta name="keywords" content="The GNU C Library: Locale Categories">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Locales.html#Locales" rel="up" title="Locales">
+<link href="Setting-the-Locale.html#Setting-the-Locale" rel="next" title="Setting the Locale">
+<link href="Choosing-Locale.html#Choosing-Locale" rel="prev" title="Choosing Locale">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Locale-Categories"></a>
+<div class="header">
+<p>
+Next: <a href="Setting-the-Locale.html#Setting-the-Locale" accesskey="n" rel="next">Setting the Locale</a>, Previous: <a href="Choosing-Locale.html#Choosing-Locale" accesskey="p" rel="prev">Choosing Locale</a>, Up: <a href="Locales.html#Locales" accesskey="u" rel="up">Locales</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Locale-Categories-1"></a>
+<h3 class="section">7.3 Locale Categories</h3>
+<a name="index-categories-for-locales"></a>
+<a name="index-locale-categories"></a>
+
+<p>The purposes that locales serve are grouped into <em>categories</em>, so
+that a user or a program can choose the locale for each category
+independently.  Here is a table of categories; each name is both an
+environment variable that a user can set, and a macro name that you can
+use as the first argument to <code>setlocale</code>.
+</p>
+<p>The contents of the environment variable (or the string in the second
+argument to <code>setlocale</code>) has to be a valid locale name.
+See <a href="Locale-Names.html#Locale-Names">Locale Names</a>.
+</p>
+<dl compact="compact">
+<dt><code>LC_COLLATE</code>
+<a name="index-LC_005fCOLLATE"></a>
+</dt>
+<dd>
+<p>This category applies to collation of strings (functions <code>strcoll</code>
+and <code>strxfrm</code>); see <a href="Collation-Functions.html#Collation-Functions">Collation Functions</a>.
+</p>
+</dd>
+<dt><code>LC_CTYPE</code>
+<a name="index-LC_005fCTYPE"></a>
+</dt>
+<dd>
+<p>This category applies to classification and conversion of characters,
+and to multibyte and wide characters;
+see <a href="Character-Handling.html#Character-Handling">Character Handling</a>, and <a href="Character-Set-Handling.html#Character-Set-Handling">Character Set Handling</a>.
+</p>
+</dd>
+<dt><code>LC_MONETARY</code>
+<a name="index-LC_005fMONETARY"></a>
+</dt>
+<dd>
+<p>This category applies to formatting monetary values; see <a href="General-Numeric.html#General-Numeric">General Numeric</a>.
+</p>
+</dd>
+<dt><code>LC_NUMERIC</code>
+<a name="index-LC_005fNUMERIC"></a>
+</dt>
+<dd>
+<p>This category applies to formatting numeric values that are not
+monetary; see <a href="General-Numeric.html#General-Numeric">General Numeric</a>.
+</p>
+</dd>
+<dt><code>LC_TIME</code>
+<a name="index-LC_005fTIME"></a>
+</dt>
+<dd>
+<p>This category applies to formatting date and time values; see
+<a href="Formatting-Calendar-Time.html#Formatting-Calendar-Time">Formatting Calendar Time</a>.
+</p>
+</dd>
+<dt><code>LC_MESSAGES</code>
+<a name="index-LC_005fMESSAGES"></a>
+</dt>
+<dd>
+<p>This category applies to selecting the language used in the user
+interface for message translation (see <a href="The-Uniforum-approach.html#The-Uniforum-approach">The Uniforum approach</a>;
+see <a href="Message-catalogs-a-la-X_002fOpen.html#Message-catalogs-a-la-X_002fOpen">Message catalogs a la X/Open</a>)  and contains regular expressions
+for affirmative and negative responses.
+</p>
+</dd>
+<dt><code>LC_ALL</code>
+<a name="index-LC_005fALL"></a>
+</dt>
+<dd>
+<p>This is not a category; it is only a macro that you can use
+with <code>setlocale</code> to set a single locale for all purposes.  Setting
+this environment variable overwrites all selections by the other
+<code>LC_*</code> variables or <code>LANG</code>.
+</p>
+</dd>
+<dt><code>LANG</code>
+<a name="index-LANG"></a>
+</dt>
+<dd>
+<p>If this environment variable is defined, its value specifies the locale
+to use for all purposes except as overridden by the variables above.
+</p></dd>
+</dl>
+
+<a name="index-LANGUAGE"></a>
+<p>When developing the message translation functions it was felt that the
+functionality provided by the variables above is not sufficient.  For
+example, it should be possible to specify more than one locale name.
+Take a Swedish user who better speaks German than English, and a program
+whose messages are output in English by default.  It should be possible
+to specify that the first choice of language is Swedish, the second
+German, and if this also fails to use English.  This is
+possible with the variable <code>LANGUAGE</code>.  For further description of
+this GNU extension see <a href="Using-gettextized-software.html#Using-gettextized-software">Using gettextized software</a>.
+</p>
+<hr>
+<div class="header">
+<p>
+Next: <a href="Setting-the-Locale.html#Setting-the-Locale" accesskey="n" rel="next">Setting the Locale</a>, Previous: <a href="Choosing-Locale.html#Choosing-Locale" accesskey="p" rel="prev">Choosing Locale</a>, Up: <a href="Locales.html#Locales" accesskey="u" rel="up">Locales</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

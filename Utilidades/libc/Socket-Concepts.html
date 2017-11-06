@@ -1,0 +1,189 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Socket Concepts</title>
+
+<meta name="description" content="The GNU C Library: Socket Concepts">
+<meta name="keywords" content="The GNU C Library: Socket Concepts">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Sockets.html#Sockets" rel="up" title="Sockets">
+<link href="Communication-Styles.html#Communication-Styles" rel="next" title="Communication Styles">
+<link href="Sockets.html#Sockets" rel="prev" title="Sockets">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Socket-Concepts"></a>
+<div class="header">
+<p>
+Next: <a href="Communication-Styles.html#Communication-Styles" accesskey="n" rel="next">Communication Styles</a>, Up: <a href="Sockets.html#Sockets" accesskey="u" rel="up">Sockets</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Socket-Concepts-1"></a>
+<h3 class="section">16.1 Socket Concepts</h3>
+
+<a name="index-communication-style-_0028of-a-socket_0029"></a>
+<a name="index-style-of-communication-_0028of-a-socket_0029"></a>
+<p>When you create a socket, you must specify the style of communication
+you want to use and the type of protocol that should implement it.
+The <em>communication style</em> of a socket defines the user-level
+semantics of sending and receiving data on the socket.  Choosing a
+communication style specifies the answers to questions such as these:
+</p>
+<ul>
+<li> <a name="index-packet"></a>
+<a name="index-byte-stream"></a>
+<a name="index-stream-_0028sockets_0029"></a>
+<strong>What are the units of data transmission?</strong>  Some communication
+styles regard the data as a sequence of bytes with no larger
+structure; others group the bytes into records (which are known in
+this context as <em>packets</em>).
+
+</li><li> <a name="index-loss-of-data-on-sockets"></a>
+<a name="index-data-loss-on-sockets"></a>
+<strong>Can data be lost during normal operation?</strong>  Some communication
+styles guarantee that all the data sent arrives in the order it was
+sent (barring system or network crashes); other styles occasionally
+lose data as a normal part of operation, and may sometimes deliver
+packets more than once or in the wrong order.
+
+<p>Designing a program to use unreliable communication styles usually
+involves taking precautions to detect lost or misordered packets and
+to retransmit data as needed.
+</p>
+</li><li> <strong>Is communication entirely with one partner?</strong>  Some
+communication styles are like a telephone call&mdash;you make a
+<em>connection</em> with one remote socket and then exchange data
+freely.  Other styles are like mailing letters&mdash;you specify a
+destination address for each message you send.
+</li></ul>
+
+<a name="index-namespace-_0028of-socket_0029"></a>
+<a name="index-domain-_0028of-socket_0029"></a>
+<a name="index-socket-namespace"></a>
+<a name="index-socket-domain"></a>
+<p>You must also choose a <em>namespace</em> for naming the socket.  A socket
+name (&ldquo;address&rdquo;) is meaningful only in the context of a particular
+namespace.  In fact, even the data type to use for a socket name may
+depend on the namespace.  Namespaces are also called &ldquo;domains&rdquo;, but we
+avoid that word as it can be confused with other usage of the same
+term.  Each namespace has a symbolic name that starts with &lsquo;<samp>PF_</samp>&rsquo;.
+A corresponding symbolic name starting with &lsquo;<samp>AF_</samp>&rsquo; designates the
+address format for that namespace.
+</p>
+<a name="index-network-protocol"></a>
+<a name="index-protocol-_0028of-socket_0029"></a>
+<a name="index-socket-protocol"></a>
+<a name="index-protocol-family"></a>
+<p>Finally you must choose the <em>protocol</em> to carry out the
+communication.  The protocol determines what low-level mechanism is used
+to transmit and receive data.  Each protocol is valid for a particular
+namespace and communication style; a namespace is sometimes called a
+<em>protocol family</em> because of this, which is why the namespace names
+start with &lsquo;<samp>PF_</samp>&rsquo;.
+</p>
+<p>The rules of a protocol apply to the data passing between two programs,
+perhaps on different computers; most of these rules are handled by the
+operating system and you need not know about them.  What you do need to
+know about protocols is this:
+</p>
+<ul>
+<li> In order to have communication between two sockets, they must specify
+the <em>same</em> protocol.
+
+</li><li> Each protocol is meaningful with particular style/namespace
+combinations and cannot be used with inappropriate combinations.  For
+example, the TCP protocol fits only the byte stream style of
+communication and the Internet namespace.
+
+</li><li> For each combination of style and namespace there is a <em>default
+protocol</em>, which you can request by specifying 0 as the protocol
+number.  And that&rsquo;s what you should normally do&mdash;use the default.
+</li></ul>
+
+<p>Throughout the following description at various places
+variables/parameters to denote sizes are required.  And here the trouble
+starts.  In the first implementations the type of these variables was
+simply <code>int</code>.  On most machines at that time an <code>int</code> was 32
+bits wide, which created a <em>de facto</em> standard requiring 32-bit
+variables.  This is important since references to variables of this type
+are passed to the kernel.
+</p>
+<p>Then the POSIX people came and unified the interface with the words &quot;all
+size values are of type <code>size_t</code>&quot;.  On 64-bit machines
+<code>size_t</code> is 64 bits wide, so pointers to variables were no longer
+possible.
+</p>
+<p>The Unix98 specification provides a solution by introducing a type
+<code>socklen_t</code>.  This type is used in all of the cases that POSIX
+changed to use <code>size_t</code>.  The only requirement of this type is that
+it be an unsigned type of at least 32 bits.  Therefore, implementations
+which require that references to 32-bit variables be passed can be as
+happy as implementations which use 64-bit values.
+</p>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Communication-Styles.html#Communication-Styles" accesskey="n" rel="next">Communication Styles</a>, Up: <a href="Sockets.html#Sockets" accesskey="u" rel="up">Sockets</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

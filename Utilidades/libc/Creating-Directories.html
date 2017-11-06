@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Creating Directories</title>
+
+<meta name="description" content="The GNU C Library: Creating Directories">
+<meta name="keywords" content="The GNU C Library: Creating Directories">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="File-System-Interface.html#File-System-Interface" rel="up" title="File System Interface">
+<link href="File-Attributes.html#File-Attributes" rel="next" title="File Attributes">
+<link href="Renaming-Files.html#Renaming-Files" rel="prev" title="Renaming Files">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Creating-Directories"></a>
+<div class="header">
+<p>
+Next: <a href="File-Attributes.html#File-Attributes" accesskey="n" rel="next">File Attributes</a>, Previous: <a href="Renaming-Files.html#Renaming-Files" accesskey="p" rel="prev">Renaming Files</a>, Up: <a href="File-System-Interface.html#File-System-Interface" accesskey="u" rel="up">File System Interface</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Creating-Directories-1"></a>
+<h3 class="section">14.8 Creating Directories</h3>
+<a name="index-creating-a-directory"></a>
+<a name="index-directories_002c-creating"></a>
+
+<a name="index-mkdir-1"></a>
+<p>Directories are created with the <code>mkdir</code> function.  (There is also
+a shell command <code>mkdir</code> which does the same thing.)
+</p>
+<dl>
+<dt><a name="index-mkdir"></a>Function: <em>int</em> <strong>mkdir</strong> <em>(const char *<var>filename</var>, mode_t <var>mode</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>mkdir</code> function creates a new, empty directory with name
+<var>filename</var>.
+</p>
+<p>The argument <var>mode</var> specifies the file permissions for the new
+directory file.  See <a href="Permission-Bits.html#Permission-Bits">Permission Bits</a>, for more information about
+this.
+</p>
+<p>A return value of <code>0</code> indicates successful completion, and
+<code>-1</code> indicates failure.  In addition to the usual file name syntax
+errors (see <a href="File-Name-Errors.html#File-Name-Errors">File Name Errors</a>), the following <code>errno</code> error
+conditions are defined for this function:
+</p>
+<dl compact="compact">
+<dt><code>EACCES</code></dt>
+<dd><p>Write permission is denied for the parent directory in which the new
+directory is to be added.
+</p>
+</dd>
+<dt><code>EEXIST</code></dt>
+<dd><p>A file named <var>filename</var> already exists.
+</p>
+</dd>
+<dt><code>EMLINK</code></dt>
+<dd><p>The parent directory has too many links (entries).
+</p>
+<p>Well-designed file systems never report this error, because they permit
+more links than your disk could possibly hold.  However, you must still
+take account of the possibility of this error, as it could result from
+network access to a file system on another machine.
+</p>
+</dd>
+<dt><code>ENOSPC</code></dt>
+<dd><p>The file system doesn&rsquo;t have enough room to create the new directory.
+</p>
+</dd>
+<dt><code>EROFS</code></dt>
+<dd><p>The parent directory of the directory being created is on a read-only
+file system and cannot be modified.
+</p></dd>
+</dl>
+
+<p>To use this function, your program should include the header file
+<samp>sys/stat.h</samp>.
+<a name="index-sys_002fstat_002eh-1"></a>
+</p></dd></dl>
+
+
+
+
+</body>
+</html>

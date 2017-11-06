@@ -1,0 +1,255 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Growing Objects</title>
+
+<meta name="description" content="The GNU C Library: Growing Objects">
+<meta name="keywords" content="The GNU C Library: Growing Objects">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Obstacks.html#Obstacks" rel="up" title="Obstacks">
+<link href="Extra-Fast-Growing.html#Extra-Fast-Growing" rel="next" title="Extra Fast Growing">
+<link href="Obstack-Functions.html#Obstack-Functions" rel="prev" title="Obstack Functions">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Growing-Objects"></a>
+<div class="header">
+<p>
+Next: <a href="Extra-Fast-Growing.html#Extra-Fast-Growing" accesskey="n" rel="next">Extra Fast Growing</a>, Previous: <a href="Obstack-Functions.html#Obstack-Functions" accesskey="p" rel="prev">Obstack Functions</a>, Up: <a href="Obstacks.html#Obstacks" accesskey="u" rel="up">Obstacks</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Growing-Objects-1"></a>
+<h4 class="subsubsection">3.2.6.6 Growing Objects</h4>
+<a name="index-growing-objects-_0028in-obstacks_0029"></a>
+<a name="index-changing-the-size-of-a-block-_0028obstacks_0029"></a>
+
+<p>Because memory in obstack chunks is used sequentially, it is possible to
+build up an object step by step, adding one or more bytes at a time to the
+end of the object.  With this technique, you do not need to know how much
+data you will put in the object until you come to the end of it.  We call
+this the technique of <em>growing objects</em>.  The special functions
+for adding data to the growing object are described in this section.
+</p>
+<p>You don&rsquo;t need to do anything special when you start to grow an object.
+Using one of the functions to add data to the object automatically
+starts it.  However, it is necessary to say explicitly when the object is
+finished.  This is done with the function <code>obstack_finish</code>.
+</p>
+<p>The actual address of the object thus built up is not known until the
+object is finished.  Until then, it always remains possible that you will
+add so much data that the object must be copied into a new chunk.
+</p>
+<p>While the obstack is in use for a growing object, you cannot use it for
+ordinary allocation of another object.  If you try to do so, the space
+already added to the growing object will become part of the other object.
+</p>
+<dl>
+<dt><a name="index-obstack_005fblank"></a>Function: <em>void</em> <strong>obstack_blank</strong> <em>(struct obstack *<var>obstack-ptr</var>, int <var>size</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe race:obstack-ptr
+| AS-Safe 
+| AC-Unsafe corrupt mem
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The most basic function for adding to a growing object is
+<code>obstack_blank</code>, which adds space without initializing it.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-obstack_005fgrow"></a>Function: <em>void</em> <strong>obstack_grow</strong> <em>(struct obstack *<var>obstack-ptr</var>, void *<var>data</var>, int <var>size</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe race:obstack-ptr
+| AS-Safe 
+| AC-Unsafe corrupt mem
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>To add a block of initialized space, use <code>obstack_grow</code>, which is
+the growing-object analogue of <code>obstack_copy</code>.  It adds <var>size</var>
+bytes of data to the growing object, copying the contents from
+<var>data</var>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-obstack_005fgrow0"></a>Function: <em>void</em> <strong>obstack_grow0</strong> <em>(struct obstack *<var>obstack-ptr</var>, void *<var>data</var>, int <var>size</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe race:obstack-ptr
+| AS-Safe 
+| AC-Unsafe corrupt mem
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This is the growing-object analogue of <code>obstack_copy0</code>.  It adds
+<var>size</var> bytes copied from <var>data</var>, followed by an additional null
+character.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-obstack_005f1grow"></a>Function: <em>void</em> <strong>obstack_1grow</strong> <em>(struct obstack *<var>obstack-ptr</var>, char <var>c</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe race:obstack-ptr
+| AS-Safe 
+| AC-Unsafe corrupt mem
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>To add one character at a time, use the function <code>obstack_1grow</code>.
+It adds a single byte containing <var>c</var> to the growing object.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-obstack_005fptr_005fgrow"></a>Function: <em>void</em> <strong>obstack_ptr_grow</strong> <em>(struct obstack *<var>obstack-ptr</var>, void *<var>data</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe race:obstack-ptr
+| AS-Safe 
+| AC-Unsafe corrupt mem
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>Adding the value of a pointer one can use the function
+<code>obstack_ptr_grow</code>.  It adds <code>sizeof (void *)</code> bytes
+containing the value of <var>data</var>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-obstack_005fint_005fgrow"></a>Function: <em>void</em> <strong>obstack_int_grow</strong> <em>(struct obstack *<var>obstack-ptr</var>, int <var>data</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe race:obstack-ptr
+| AS-Safe 
+| AC-Unsafe corrupt mem
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>A single value of type <code>int</code> can be added by using the
+<code>obstack_int_grow</code> function.  It adds <code>sizeof (int)</code> bytes to
+the growing object and initializes them with the value of <var>data</var>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-obstack_005ffinish"></a>Function: <em>void *</em> <strong>obstack_finish</strong> <em>(struct obstack *<var>obstack-ptr</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe race:obstack-ptr
+| AS-Safe 
+| AC-Unsafe corrupt
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>When you are finished growing the object, use the function
+<code>obstack_finish</code> to close it off and return its final address.
+</p>
+<p>Once you have finished the object, the obstack is available for ordinary
+allocation or for growing another object.
+</p>
+<p>This function can return a null pointer under the same conditions as
+<code>obstack_alloc</code> (see <a href="Allocation-in-an-Obstack.html#Allocation-in-an-Obstack">Allocation in an Obstack</a>).
+</p></dd></dl>
+
+<p>When you build an object by growing it, you will probably need to know
+afterward how long it became.  You need not keep track of this as you grow
+the object, because you can find out the length from the obstack just
+before finishing the object with the function <code>obstack_object_size</code>,
+declared as follows:
+</p>
+<dl>
+<dt><a name="index-obstack_005fobject_005fsize"></a>Function: <em>int</em> <strong>obstack_object_size</strong> <em>(struct obstack *<var>obstack-ptr</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe race:obstack-ptr
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function returns the current size of the growing object, in bytes.
+Remember to call this function <em>before</em> finishing the object.
+After it is finished, <code>obstack_object_size</code> will return zero.
+</p></dd></dl>
+
+<p>If you have started growing an object and wish to cancel it, you should
+finish it and then free it, like this:
+</p>
+<div class="smallexample">
+<pre class="smallexample">obstack_free (obstack_ptr, obstack_finish (obstack_ptr));
+</pre></div>
+
+<p>This has no effect if no object was growing.
+</p>
+<a name="index-shrinking-objects"></a>
+<p>You can use <code>obstack_blank</code> with a negative size argument to make
+the current object smaller.  Just don&rsquo;t try to shrink it beyond zero
+length&mdash;there&rsquo;s no telling what will happen if you do that.
+</p>
+<hr>
+<div class="header">
+<p>
+Next: <a href="Extra-Fast-Growing.html#Extra-Fast-Growing" accesskey="n" rel="next">Extra Fast Growing</a>, Previous: <a href="Obstack-Functions.html#Obstack-Functions" accesskey="p" rel="prev">Obstack Functions</a>, Up: <a href="Obstacks.html#Obstacks" accesskey="u" rel="up">Obstacks</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

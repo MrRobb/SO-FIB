@@ -1,0 +1,344 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Floating Point Classes</title>
+
+<meta name="description" content="The GNU C Library: Floating Point Classes">
+<meta name="keywords" content="The GNU C Library: Floating Point Classes">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Arithmetic.html#Arithmetic" rel="up" title="Arithmetic">
+<link href="Floating-Point-Errors.html#Floating-Point-Errors" rel="next" title="Floating Point Errors">
+<link href="Floating-Point-Numbers.html#Floating-Point-Numbers" rel="prev" title="Floating Point Numbers">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Floating-Point-Classes"></a>
+<div class="header">
+<p>
+Next: <a href="Floating-Point-Errors.html#Floating-Point-Errors" accesskey="n" rel="next">Floating Point Errors</a>, Previous: <a href="Floating-Point-Numbers.html#Floating-Point-Numbers" accesskey="p" rel="prev">Floating Point Numbers</a>, Up: <a href="Arithmetic.html#Arithmetic" accesskey="u" rel="up">Arithmetic</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Floating_002dPoint-Number-Classification-Functions"></a>
+<h3 class="section">20.4 Floating-Point Number Classification Functions</h3>
+<a name="index-floating_002dpoint-classes"></a>
+<a name="index-classes_002c-floating_002dpoint"></a>
+<a name="index-math_002eh-1"></a>
+
+<p>ISO&nbsp;C99<!-- /@w --> defines macros that let you determine what sort of
+floating-point number a variable holds.
+</p>
+<dl>
+<dt><a name="index-fpclassify"></a>Macro: <em>int</em> <strong>fpclassify</strong> <em>(<em>float-type</em> <var>x</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This is a generic macro which works on all floating-point types and
+which returns a value of type <code>int</code>.  The possible values are:
+</p>
+<dl compact="compact">
+<dt><code>FP_NAN</code>
+<a name="index-FP_005fNAN"></a>
+</dt>
+<dd>
+<p>The floating-point number <var>x</var> is &ldquo;Not a Number&rdquo; (see <a href="Infinity-and-NaN.html#Infinity-and-NaN">Infinity and NaN</a>)
+</p></dd>
+<dt><code>FP_INFINITE</code>
+<a name="index-FP_005fINFINITE"></a>
+</dt>
+<dd>
+<p>The value of <var>x</var> is either plus or minus infinity (see <a href="Infinity-and-NaN.html#Infinity-and-NaN">Infinity and NaN</a>)
+</p></dd>
+<dt><code>FP_ZERO</code>
+<a name="index-FP_005fZERO"></a>
+</dt>
+<dd>
+<p>The value of <var>x</var> is zero.  In floating-point formats like IEEE&nbsp;754<!-- /@w -->, where zero can be signed, this value is also returned if
+<var>x</var> is negative zero.
+</p></dd>
+<dt><code>FP_SUBNORMAL</code>
+<a name="index-FP_005fSUBNORMAL"></a>
+</dt>
+<dd>
+<p>Numbers whose absolute value is too small to be represented in the
+normal format are represented in an alternate, <em>denormalized</em> format
+(see <a href="Floating-Point-Concepts.html#Floating-Point-Concepts">Floating Point Concepts</a>).  This format is less precise but can
+represent values closer to zero.  <code>fpclassify</code> returns this value
+for values of <var>x</var> in this alternate format.
+</p></dd>
+<dt><code>FP_NORMAL</code>
+<a name="index-FP_005fNORMAL"></a>
+</dt>
+<dd>
+<p>This value is returned for all other values of <var>x</var>.  It indicates
+that there is nothing special about the number.
+</p></dd>
+</dl>
+
+</dd></dl>
+
+<p><code>fpclassify</code> is most useful if more than one property of a number
+must be tested.  There are more specific macros which only test one
+property at a time.  Generally these macros execute faster than
+<code>fpclassify</code>, since there is special hardware support for them.
+You should therefore use the specific macros whenever possible.
+</p>
+<dl>
+<dt><a name="index-iscanonical"></a>Macro: <em>int</em> <strong>iscanonical</strong> <em>(<em>float-type</em> <var>x</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>In some floating-point formats, some values have canonical (preferred)
+and noncanonical encodings (for IEEE interchange binary formats, all
+encodings are canonical).  This macro returns a nonzero value if
+<var>x</var> has a canonical encoding.  It is from TS 18661-1:2014.
+</p>
+<p>Note that some formats have multiple encodings of a value which are
+all equally canonical; <code>iscanonical</code> returns a nonzero value for
+all such encodings.  Also, formats may have encodings that do not
+correspond to any valid value of the type.  In ISO C terms these are
+<em>trap representations</em>; in the GNU C Library, <code>iscanonical</code> returns
+zero for such encodings.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-isfinite"></a>Macro: <em>int</em> <strong>isfinite</strong> <em>(<em>float-type</em> <var>x</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This macro returns a nonzero value if <var>x</var> is finite: not plus or
+minus infinity, and not NaN.  It is equivalent to
+</p>
+<div class="smallexample">
+<pre class="smallexample">(fpclassify (x) != FP_NAN &amp;&amp; fpclassify (x) != FP_INFINITE)
+</pre></div>
+
+<p><code>isfinite</code> is implemented as a macro which accepts any
+floating-point type.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-isnormal"></a>Macro: <em>int</em> <strong>isnormal</strong> <em>(<em>float-type</em> <var>x</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This macro returns a nonzero value if <var>x</var> is finite and normalized.
+It is equivalent to
+</p>
+<div class="smallexample">
+<pre class="smallexample">(fpclassify (x) == FP_NORMAL)
+</pre></div>
+</dd></dl>
+
+<dl>
+<dt><a name="index-isnan"></a>Macro: <em>int</em> <strong>isnan</strong> <em>(<em>float-type</em> <var>x</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This macro returns a nonzero value if <var>x</var> is NaN.  It is equivalent
+to
+</p>
+<div class="smallexample">
+<pre class="smallexample">(fpclassify (x) == FP_NAN)
+</pre></div>
+</dd></dl>
+
+<dl>
+<dt><a name="index-issignaling"></a>Macro: <em>int</em> <strong>issignaling</strong> <em>(<em>float-type</em> <var>x</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This macro returns a nonzero value if <var>x</var> is a signaling NaN
+(sNaN).  It is from TS 18661-1:2014.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-issubnormal"></a>Macro: <em>int</em> <strong>issubnormal</strong> <em>(<em>float-type</em> <var>x</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This macro returns a nonzero value if <var>x</var> is subnormal.  It is
+from TS 18661-1:2014.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-iszero"></a>Macro: <em>int</em> <strong>iszero</strong> <em>(<em>float-type</em> <var>x</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This macro returns a nonzero value if <var>x</var> is zero.  It is from TS
+18661-1:2014.
+</p></dd></dl>
+
+<p>Another set of floating-point classification functions was provided by
+BSD.  The GNU C Library also supports these functions; however, we
+recommend that you use the ISO C99 macros in new code.  Those are standard
+and will be available more widely.  Also, since they are macros, you do
+not have to worry about the type of their argument.
+</p>
+<dl>
+<dt><a name="index-isinf"></a>Function: <em>int</em> <strong>isinf</strong> <em>(double <var>x</var>)</em></dt>
+<dt><a name="index-isinff"></a>Function: <em>int</em> <strong>isinff</strong> <em>(float <var>x</var>)</em></dt>
+<dt><a name="index-isinfl"></a>Function: <em>int</em> <strong>isinfl</strong> <em>(long double <var>x</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function returns <code>-1</code> if <var>x</var> represents negative infinity,
+<code>1</code> if <var>x</var> represents positive infinity, and <code>0</code> otherwise.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-isnan-1"></a>Function: <em>int</em> <strong>isnan</strong> <em>(double <var>x</var>)</em></dt>
+<dt><a name="index-isnanf"></a>Function: <em>int</em> <strong>isnanf</strong> <em>(float <var>x</var>)</em></dt>
+<dt><a name="index-isnanl"></a>Function: <em>int</em> <strong>isnanl</strong> <em>(long double <var>x</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function returns a nonzero value if <var>x</var> is a &ldquo;not a number&rdquo;
+value, and zero otherwise.
+</p>
+<p><strong>NB:</strong> The <code>isnan</code> macro defined by ISO&nbsp;C99<!-- /@w --> overrides
+the BSD function.  This is normally not a problem, because the two
+routines behave identically.  However, if you really need to get the BSD
+function for some reason, you can write
+</p>
+<div class="smallexample">
+<pre class="smallexample">(isnan) (x)
+</pre></div>
+</dd></dl>
+
+<dl>
+<dt><a name="index-finite"></a>Function: <em>int</em> <strong>finite</strong> <em>(double <var>x</var>)</em></dt>
+<dt><a name="index-finitef"></a>Function: <em>int</em> <strong>finitef</strong> <em>(float <var>x</var>)</em></dt>
+<dt><a name="index-finitel"></a>Function: <em>int</em> <strong>finitel</strong> <em>(long double <var>x</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function returns a nonzero value if <var>x</var> is finite or a &ldquo;not a
+number&rdquo; value, and zero otherwise.
+</p></dd></dl>
+
+<p><strong>Portability Note:</strong> The functions listed in this section are BSD
+extensions.
+</p>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Floating-Point-Errors.html#Floating-Point-Errors" accesskey="n" rel="next">Floating Point Errors</a>, Previous: <a href="Floating-Point-Numbers.html#Floating-Point-Numbers" accesskey="p" rel="prev">Floating Point Numbers</a>, Up: <a href="Arithmetic.html#Arithmetic" accesskey="u" rel="up">Arithmetic</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

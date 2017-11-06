@@ -1,0 +1,140 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Obstack Functions</title>
+
+<meta name="description" content="The GNU C Library: Obstack Functions">
+<meta name="keywords" content="The GNU C Library: Obstack Functions">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Obstacks.html#Obstacks" rel="up" title="Obstacks">
+<link href="Growing-Objects.html#Growing-Objects" rel="next" title="Growing Objects">
+<link href="Freeing-Obstack-Objects.html#Freeing-Obstack-Objects" rel="prev" title="Freeing Obstack Objects">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Obstack-Functions"></a>
+<div class="header">
+<p>
+Next: <a href="Growing-Objects.html#Growing-Objects" accesskey="n" rel="next">Growing Objects</a>, Previous: <a href="Freeing-Obstack-Objects.html#Freeing-Obstack-Objects" accesskey="p" rel="prev">Freeing Obstack Objects</a>, Up: <a href="Obstacks.html#Obstacks" accesskey="u" rel="up">Obstacks</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Obstack-Functions-and-Macros"></a>
+<h4 class="subsubsection">3.2.6.5 Obstack Functions and Macros</h4>
+<a name="index-macros"></a>
+
+<p>The interfaces for using obstacks may be defined either as functions or
+as macros, depending on the compiler.  The obstack facility works with
+all C compilers, including both ISO&nbsp;C<!-- /@w --> and traditional C, but there are
+precautions you must take if you plan to use compilers other than GNU C.
+</p>
+<p>If you are using an old-fashioned <span class="nolinebreak">non-ISO</span>&nbsp;C<!-- /@w --> compiler, all the obstack
+&ldquo;functions&rdquo; are actually defined only as macros.  You can call these
+macros like functions, but you cannot use them in any other way (for
+example, you cannot take their address).
+</p>
+<p>Calling the macros requires a special precaution: namely, the first
+operand (the obstack pointer) may not contain any side effects, because
+it may be computed more than once.  For example, if you write this:
+</p>
+<div class="smallexample">
+<pre class="smallexample">obstack_alloc (get_obstack (), 4);
+</pre></div>
+
+<p>you will find that <code>get_obstack</code> may be called several times.
+If you use <code>*obstack_list_ptr++</code> as the obstack pointer argument,
+you will get very strange results since the incrementation may occur
+several times.
+</p>
+<p>In ISO&nbsp;C<!-- /@w -->, each function has both a macro definition and a function
+definition.  The function definition is used if you take the address of the
+function without calling it.  An ordinary call uses the macro definition by
+default, but you can request the function definition instead by writing the
+function name in parentheses, as shown here:
+</p>
+<div class="smallexample">
+<pre class="smallexample">char *x;
+void *(*funcp) ();
+/* <span class="roman">Use the macro</span>.  */
+x = (char *) obstack_alloc (obptr, size);
+/* <span class="roman">Call the function</span>.  */
+x = (char *) (obstack_alloc) (obptr, size);
+/* <span class="roman">Take the address of the function</span>.  */
+funcp = obstack_alloc;
+</pre></div>
+
+<p>This is the same situation that exists in ISO&nbsp;C<!-- /@w --> for the standard library
+functions.  See <a href="Macro-Definitions.html#Macro-Definitions">Macro Definitions</a>.
+</p>
+<p><strong>Warning:</strong> When you do use the macros, you must observe the
+precaution of avoiding side effects in the first operand, even in ISO&nbsp;C<!-- /@w -->.
+</p>
+<p>If you use the GNU C compiler, this precaution is not necessary, because
+various language extensions in GNU C permit defining the macros so as to
+compute each argument only once.
+</p>
+<hr>
+<div class="header">
+<p>
+Next: <a href="Growing-Objects.html#Growing-Objects" accesskey="n" rel="next">Growing Objects</a>, Previous: <a href="Freeing-Obstack-Objects.html#Freeing-Obstack-Objects" accesskey="p" rel="prev">Freeing Obstack Objects</a>, Up: <a href="Obstacks.html#Obstacks" accesskey="u" rel="up">Obstacks</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

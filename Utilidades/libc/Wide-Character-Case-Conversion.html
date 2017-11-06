@@ -1,0 +1,207 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Wide Character Case Conversion</title>
+
+<meta name="description" content="The GNU C Library: Wide Character Case Conversion">
+<meta name="keywords" content="The GNU C Library: Wide Character Case Conversion">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Character-Handling.html#Character-Handling" rel="up" title="Character Handling">
+<link href="String-and-Array-Utilities.html#String-and-Array-Utilities" rel="next" title="String and Array Utilities">
+<link href="Using-Wide-Char-Classes.html#Using-Wide-Char-Classes" rel="prev" title="Using Wide Char Classes">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Wide-Character-Case-Conversion"></a>
+<div class="header">
+<p>
+Previous: <a href="Using-Wide-Char-Classes.html#Using-Wide-Char-Classes" accesskey="p" rel="prev">Using Wide Char Classes</a>, Up: <a href="Character-Handling.html#Character-Handling" accesskey="u" rel="up">Character Handling</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Mapping-of-wide-characters_002e"></a>
+<h3 class="section">4.5 Mapping of wide characters.</h3>
+
+<p>The classification functions are also generalized by the ISO&nbsp;C<!-- /@w -->
+standard.  Instead of just allowing the two standard mappings, a
+locale can contain others.  Again, the <code>localedef</code> program
+already supports generating such locale data files.
+</p>
+<dl>
+<dt><a name="index-wctrans_005ft"></a>Data Type: <strong>wctrans_t</strong></dt>
+<dd>
+<p>This data type is defined as a scalar type which can hold a value
+representing the locale-dependent character mapping.  There is no way to
+construct such a value apart from using the return value of the
+<code>wctrans</code> function.
+</p>
+<a name="index-wctype_002eh-14"></a>
+<p>This type is defined in <samp>wctype.h</samp>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-wctrans"></a>Function: <em>wctrans_t</em> <strong>wctrans</strong> <em>(const char *<var>property</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe locale
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>wctrans</code> function has to be used to find out whether a named
+mapping is defined in the current locale selected for the
+<code>LC_CTYPE</code> category.  If the returned value is non-zero, you can use
+it afterwards in calls to <code>towctrans</code>.  If the return value is
+zero no such mapping is known in the current locale.
+</p>
+<p>Beside locale-specific mappings there are two mappings which are
+guaranteed to be available in every locale:
+</p>
+<table>
+<tr><td width="50%"><code>&quot;tolower&quot;</code></td><td width="50%"><code>&quot;toupper&quot;</code></td></tr>
+</table>
+
+<a name="index-wctype_002eh-15"></a>
+<p>These functions are declared in <samp>wctype.h</samp>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-towctrans"></a>Function: <em>wint_t</em> <strong>towctrans</strong> <em>(wint_t <var>wc</var>, wctrans_t <var>desc</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p><code>towctrans</code> maps the input character <var>wc</var>
+according to the rules of the mapping for which <var>desc</var> is a
+descriptor, and returns the value it finds.  <var>desc</var> must be
+obtained by a successful call to <code>wctrans</code>.
+</p>
+<a name="index-wctype_002eh-16"></a>
+<p>This function is declared in <samp>wctype.h</samp>.
+</p></dd></dl>
+
+<p>For the generally available mappings, the ISO&nbsp;C<!-- /@w --> standard defines
+convenient shortcuts so that it is not necessary to call <code>wctrans</code>
+for them.
+</p>
+<dl>
+<dt><a name="index-towlower"></a>Function: <em>wint_t</em> <strong>towlower</strong> <em>(wint_t <var>wc</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe locale
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>If <var>wc</var> is an upper-case letter, <code>towlower</code> returns the corresponding
+lower-case letter.  If <var>wc</var> is not an upper-case letter,
+<var>wc</var> is returned unchanged.
+</p>
+<p><code>towlower</code> can be implemented using
+</p>
+<div class="smallexample">
+<pre class="smallexample">towctrans (wc, wctrans (&quot;tolower&quot;))
+</pre></div>
+
+<a name="index-wctype_002eh-17"></a>
+<p>This function is declared in <samp>wctype.h</samp>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-towupper"></a>Function: <em>wint_t</em> <strong>towupper</strong> <em>(wint_t <var>wc</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe locale
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>If <var>wc</var> is a lower-case letter, <code>towupper</code> returns the corresponding
+upper-case letter.  Otherwise <var>wc</var> is returned unchanged.
+</p>
+<p><code>towupper</code> can be implemented using
+</p>
+<div class="smallexample">
+<pre class="smallexample">towctrans (wc, wctrans (&quot;toupper&quot;))
+</pre></div>
+
+<a name="index-wctype_002eh-18"></a>
+<p>This function is declared in <samp>wctype.h</samp>.
+</p></dd></dl>
+
+<p>The same warnings given in the last section for the use of the wide
+character classification functions apply here.  It is not possible to
+simply cast a <code>char</code> type value to a <code>wint_t</code> and use it as an
+argument to <code>towctrans</code> calls.
+</p><hr>
+<div class="header">
+<p>
+Previous: <a href="Using-Wide-Char-Classes.html#Using-Wide-Char-Classes" accesskey="p" rel="prev">Using Wide Char Classes</a>, Up: <a href="Character-Handling.html#Character-Handling" accesskey="u" rel="up">Character Handling</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

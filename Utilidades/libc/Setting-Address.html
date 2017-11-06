@@ -1,0 +1,142 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Setting Address</title>
+
+<meta name="description" content="The GNU C Library: Setting Address">
+<meta name="keywords" content="The GNU C Library: Setting Address">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Socket-Addresses.html#Socket-Addresses" rel="up" title="Socket Addresses">
+<link href="Reading-Address.html#Reading-Address" rel="next" title="Reading Address">
+<link href="Address-Formats.html#Address-Formats" rel="prev" title="Address Formats">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Setting-Address"></a>
+<div class="header">
+<p>
+Next: <a href="Reading-Address.html#Reading-Address" accesskey="n" rel="next">Reading Address</a>, Previous: <a href="Address-Formats.html#Address-Formats" accesskey="p" rel="prev">Address Formats</a>, Up: <a href="Socket-Addresses.html#Socket-Addresses" accesskey="u" rel="up">Socket Addresses</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Setting-the-Address-of-a-Socket"></a>
+<h4 class="subsection">16.3.2 Setting the Address of a Socket</h4>
+
+<a name="index-sys_002fsocket_002eh-2"></a>
+<p>Use the <code>bind</code> function to assign an address to a socket.  The
+prototype for <code>bind</code> is in the header file <samp>sys/socket.h</samp>.
+For examples of use, see <a href="Local-Socket-Example.html#Local-Socket-Example">Local Socket Example</a>, or see <a href="Inet-Example.html#Inet-Example">Inet Example</a>.
+</p>
+<dl>
+<dt><a name="index-bind"></a>Function: <em>int</em> <strong>bind</strong> <em>(int <var>socket</var>, struct sockaddr *<var>addr</var>, socklen_t <var>length</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>bind</code> function assigns an address to the socket
+<var>socket</var>.  The <var>addr</var> and <var>length</var> arguments specify the
+address; the detailed format of the address depends on the namespace.
+The first part of the address is always the format designator, which
+specifies a namespace, and says that the address is in the format of
+that namespace.
+</p>
+<p>The return value is <code>0</code> on success and <code>-1</code> on failure.  The
+following <code>errno</code> error conditions are defined for this function:
+</p>
+<dl compact="compact">
+<dt><code>EBADF</code></dt>
+<dd><p>The <var>socket</var> argument is not a valid file descriptor.
+</p>
+</dd>
+<dt><code>ENOTSOCK</code></dt>
+<dd><p>The descriptor <var>socket</var> is not a socket.
+</p>
+</dd>
+<dt><code>EADDRNOTAVAIL</code></dt>
+<dd><p>The specified address is not available on this machine.
+</p>
+</dd>
+<dt><code>EADDRINUSE</code></dt>
+<dd><p>Some other socket is already using the specified address.
+</p>
+</dd>
+<dt><code>EINVAL</code></dt>
+<dd><p>The socket <var>socket</var> already has an address.
+</p>
+</dd>
+<dt><code>EACCES</code></dt>
+<dd><p>You do not have permission to access the requested address.  (In the
+Internet domain, only the super-user is allowed to specify a port number
+in the range 0 through <code>IPPORT_RESERVED</code> minus one; see
+<a href="Ports.html#Ports">Ports</a>.)
+</p></dd>
+</dl>
+
+<p>Additional conditions may be possible depending on the particular namespace
+of the socket.
+</p></dd></dl>
+
+
+
+
+</body>
+</html>

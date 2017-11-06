@@ -1,0 +1,129 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: User Data Structure</title>
+
+<meta name="description" content="The GNU C Library: User Data Structure">
+<meta name="keywords" content="The GNU C Library: User Data Structure">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="User-Database.html#User-Database" rel="up" title="User Database">
+<link href="Lookup-User.html#Lookup-User" rel="next" title="Lookup User">
+<link href="User-Database.html#User-Database" rel="prev" title="User Database">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="User-Data-Structure"></a>
+<div class="header">
+<p>
+Next: <a href="Lookup-User.html#Lookup-User" accesskey="n" rel="next">Lookup User</a>, Up: <a href="User-Database.html#User-Database" accesskey="u" rel="up">User Database</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="The-Data-Structure-that-Describes-a-User"></a>
+<h4 class="subsection">30.13.1 The Data Structure that Describes a User</h4>
+
+<p>The functions and data structures for accessing the system user database
+are declared in the header file <samp>pwd.h</samp>.
+<a name="index-pwd_002eh-1"></a>
+</p>
+<dl>
+<dt><a name="index-struct-passwd"></a>Data Type: <strong>struct passwd</strong></dt>
+<dd>
+<p>The <code>passwd</code> data structure is used to hold information about
+entries in the system user data base.  It has at least the following members:
+</p>
+<dl compact="compact">
+<dt><code>char *pw_name</code></dt>
+<dd><p>The user&rsquo;s login name.
+</p>
+</dd>
+<dt><code>char *pw_passwd.</code></dt>
+<dd><p>The encrypted password string.
+</p>
+</dd>
+<dt><code>uid_t pw_uid</code></dt>
+<dd><p>The user ID number.
+</p>
+</dd>
+<dt><code>gid_t pw_gid</code></dt>
+<dd><p>The user&rsquo;s default group ID number.
+</p>
+</dd>
+<dt><code>char *pw_gecos</code></dt>
+<dd><p>A string typically containing the user&rsquo;s real name, and possibly other
+information such as a phone number.
+</p>
+</dd>
+<dt><code>char *pw_dir</code></dt>
+<dd><p>The user&rsquo;s home directory, or initial working directory.  This might be
+a null pointer, in which case the interpretation is system-dependent.
+</p>
+</dd>
+<dt><code>char *pw_shell</code></dt>
+<dd><p>The user&rsquo;s default shell, or the initial program run when the user logs in.
+This might be a null pointer, indicating that the system default should
+be used.
+</p></dd>
+</dl>
+</dd></dl>
+
+
+
+
+</body>
+</html>

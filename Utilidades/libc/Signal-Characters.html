@@ -1,0 +1,170 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Signal Characters</title>
+
+<meta name="description" content="The GNU C Library: Signal Characters">
+<meta name="keywords" content="The GNU C Library: Signal Characters">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Special-Characters.html#Special-Characters" rel="up" title="Special Characters">
+<link href="Start_002fStop-Characters.html#Start_002fStop-Characters" rel="next" title="Start/Stop Characters">
+<link href="Editing-Characters.html#Editing-Characters" rel="prev" title="Editing Characters">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Signal-Characters"></a>
+<div class="header">
+<p>
+Next: <a href="Start_002fStop-Characters.html#Start_002fStop-Characters" accesskey="n" rel="next">Start/Stop Characters</a>, Previous: <a href="Editing-Characters.html#Editing-Characters" accesskey="p" rel="prev">Editing Characters</a>, Up: <a href="Special-Characters.html#Special-Characters" accesskey="u" rel="up">Special Characters</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Characters-that-Cause-Signals"></a>
+<h4 class="subsubsection">17.4.9.2 Characters that Cause Signals</h4>
+
+<p>These special characters may be active in either canonical or noncanonical
+input mode, but only when the <code>ISIG</code> flag is set (see <a href="Local-Modes.html#Local-Modes">Local Modes</a>).
+</p>
+<dl>
+<dt><a name="index-VINTR"></a>Macro: <em>int</em> <strong>VINTR</strong></dt>
+<dd>
+<a name="index-INTR-character"></a>
+<a name="index-interrupt-character"></a>
+<p>This is the subscript for the INTR character in the special control
+character array.  <code><var>termios</var>.c_cc[VINTR]</code> holds the character
+itself.
+</p>
+<p>The INTR (interrupt) character raises a <code>SIGINT</code> signal for all
+processes in the foreground job associated with the terminal.  The INTR
+character itself is then discarded.  See <a href="Signal-Handling.html#Signal-Handling">Signal Handling</a>, for more
+information about signals.
+</p>
+<p>Typically, the INTR character is <kbd>C-c</kbd>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-VQUIT"></a>Macro: <em>int</em> <strong>VQUIT</strong></dt>
+<dd>
+<a name="index-QUIT-character"></a>
+<p>This is the subscript for the QUIT character in the special control
+character array.  <code><var>termios</var>.c_cc[VQUIT]</code> holds the character
+itself.
+</p>
+<p>The QUIT character raises a <code>SIGQUIT</code> signal for all processes in
+the foreground job associated with the terminal.  The QUIT character
+itself is then discarded.  See <a href="Signal-Handling.html#Signal-Handling">Signal Handling</a>, for more information
+about signals.
+</p>
+<p>Typically, the QUIT character is <kbd>C-\</kbd>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-VSUSP"></a>Macro: <em>int</em> <strong>VSUSP</strong></dt>
+<dd>
+<a name="index-SUSP-character"></a>
+<a name="index-suspend-character"></a>
+<p>This is the subscript for the SUSP character in the special control
+character array.  <code><var>termios</var>.c_cc[VSUSP]</code> holds the character
+itself.
+</p>
+<p>The SUSP (suspend) character is recognized only if the implementation
+supports job control (see <a href="Job-Control.html#Job-Control">Job Control</a>).  It causes a <code>SIGTSTP</code>
+signal to be sent to all processes in the foreground job associated with
+the terminal.  The SUSP character itself is then discarded.
+See <a href="Signal-Handling.html#Signal-Handling">Signal Handling</a>, for more information about signals.
+</p>
+<p>Typically, the SUSP character is <kbd>C-z</kbd>.
+</p></dd></dl>
+
+<p>Few applications disable the normal interpretation of the SUSP
+character.  If your program does this, it should provide some other
+mechanism for the user to stop the job.  When the user invokes this
+mechanism, the program should send a <code>SIGTSTP</code> signal to the
+process group of the process, not just to the process itself.
+See <a href="Signaling-Another-Process.html#Signaling-Another-Process">Signaling Another Process</a>.
+</p>
+<dl>
+<dt><a name="index-VDSUSP"></a>Macro: <em>int</em> <strong>VDSUSP</strong></dt>
+<dd>
+<a name="index-DSUSP-character"></a>
+<a name="index-delayed-suspend-character"></a>
+<p>This is the subscript for the DSUSP character in the special control
+character array.  <code><var>termios</var>.c_cc[VDSUSP]</code> holds the character
+itself.
+</p>
+<p>The DSUSP (suspend) character is recognized only if the implementation
+supports job control (see <a href="Job-Control.html#Job-Control">Job Control</a>).  It sends a <code>SIGTSTP</code>
+signal, like the SUSP character, but not right away&mdash;only when the
+program tries to read it as input.  Not all systems with job control
+support DSUSP; only BSD-compatible systems do (including GNU/Hurd systems).
+</p>
+<p>See <a href="Signal-Handling.html#Signal-Handling">Signal Handling</a>, for more information about signals.
+</p>
+<p>Typically, the DSUSP character is <kbd>C-y</kbd>.
+</p></dd></dl>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Start_002fStop-Characters.html#Start_002fStop-Characters" accesskey="n" rel="next">Start/Stop Characters</a>, Previous: <a href="Editing-Characters.html#Editing-Characters" accesskey="p" rel="prev">Editing Characters</a>, Up: <a href="Special-Characters.html#Special-Characters" accesskey="u" rel="up">Special Characters</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

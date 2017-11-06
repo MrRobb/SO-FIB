@@ -1,0 +1,182 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Connecting</title>
+
+<meta name="description" content="The GNU C Library: Connecting">
+<meta name="keywords" content="The GNU C Library: Connecting">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Connections.html#Connections" rel="up" title="Connections">
+<link href="Listening.html#Listening" rel="next" title="Listening">
+<link href="Connections.html#Connections" rel="prev" title="Connections">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Connecting"></a>
+<div class="header">
+<p>
+Next: <a href="Listening.html#Listening" accesskey="n" rel="next">Listening</a>, Up: <a href="Connections.html#Connections" accesskey="u" rel="up">Connections</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Making-a-Connection"></a>
+<h4 class="subsection">16.9.1 Making a Connection</h4>
+<a name="index-connecting-a-socket"></a>
+<a name="index-socket_002c-connecting"></a>
+<a name="index-socket_002c-initiating-a-connection"></a>
+<a name="index-socket_002c-client-actions"></a>
+
+<p>In making a connection, the client makes a connection while the server
+waits for and accepts the connection.  Here we discuss what the client
+program must do with the <code>connect</code> function, which is declared in
+<samp>sys/socket.h</samp>.
+</p>
+<dl>
+<dt><a name="index-connect"></a>Function: <em>int</em> <strong>connect</strong> <em>(int <var>socket</var>, struct sockaddr *<var>addr</var>, socklen_t <var>length</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>connect</code> function initiates a connection from the socket
+with file descriptor <var>socket</var> to the socket whose address is
+specified by the <var>addr</var> and <var>length</var> arguments.  (This socket
+is typically on another machine, and it must be already set up as a
+server.)  See <a href="Socket-Addresses.html#Socket-Addresses">Socket Addresses</a>, for information about how these
+arguments are interpreted.
+</p>
+<p>Normally, <code>connect</code> waits until the server responds to the request
+before it returns.  You can set nonblocking mode on the socket
+<var>socket</var> to make <code>connect</code> return immediately without waiting
+for the response.  See <a href="File-Status-Flags.html#File-Status-Flags">File Status Flags</a>, for information about
+nonblocking mode.
+</p>
+<p>The normal return value from <code>connect</code> is <code>0</code>.  If an error
+occurs, <code>connect</code> returns <code>-1</code>.  The following <code>errno</code>
+error conditions are defined for this function:
+</p>
+<dl compact="compact">
+<dt><code>EBADF</code></dt>
+<dd><p>The socket <var>socket</var> is not a valid file descriptor.
+</p>
+</dd>
+<dt><code>ENOTSOCK</code></dt>
+<dd><p>File descriptor <var>socket</var> is not a socket.
+</p>
+</dd>
+<dt><code>EADDRNOTAVAIL</code></dt>
+<dd><p>The specified address is not available on the remote machine.
+</p>
+</dd>
+<dt><code>EAFNOSUPPORT</code></dt>
+<dd><p>The namespace of the <var>addr</var> is not supported by this socket.
+</p>
+</dd>
+<dt><code>EISCONN</code></dt>
+<dd><p>The socket <var>socket</var> is already connected.
+</p>
+</dd>
+<dt><code>ETIMEDOUT</code></dt>
+<dd><p>The attempt to establish the connection timed out.
+</p>
+</dd>
+<dt><code>ECONNREFUSED</code></dt>
+<dd><p>The server has actively refused to establish the connection.
+</p>
+</dd>
+<dt><code>ENETUNREACH</code></dt>
+<dd><p>The network of the given <var>addr</var> isn&rsquo;t reachable from this host.
+</p>
+</dd>
+<dt><code>EADDRINUSE</code></dt>
+<dd><p>The socket address of the given <var>addr</var> is already in use.
+</p>
+</dd>
+<dt><code>EINPROGRESS</code></dt>
+<dd><p>The socket <var>socket</var> is non-blocking and the connection could not be
+established immediately.  You can determine when the connection is
+completely established with <code>select</code>; see <a href="Waiting-for-I_002fO.html#Waiting-for-I_002fO">Waiting for I/O</a>.
+Another <code>connect</code> call on the same socket, before the connection is
+completely established, will fail with <code>EALREADY</code>.
+</p>
+</dd>
+<dt><code>EALREADY</code></dt>
+<dd><p>The socket <var>socket</var> is non-blocking and already has a pending
+connection in progress (see <code>EINPROGRESS</code> above).
+</p></dd>
+</dl>
+
+<p>This function is defined as a cancellation point in multi-threaded
+programs, so one has to be prepared for this and make sure that
+allocated resources (like memory, file descriptors, semaphores or
+whatever) are freed even if the thread is canceled.
+</p></dd></dl>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Listening.html#Listening" accesskey="n" rel="next">Listening</a>, Up: <a href="Connections.html#Connections" accesskey="u" rel="up">Connections</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

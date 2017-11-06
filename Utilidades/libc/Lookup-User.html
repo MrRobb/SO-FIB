@@ -1,0 +1,183 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Lookup User</title>
+
+<meta name="description" content="The GNU C Library: Lookup User">
+<meta name="keywords" content="The GNU C Library: Lookup User">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="User-Database.html#User-Database" rel="up" title="User Database">
+<link href="Scanning-All-Users.html#Scanning-All-Users" rel="next" title="Scanning All Users">
+<link href="User-Data-Structure.html#User-Data-Structure" rel="prev" title="User Data Structure">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Lookup-User"></a>
+<div class="header">
+<p>
+Next: <a href="Scanning-All-Users.html#Scanning-All-Users" accesskey="n" rel="next">Scanning All Users</a>, Previous: <a href="User-Data-Structure.html#User-Data-Structure" accesskey="p" rel="prev">User Data Structure</a>, Up: <a href="User-Database.html#User-Database" accesskey="u" rel="up">User Database</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Looking-Up-One-User"></a>
+<h4 class="subsection">30.13.2 Looking Up One User</h4>
+<a name="index-converting-user-ID-to-user-name"></a>
+<a name="index-converting-user-name-to-user-ID"></a>
+
+<p>You can search the system user database for information about a
+specific user using <code>getpwuid</code> or <code>getpwnam</code>.  These
+functions are declared in <samp>pwd.h</samp>.
+</p>
+<dl>
+<dt><a name="index-getpwuid"></a>Function: <em>struct passwd *</em> <strong>getpwuid</strong> <em>(uid_t <var>uid</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Unsafe race:pwuid locale
+| AS-Unsafe dlopen plugin heap lock
+| AC-Unsafe corrupt lock fd mem
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function returns a pointer to a statically-allocated structure
+containing information about the user whose user ID is <var>uid</var>.  This
+structure may be overwritten on subsequent calls to <code>getpwuid</code>.
+</p>
+<p>A null pointer value indicates there is no user in the data base with
+user ID <var>uid</var>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-getpwuid_005fr"></a>Function: <em>int</em> <strong>getpwuid_r</strong> <em>(uid_t <var>uid</var>, struct passwd *<var>result_buf</var>, char *<var>buffer</var>, size_t <var>buflen</var>, struct passwd **<var>result</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe locale
+| AS-Unsafe dlopen plugin heap lock
+| AC-Unsafe corrupt lock fd mem
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+
+
+<p>This function is similar to <code>getpwuid</code> in that it returns
+information about the user whose user ID is <var>uid</var>.  However, it
+fills the user supplied structure pointed to by <var>result_buf</var> with
+the information instead of using a static buffer.  The first
+<var>buflen</var> bytes of the additional buffer pointed to by <var>buffer</var>
+are used to contain additional information, normally strings which are
+pointed to by the elements of the result structure.
+</p>
+<p>If a user with ID <var>uid</var> is found, the pointer returned in
+<var>result</var> points to the record which contains the wanted data (i.e.,
+<var>result</var> contains the value <var>result_buf</var>).  If no user is found
+or if an error occurred, the pointer returned in <var>result</var> is a null
+pointer.  The function returns zero or an error code.  If the buffer
+<var>buffer</var> is too small to contain all the needed information, the
+error code <code>ERANGE</code> is returned and <var>errno</var> is set to
+<code>ERANGE</code>.
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-getpwnam"></a>Function: <em>struct passwd *</em> <strong>getpwnam</strong> <em>(const char *<var>name</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Unsafe race:pwnam locale
+| AS-Unsafe dlopen plugin heap lock
+| AC-Unsafe corrupt lock fd mem
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function returns a pointer to a statically-allocated structure
+containing information about the user whose user name is <var>name</var>.
+This structure may be overwritten on subsequent calls to
+<code>getpwnam</code>.
+</p>
+<p>A null pointer return indicates there is no user named <var>name</var>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-getpwnam_005fr"></a>Function: <em>int</em> <strong>getpwnam_r</strong> <em>(const char *<var>name</var>, struct passwd *<var>result_buf</var>, char *<var>buffer</var>, size_t <var>buflen</var>, struct passwd **<var>result</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe locale
+| AS-Unsafe dlopen plugin heap lock
+| AC-Unsafe corrupt lock fd mem
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+
+<p>This function is similar to <code>getpwnam</code> in that it returns
+information about the user whose user name is <var>name</var>.  However, like
+<code>getpwuid_r</code>, it fills the user supplied buffers in
+<var>result_buf</var> and <var>buffer</var> with the information instead of using
+a static buffer.
+</p>
+<p>The return values are the same as for <code>getpwuid_r</code>.
+</p></dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Scanning-All-Users.html#Scanning-All-Users" accesskey="n" rel="next">Scanning All Users</a>, Previous: <a href="User-Data-Structure.html#User-Data-Structure" accesskey="p" rel="prev">User Data Structure</a>, Up: <a href="User-Database.html#User-Database" accesskey="u" rel="up">User Database</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

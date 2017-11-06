@@ -1,0 +1,189 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Infinity and NaN</title>
+
+<meta name="description" content="The GNU C Library: Infinity and NaN">
+<meta name="keywords" content="The GNU C Library: Infinity and NaN">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Floating-Point-Errors.html#Floating-Point-Errors" rel="up" title="Floating Point Errors">
+<link href="Status-bit-operations.html#Status-bit-operations" rel="next" title="Status bit operations">
+<link href="FP-Exceptions.html#FP-Exceptions" rel="prev" title="FP Exceptions">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Infinity-and-NaN"></a>
+<div class="header">
+<p>
+Next: <a href="Status-bit-operations.html#Status-bit-operations" accesskey="n" rel="next">Status bit operations</a>, Previous: <a href="FP-Exceptions.html#FP-Exceptions" accesskey="p" rel="prev">FP Exceptions</a>, Up: <a href="Floating-Point-Errors.html#Floating-Point-Errors" accesskey="u" rel="up">Floating Point Errors</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Infinity-and-NaN-1"></a>
+<h4 class="subsection">20.5.2 Infinity and NaN</h4>
+<a name="index-infinity"></a>
+<a name="index-not-a-number"></a>
+<a name="index-NaN"></a>
+
+<p>IEEE&nbsp;754<!-- /@w --> floating point numbers can represent positive or negative
+infinity, and <em>NaN</em> (not a number).  These three values arise from
+calculations whose result is undefined or cannot be represented
+accurately.  You can also deliberately set a floating-point variable to
+any of them, which is sometimes useful.  Some examples of calculations
+that produce infinity or NaN:
+</p>
+<div class="smallexample">
+<pre class="smallexample"><em>1/0 = &amp;infin;</em>
+<em>log (0) = -&amp;infin;</em>
+<em>sqrt (-1) = NaN</em>
+</pre></div>
+
+<p>When a calculation produces any of these values, an exception also
+occurs; see <a href="FP-Exceptions.html#FP-Exceptions">FP Exceptions</a>.
+</p>
+<p>The basic operations and math functions all accept infinity and NaN and
+produce sensible output.  Infinities propagate through calculations as
+one would expect: for example, <em>2 + &amp;infin; = &amp;infin;</em>,
+<em>4/&amp;infin; = 0</em>, atan <em>(&amp;infin;) = &amp;pi;/2</em>.  NaN, on
+the other hand, infects any calculation that involves it.  Unless the
+calculation would produce the same result no matter what real value
+replaced NaN, the result is NaN.
+</p>
+<p>In comparison operations, positive infinity is larger than all values
+except itself and NaN, and negative infinity is smaller than all values
+except itself and NaN.  NaN is <em>unordered</em>: it is not equal to,
+greater than, or less than anything, <em>including itself</em>. <code>x ==
+x</code> is false if the value of <code>x</code> is NaN.  You can use this to test
+whether a value is NaN or not, but the recommended way to test for NaN
+is with the <code>isnan</code> function (see <a href="Floating-Point-Classes.html#Floating-Point-Classes">Floating Point Classes</a>).  In
+addition, <code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code>, and <code>&gt;=</code> will raise an
+exception when applied to NaNs.
+</p>
+<p><samp>math.h</samp> defines macros that allow you to explicitly set a variable
+to infinity or NaN.
+</p>
+<dl>
+<dt><a name="index-INFINITY"></a>Macro: <em>float</em> <strong>INFINITY</strong></dt>
+<dd>
+<p>An expression representing positive infinity.  It is equal to the value
+produced  by mathematical operations like <code>1.0 / 0.0</code>.
+<code>-INFINITY</code> represents negative infinity.
+</p>
+<p>You can test whether a floating-point value is infinite by comparing it
+to this macro.  However, this is not recommended; you should use the
+<code>isfinite</code> macro instead.  See <a href="Floating-Point-Classes.html#Floating-Point-Classes">Floating Point Classes</a>.
+</p>
+<p>This macro was introduced in the ISO&nbsp;C99<!-- /@w --> standard.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-NAN"></a>Macro: <em>float</em> <strong>NAN</strong></dt>
+<dd>
+<p>An expression representing a value which is &ldquo;not a number&rdquo;.  This
+macro is a GNU extension, available only on machines that support the
+&ldquo;not a number&rdquo; value&mdash;that is to say, on all machines that support
+IEEE floating point.
+</p>
+<p>You can use &lsquo;<samp>#ifdef NAN</samp>&rsquo; to test whether the machine supports
+NaN.  (Of course, you must arrange for GNU extensions to be visible,
+such as by defining <code>_GNU_SOURCE</code>, and then you must include
+<samp>math.h</samp>.)
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-SNANF"></a>Macro: <em>float</em> <strong>SNANF</strong></dt>
+<dt><a name="index-SNAN"></a>Macro: <em>double</em> <strong>SNAN</strong></dt>
+<dt><a name="index-SNANL"></a>Macro: <em>long double</em> <strong>SNANL</strong></dt>
+<dt><a name="index-SNANFN"></a>Macro: <em>_FloatN</em> <strong>SNANFN</strong></dt>
+<dt><a name="index-SNANFNx"></a>Macro: <em>_FloatNx</em> <strong>SNANFNx</strong></dt>
+<dd>
+
+
+<p>These macros, defined by TS 18661-1:2014 and TS 18661-3:2015, are
+constant expressions for signaling NaNs.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-FE_005fSNANS_005fALWAYS_005fSIGNAL"></a>Macro: <em>int</em> <strong>FE_SNANS_ALWAYS_SIGNAL</strong></dt>
+<dd>
+<p>This macro, defined by TS 18661-1:2014, is defined to <code>1</code> in
+<samp>fenv.h</samp> to indicate that functions and operations with signaling
+NaN inputs and floating-point results always raise the invalid
+exception and return a quiet NaN, even in cases (such as <code>fmax</code>,
+<code>hypot</code> and <code>pow</code>) where a quiet NaN input can produce a
+non-NaN result.  Because some compiler optimizations may not handle
+signaling NaNs correctly, this macro is only defined if compiler
+support for signaling NaNs is enabled.  That support can be enabled
+with the GCC option <samp>-fsignaling-nans</samp>.
+</p></dd></dl>
+
+<p>IEEE&nbsp;754<!-- /@w --> also allows for another unusual value: negative zero.  This
+value is produced when you divide a positive number by negative
+infinity, or when a negative result is smaller than the limits of
+representation.
+</p>
+<hr>
+<div class="header">
+<p>
+Next: <a href="Status-bit-operations.html#Status-bit-operations" accesskey="n" rel="next">Status bit operations</a>, Previous: <a href="FP-Exceptions.html#FP-Exceptions" accesskey="p" rel="prev">FP Exceptions</a>, Up: <a href="Floating-Point-Errors.html#Floating-Point-Errors" accesskey="u" rel="up">Floating Point Errors</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

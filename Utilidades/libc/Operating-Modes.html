@@ -1,0 +1,165 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Operating Modes</title>
+
+<meta name="description" content="The GNU C Library: Operating Modes">
+<meta name="keywords" content="The GNU C Library: Operating Modes">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="File-Status-Flags.html#File-Status-Flags" rel="up" title="File Status Flags">
+<link href="Getting-File-Status-Flags.html#Getting-File-Status-Flags" rel="next" title="Getting File Status Flags">
+<link href="Open_002dtime-Flags.html#Open_002dtime-Flags" rel="prev" title="Open-time Flags">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Operating-Modes"></a>
+<div class="header">
+<p>
+Next: <a href="Getting-File-Status-Flags.html#Getting-File-Status-Flags" accesskey="n" rel="next">Getting File Status Flags</a>, Previous: <a href="Open_002dtime-Flags.html#Open_002dtime-Flags" accesskey="p" rel="prev">Open-time Flags</a>, Up: <a href="File-Status-Flags.html#File-Status-Flags" accesskey="u" rel="up">File Status Flags</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="I_002fO-Operating-Modes"></a>
+<h4 class="subsection">13.14.3 I/O Operating Modes</h4>
+
+<p>The operating modes affect how input and output operations using a file
+descriptor work.  These flags are set by <code>open</code> and can be fetched
+and changed with <code>fcntl</code>.
+</p>
+<dl>
+<dt><a name="index-O_005fAPPEND"></a>Macro: <em>int</em> <strong>O_APPEND</strong></dt>
+<dd>
+<p>The bit that enables append mode for the file.  If set, then all
+<code>write</code> operations write the data at the end of the file, extending
+it, regardless of the current file position.  This is the only reliable
+way to append to a file.  In append mode, you are guaranteed that the
+data you write will always go to the current end of the file, regardless
+of other processes writing to the file.  Conversely, if you simply set
+the file position to the end of file and write, then another process can
+extend the file after you set the file position but before you write,
+resulting in your data appearing someplace before the real end of file.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-O_005fNONBLOCK-1"></a>Macro: <em>int</em> <strong>O_NONBLOCK</strong></dt>
+<dd>
+<p>The bit that enables nonblocking mode for the file.  If this bit is set,
+<code>read</code> requests on the file can return immediately with a failure
+status if there is no input immediately available, instead of blocking.
+Likewise, <code>write</code> requests can also return immediately with a
+failure status if the output can&rsquo;t be written immediately.
+</p>
+<p>Note that the <code>O_NONBLOCK</code> flag is overloaded as both an I/O
+operating mode and a file name translation flag; see <a href="Open_002dtime-Flags.html#Open_002dtime-Flags">Open-time Flags</a>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-O_005fNDELAY"></a>Macro: <em>int</em> <strong>O_NDELAY</strong></dt>
+<dd>
+<p>This is an obsolete name for <code>O_NONBLOCK</code>, provided for
+compatibility with BSD.  It is not defined by the POSIX.1 standard.
+</p></dd></dl>
+
+<p>The remaining operating modes are BSD and GNU extensions.  They exist only
+on some systems.  On other systems, these macros are not defined.
+</p>
+<dl>
+<dt><a name="index-O_005fASYNC"></a>Macro: <em>int</em> <strong>O_ASYNC</strong></dt>
+<dd>
+<p>The bit that enables asynchronous input mode.  If set, then <code>SIGIO</code>
+signals will be generated when input is available.  See <a href="Interrupt-Input.html#Interrupt-Input">Interrupt Input</a>.
+</p>
+<p>Asynchronous input mode is a BSD feature.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-O_005fFSYNC"></a>Macro: <em>int</em> <strong>O_FSYNC</strong></dt>
+<dd>
+<p>The bit that enables synchronous writing for the file.  If set, each
+<code>write</code> call will make sure the data is reliably stored on disk before
+returning. </p>
+<p>Synchronous writing is a BSD feature.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-O_005fSYNC"></a>Macro: <em>int</em> <strong>O_SYNC</strong></dt>
+<dd>
+<p>This is another name for <code>O_FSYNC</code>.  They have the same value.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-O_005fNOATIME"></a>Macro: <em>int</em> <strong>O_NOATIME</strong></dt>
+<dd>
+<p>If this bit is set, <code>read</code> will not update the access time of the
+file.  See <a href="File-Times.html#File-Times">File Times</a>.  This is used by programs that do backups, so
+that backing a file up does not count as reading it.
+Only the owner of the file or the superuser may use this bit.
+</p>
+<p>This is a GNU extension.
+</p></dd></dl>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Getting-File-Status-Flags.html#Getting-File-Status-Flags" accesskey="n" rel="next">Getting File Status Flags</a>, Previous: <a href="Open_002dtime-Flags.html#Open_002dtime-Flags" accesskey="p" rel="prev">Open-time Flags</a>, Up: <a href="File-Status-Flags.html#File-Status-Flags" accesskey="u" rel="up">File Status Flags</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

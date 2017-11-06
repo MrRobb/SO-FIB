@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Mount Information</title>
+
+<meta name="description" content="The GNU C Library: Mount Information">
+<meta name="keywords" content="The GNU C Library: Mount Information">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Filesystem-Handling.html#Filesystem-Handling" rel="up" title="Filesystem Handling">
+<link href="fstab.html#fstab" rel="next" title="fstab">
+<link href="Filesystem-Handling.html#Filesystem-Handling" rel="prev" title="Filesystem Handling">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Mount-Information"></a>
+<div class="header">
+<p>
+Next: <a href="Mount_002dUnmount_002dRemount.html#Mount_002dUnmount_002dRemount" accesskey="n" rel="next">Mount-Unmount-Remount</a>, Up: <a href="Filesystem-Handling.html#Filesystem-Handling" accesskey="u" rel="up">Filesystem Handling</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Mount-Information-1"></a>
+<h4 class="subsection">31.3.1 Mount Information</h4>
+
+<p>For some programs it is desirable and necessary to access information
+about whether a certain filesystem is mounted and, if it is, where, or
+simply to get lists of all the available filesystems.  The GNU C Library
+provides some functions to retrieve this information portably.
+</p>
+<p>Traditionally Unix systems have a file named <samp>/etc/fstab</samp> which
+describes all possibly mounted filesystems.  The <code>mount</code> program
+uses this file to mount at startup time of the system all the
+necessary filesystems.  The information about all the filesystems
+actually mounted is normally kept in a file named either
+<samp>/var/run/mtab</samp> or <samp>/etc/mtab</samp>.  Both files share the same
+syntax and it is crucial that this syntax is followed all the time.
+Therefore it is best to never directly write to the files.  The functions
+described in this section can do this and they also provide the
+functionality to convert the external textual representation to the
+internal representation.
+</p>
+<p>Note that the <samp>fstab</samp> and <samp>mtab</samp> files are maintained on a
+system by <em>convention</em>.  It is possible for the files not to exist
+or not to be consistent with what is really mounted or available to
+mount, if the system&rsquo;s administration policy allows it.  But programs
+that mount and unmount filesystems typically maintain and use these
+files as described herein.
+</p>
+<a name="index-_005fPATH_005fFSTAB"></a>
+<a name="index-_005fPATH_005fMNTTAB"></a>
+<a name="index-_005fPATH_005fMOUNTED"></a>
+<a name="index-FSTAB"></a>
+<a name="index-MNTTAB"></a>
+<a name="index-MOUNTED"></a>
+<p>The filenames given above should never be used directly.  The portable
+way to handle these files is to use the macros <code>_PATH_FSTAB</code>,
+defined in <samp>fstab.h</samp>, or <code>_PATH_MNTTAB</code>, defined in
+<samp>mntent.h</samp> and <samp>paths.h</samp>, for <samp>fstab</samp>; and the macro
+<code>_PATH_MOUNTED</code>, also defined in <samp>mntent.h</samp> and
+<samp>paths.h</samp>, for <samp>mtab</samp>.  There are also two alternate macro
+names <code>FSTAB</code>, <code>MNTTAB</code>, and <code>MOUNTED</code> defined but
+these names are deprecated and kept only for backward compatibility.
+The names <code>_PATH_MNTTAB</code> and <code>_PATH_MOUNTED</code> should always be used.
+</p>
+<table class="menu" border="0" cellspacing="0">
+<tr><td align="left" valign="top">&bull; <a href="fstab.html#fstab" accesskey="1">fstab</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">The <samp>fstab</samp> file
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="mtab.html#mtab" accesskey="2">mtab</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">The <samp>mtab</samp> file
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Other-Mount-Information.html#Other-Mount-Information" accesskey="3">Other Mount Information</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Other (non-libc) sources of mount information
+</td></tr>
+</table>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Mount_002dUnmount_002dRemount.html#Mount_002dUnmount_002dRemount" accesskey="n" rel="next">Mount-Unmount-Remount</a>, Up: <a href="Filesystem-Handling.html#Filesystem-Handling" accesskey="u" rel="up">Filesystem Handling</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

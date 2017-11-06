@@ -1,0 +1,278 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Open File Description Locks</title>
+
+<meta name="description" content="The GNU C Library: Open File Description Locks">
+<meta name="keywords" content="The GNU C Library: Open File Description Locks">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Low_002dLevel-I_002fO.html#Low_002dLevel-I_002fO" rel="up" title="Low-Level I/O">
+<link href="Open-File-Description-Locks-Example.html#Open-File-Description-Locks-Example" rel="next" title="Open File Description Locks Example">
+<link href="File-Locks.html#File-Locks" rel="prev" title="File Locks">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Open-File-Description-Locks"></a>
+<div class="header">
+<p>
+Next: <a href="Open-File-Description-Locks-Example.html#Open-File-Description-Locks-Example" accesskey="n" rel="next">Open File Description Locks Example</a>, Previous: <a href="File-Locks.html#File-Locks" accesskey="p" rel="prev">File Locks</a>, Up: <a href="Low_002dLevel-I_002fO.html#Low_002dLevel-I_002fO" accesskey="u" rel="up">Low-Level I/O</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Open-File-Description-Locks-1"></a>
+<h3 class="section">13.16 Open File Description Locks</h3>
+
+<p>In contrast to process-associated record locks (see <a href="File-Locks.html#File-Locks">File Locks</a>),
+open file description record locks are associated with an open file
+description rather than a process.
+</p>
+<p>Using <code>fcntl</code> to apply an open file description lock on a region that
+already has an existing open file description lock that was created via the
+same file descriptor will never cause a lock conflict.
+</p>
+<p>Open file description locks are also inherited by child processes across
+<code>fork</code>, or <code>clone</code> with <code>CLONE_FILES</code> set
+(see <a href="Creating-a-Process.html#Creating-a-Process">Creating a Process</a>), along with the file descriptor.
+</p>
+<p>It is important to distinguish between the open file <em>description</em> (an
+instance of an open file, usually created by a call to <code>open</code>) and
+an open file <em>descriptor</em>, which is a numeric value that refers to the
+open file description.  The locks described here are associated with the
+open file <em>description</em> and not the open file <em>descriptor</em>.
+</p>
+<p>Using <code>dup</code> (see <a href="Duplicating-Descriptors.html#Duplicating-Descriptors">Duplicating Descriptors</a>) to copy a file
+descriptor does not give you a new open file description, but rather copies a
+reference to an existing open file description and assigns it to a new
+file descriptor.  Thus, open file description locks set on a file
+descriptor cloned by <code>dup</code> will never conflict with open file
+description locks set on the original descriptor since they refer to the
+same open file description.  Depending on the range and type of lock
+involved, the original lock may be modified by a <code>F_OFD_SETLK</code> or
+<code>F_OFD_SETLKW</code> command in this situation however.
+</p>
+<p>Open file description locks always conflict with process-associated locks,
+even if acquired by the same process or on the same open file
+descriptor.
+</p>
+<p>Open file description locks use the same <code>struct flock</code> as
+process-associated locks as an argument (see <a href="File-Locks.html#File-Locks">File Locks</a>) and the
+macros for the <code>command</code> values are also declared in the header file
+<samp>fcntl.h</samp>. To use them, the macro <code>_GNU_SOURCE</code> must be
+defined prior to including any header file.
+</p>
+<p>In contrast to process-associated locks, any <code>struct flock</code> used as
+an argument to open file description lock commands must have the <code>l_pid</code>
+value set to <em>0</em>.  Also, when returning information about an
+open file description lock in a <code>F_GETLK</code> or <code>F_OFD_GETLK</code> request,
+the <code>l_pid</code> field in <code>struct flock</code> will be set to <em>-1</em>
+to indicate that the lock is not associated with a process.
+</p>
+<p>When the same <code>struct flock</code> is reused as an argument to a
+<code>F_OFD_SETLK</code> or <code>F_OFD_SETLKW</code> request after being used for an
+<code>F_OFD_GETLK</code> request, it is necessary to inspect and reset the
+<code>l_pid</code> field to <em>0</em>.
+</p>
+<a name="index-fcntl_002eh_002e"></a>
+
+<dl>
+<dt><a name="index-F_005fOFD_005fGETLK-1"></a>Macro: <em>int</em> <strong>F_OFD_GETLK</strong></dt>
+<dd><p>This macro is used as the <var>command</var> argument to <code>fcntl</code>, to
+specify that it should get information about a lock.  This command
+requires a third argument of type <code>struct&nbsp;flock&nbsp;*</code><!-- /@w --> to be passed
+to <code>fcntl</code>, so that the form of the call is:
+</p>
+<div class="smallexample">
+<pre class="smallexample">fcntl (<var>filedes</var>, F_OFD_GETLK, <var>lockp</var>)
+</pre></div>
+
+<p>If there is a lock already in place that would block the lock described
+by the <var>lockp</var> argument, information about that lock is written to
+<code>*<var>lockp</var></code>.  Existing locks are not reported if they are
+compatible with making a new lock as specified.  Thus, you should
+specify a lock type of <code>F_WRLCK</code> if you want to find out about both
+read and write locks, or <code>F_RDLCK</code> if you want to find out about
+write locks only.
+</p>
+<p>There might be more than one lock affecting the region specified by the
+<var>lockp</var> argument, but <code>fcntl</code> only returns information about
+one of them. Which lock is returned in this situation is undefined.
+</p>
+<p>The <code>l_whence</code> member of the <var>lockp</var> structure are set to
+<code>SEEK_SET</code> and the <code>l_start</code> and <code>l_len</code> fields are set
+to identify the locked region.
+</p>
+<p>If no conflicting lock exists, the only change to the <var>lockp</var> structure
+is to update the <code>l_type</code> field to the value <code>F_UNLCK</code>.
+</p>
+<p>The normal return value from <code>fcntl</code> with this command is either <em>0</em>
+on success or <em>-1</em>, which indicates an error. The following <code>errno</code>
+error conditions are defined for this command:
+</p>
+<dl compact="compact">
+<dt><code>EBADF</code></dt>
+<dd><p>The <var>filedes</var> argument is invalid.
+</p>
+</dd>
+<dt><code>EINVAL</code></dt>
+<dd><p>Either the <var>lockp</var> argument doesn&rsquo;t specify valid lock information,
+the operating system kernel doesn&rsquo;t support open file description locks, or the file
+associated with <var>filedes</var> doesn&rsquo;t support locks.
+</p></dd>
+</dl>
+</dd></dl>
+
+<dl>
+<dt><a name="index-F_005fOFD_005fSETLK-1"></a>Macro: <em>int</em> <strong>F_OFD_SETLK</strong></dt>
+<dd>
+<p>This macro is used as the <var>command</var> argument to <code>fcntl</code>, to
+specify that it should set or clear a lock.  This command requires a
+third argument of type <code>struct&nbsp;flock&nbsp;*</code><!-- /@w --> to be passed to
+<code>fcntl</code>, so that the form of the call is:
+</p>
+<div class="smallexample">
+<pre class="smallexample">fcntl (<var>filedes</var>, F_OFD_SETLK, <var>lockp</var>)
+</pre></div>
+
+<p>If the open file already has a lock on any part of the
+region, the old lock on that part is replaced with the new lock.  You
+can remove a lock by specifying a lock type of <code>F_UNLCK</code>.
+</p>
+<p>If the lock cannot be set, <code>fcntl</code> returns immediately with a value
+of <em>-1</em>.  This command does not wait for other tasks
+to release locks.  If <code>fcntl</code> succeeds, it returns <em>0</em>.
+</p>
+<p>The following <code>errno</code> error conditions are defined for this
+command:
+</p>
+<dl compact="compact">
+<dt><code>EAGAIN</code></dt>
+<dd><p>The lock cannot be set because it is blocked by an existing lock on the
+file.
+</p>
+</dd>
+<dt><code>EBADF</code></dt>
+<dd><p>Either: the <var>filedes</var> argument is invalid; you requested a read lock
+but the <var>filedes</var> is not open for read access; or, you requested a
+write lock but the <var>filedes</var> is not open for write access.
+</p>
+</dd>
+<dt><code>EINVAL</code></dt>
+<dd><p>Either the <var>lockp</var> argument doesn&rsquo;t specify valid lock information,
+the operating system kernel doesn&rsquo;t support open file description locks, or the
+file associated with <var>filedes</var> doesn&rsquo;t support locks.
+</p>
+</dd>
+<dt><code>ENOLCK</code></dt>
+<dd><p>The system has run out of file lock resources; there are already too
+many file locks in place.
+</p>
+<p>Well-designed file systems never report this error, because they have no
+limitation on the number of locks.  However, you must still take account
+of the possibility of this error, as it could result from network access
+to a file system on another machine.
+</p></dd>
+</dl>
+</dd></dl>
+
+<dl>
+<dt><a name="index-F_005fOFD_005fSETLKW-1"></a>Macro: <em>int</em> <strong>F_OFD_SETLKW</strong></dt>
+<dd>
+<p>This macro is used as the <var>command</var> argument to <code>fcntl</code>, to
+specify that it should set or clear a lock.  It is just like the
+<code>F_OFD_SETLK</code> command, but causes the process to wait until the request
+can be completed.
+</p>
+<p>This command requires a third argument of type <code>struct flock *</code>, as
+for the <code>F_OFD_SETLK</code> command.
+</p>
+<p>The <code>fcntl</code> return values and errors are the same as for the
+<code>F_OFD_SETLK</code> command, but these additional <code>errno</code> error conditions
+are defined for this command:
+</p>
+<dl compact="compact">
+<dt><code>EINTR</code></dt>
+<dd><p>The function was interrupted by a signal while it was waiting.
+See <a href="Interrupted-Primitives.html#Interrupted-Primitives">Interrupted Primitives</a>.
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>Open file description locks are useful in the same sorts of situations as
+process-associated locks. They can also be used to synchronize file
+access between threads within the same process by having each thread perform
+its own <code>open</code> of the file, to obtain its own open file description.
+</p>
+<p>Because open file description locks are automatically freed only upon
+closing the last file descriptor that refers to the open file
+description, this locking mechanism avoids the possibility that locks
+are inadvertently released due to a library routine opening and closing
+a file without the application being aware.
+</p>
+<p>As with process-associated locks, open file description locks are advisory.
+</p>
+<hr>
+<div class="header">
+<p>
+Next: <a href="Open-File-Description-Locks-Example.html#Open-File-Description-Locks-Example" accesskey="n" rel="next">Open File Description Locks Example</a>, Previous: <a href="File-Locks.html#File-Locks" accesskey="p" rel="prev">File Locks</a>, Up: <a href="Low_002dLevel-I_002fO.html#Low_002dLevel-I_002fO" accesskey="u" rel="up">Low-Level I/O</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

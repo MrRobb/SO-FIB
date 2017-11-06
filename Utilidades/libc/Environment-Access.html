@@ -1,0 +1,275 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Environment Access</title>
+
+<meta name="description" content="The GNU C Library: Environment Access">
+<meta name="keywords" content="The GNU C Library: Environment Access">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Environment-Variables.html#Environment-Variables" rel="up" title="Environment Variables">
+<link href="Standard-Environment.html#Standard-Environment" rel="next" title="Standard Environment">
+<link href="Environment-Variables.html#Environment-Variables" rel="prev" title="Environment Variables">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Environment-Access"></a>
+<div class="header">
+<p>
+Next: <a href="Standard-Environment.html#Standard-Environment" accesskey="n" rel="next">Standard Environment</a>, Up: <a href="Environment-Variables.html#Environment-Variables" accesskey="u" rel="up">Environment Variables</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Environment-Access-1"></a>
+<h4 class="subsection">25.4.1 Environment Access</h4>
+<a name="index-environment-access"></a>
+<a name="index-environment-representation"></a>
+
+<p>The value of an environment variable can be accessed with the
+<code>getenv</code> function.  This is declared in the header file
+<samp>stdlib.h</samp>.
+<a name="index-stdlib_002eh-20"></a>
+</p>
+<p>Libraries should use <code>secure_getenv</code> instead of <code>getenv</code>, so
+that they do not accidentally use untrusted environment variables.
+Modifications of environment variables are not allowed in
+multi-threaded programs.  The <code>getenv</code> and <code>secure_getenv</code>
+functions can be safely used in multi-threaded programs.
+</p>
+<dl>
+<dt><a name="index-getenv"></a>Function: <em>char *</em> <strong>getenv</strong> <em>(const char *<var>name</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe env
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function returns a string that is the value of the environment
+variable <var>name</var>.  You must not modify this string.  In some non-Unix
+systems not using the GNU C Library, it might be overwritten by subsequent
+calls to <code>getenv</code> (but not by any other library function).  If the
+environment variable <var>name</var> is not defined, the value is a null
+pointer.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-secure_005fgetenv"></a>Function: <em>char *</em> <strong>secure_getenv</strong> <em>(const char *<var>name</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe env
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function is similar to <code>getenv</code>, but it returns a null
+pointer if the environment is untrusted.  This happens when the
+program file has SUID or SGID bits set.  General-purpose libraries
+should always prefer this function over <code>getenv</code> to avoid
+vulnerabilities if the library is referenced from a SUID/SGID program.
+</p>
+<p>This function is a GNU extension.
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-putenv"></a>Function: <em>int</em> <strong>putenv</strong> <em>(char *<var>string</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Unsafe const:env
+| AS-Unsafe heap lock
+| AC-Unsafe corrupt lock mem
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>putenv</code> function adds or removes definitions from the environment.
+If the <var>string</var> is of the form &lsquo;<samp><var>name</var>=<var>value</var></samp>&rsquo;, the
+definition is added to the environment.  Otherwise, the <var>string</var> is
+interpreted as the name of an environment variable, and any definition
+for this variable in the environment is removed.
+</p>
+<p>If the function is successful it returns <code>0</code>.  Otherwise the return
+value is nonzero and <code>errno</code> is set to indicate the error.
+</p>
+<p>The difference to the <code>setenv</code> function is that the exact string
+given as the parameter <var>string</var> is put into the environment.  If the
+user should change the string after the <code>putenv</code> call this will
+reflect automatically in the environment.  This also requires that
+<var>string</var> not be an automatic variable whose scope is left before the
+variable is removed from the environment.  The same applies of course to
+dynamically allocated variables which are freed later.
+</p>
+<p>This function is part of the extended Unix interface.  You should define
+<var>_XOPEN_SOURCE</var> before including any header.
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-setenv"></a>Function: <em>int</em> <strong>setenv</strong> <em>(const char *<var>name</var>, const char *<var>value</var>, int <var>replace</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Unsafe const:env
+| AS-Unsafe heap lock
+| AC-Unsafe corrupt lock mem
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>setenv</code> function can be used to add a new definition to the
+environment.  The entry with the name <var>name</var> is replaced by the
+value &lsquo;<samp><var>name</var>=<var>value</var></samp>&rsquo;.  Please note that this is also true
+if <var>value</var> is the empty string.  To do this a new string is created
+and the strings <var>name</var> and <var>value</var> are copied.  A null pointer
+for the <var>value</var> parameter is illegal.  If the environment already
+contains an entry with key <var>name</var> the <var>replace</var> parameter
+controls the action.  If replace is zero, nothing happens.  Otherwise
+the old entry is replaced by the new one.
+</p>
+<p>Please note that you cannot remove an entry completely using this function.
+</p>
+<p>If the function is successful it returns <code>0</code>.  Otherwise the
+environment is unchanged and the return value is <code>-1</code> and
+<code>errno</code> is set.
+</p>
+<p>This function was originally part of the BSD library but is now part of
+the Unix standard.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-unsetenv"></a>Function: <em>int</em> <strong>unsetenv</strong> <em>(const char *<var>name</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Unsafe const:env
+| AS-Unsafe lock
+| AC-Unsafe lock
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>Using this function one can remove an entry completely from the
+environment.  If the environment contains an entry with the key
+<var>name</var> this whole entry is removed.  A call to this function is
+equivalent to a call to <code>putenv</code> when the <var>value</var> part of the
+string is empty.
+</p>
+<p>The function returns <code>-1</code> if <var>name</var> is a null pointer, points to
+an empty string, or points to a string containing a <code>=</code> character.
+It returns <code>0</code> if the call succeeded.
+</p>
+<p>This function was originally part of the BSD library but is now part of
+the Unix standard.  The BSD version had no return value, though.
+</p></dd></dl>
+
+<p>There is one more function to modify the whole environment.  This
+function is said to be used in the POSIX.9 (POSIX bindings for Fortran
+77) and so one should expect it did made it into POSIX.1.  But this
+never happened.  But we still provide this function as a GNU extension
+to enable writing standard compliant Fortran environments.
+</p>
+<dl>
+<dt><a name="index-clearenv"></a>Function: <em>int</em> <strong>clearenv</strong> <em>(void)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Unsafe const:env
+| AS-Unsafe heap lock
+| AC-Unsafe lock mem
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>clearenv</code> function removes all entries from the environment.
+Using <code>putenv</code> and <code>setenv</code> new entries can be added again
+later.
+</p>
+<p>If the function is successful it returns <code>0</code>.  Otherwise the return
+value is nonzero.
+</p></dd></dl>
+
+
+<p>You can deal directly with the underlying representation of environment
+objects to add more variables to the environment (for example, to
+communicate with another program you are about to execute;
+see <a href="Executing-a-File.html#Executing-a-File">Executing a File</a>).
+</p>
+<dl>
+<dt><a name="index-environ"></a>Variable: <em>char **</em> <strong>environ</strong></dt>
+<dd>
+<p>The environment is represented as an array of strings.  Each string is
+of the format &lsquo;<samp><var>name</var>=<var>value</var></samp>&rsquo;.  The order in which
+strings appear in the environment is not significant, but the same
+<var>name</var> must not appear more than once.  The last element of the
+array is a null pointer.
+</p>
+<p>This variable is declared in the header file <samp>unistd.h</samp>.
+</p>
+<p>If you just want to get the value of an environment variable, use
+<code>getenv</code>.
+</p></dd></dl>
+
+<p>Unix systems, and GNU systems, pass the initial value of
+<code>environ</code> as the third argument to <code>main</code>.
+See <a href="Program-Arguments.html#Program-Arguments">Program Arguments</a>.
+</p>
+<hr>
+<div class="header">
+<p>
+Next: <a href="Standard-Environment.html#Standard-Environment" accesskey="n" rel="next">Standard Environment</a>, Up: <a href="Environment-Variables.html#Environment-Variables" accesskey="u" rel="up">Environment Variables</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

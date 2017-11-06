@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Signal Generation</title>
+
+<meta name="description" content="The GNU C Library: Signal Generation">
+<meta name="keywords" content="The GNU C Library: Signal Generation">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Concepts-of-Signals.html#Concepts-of-Signals" rel="up" title="Concepts of Signals">
+<link href="Delivery-of-Signal.html#Delivery-of-Signal" rel="next" title="Delivery of Signal">
+<link href="Kinds-of-Signals.html#Kinds-of-Signals" rel="prev" title="Kinds of Signals">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Signal-Generation"></a>
+<div class="header">
+<p>
+Next: <a href="Delivery-of-Signal.html#Delivery-of-Signal" accesskey="n" rel="next">Delivery of Signal</a>, Previous: <a href="Kinds-of-Signals.html#Kinds-of-Signals" accesskey="p" rel="prev">Kinds of Signals</a>, Up: <a href="Concepts-of-Signals.html#Concepts-of-Signals" accesskey="u" rel="up">Concepts of Signals</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Concepts-of-Signal-Generation"></a>
+<h4 class="subsection">24.1.2 Concepts of Signal Generation</h4>
+<a name="index-generation-of-signals"></a>
+
+<p>In general, the events that generate signals fall into three major
+categories: errors, external events, and explicit requests.
+</p>
+<p>An error means that a program has done something invalid and cannot
+continue execution.  But not all kinds of errors generate signals&mdash;in
+fact, most do not.  For example, opening a nonexistent file is an error,
+but it does not raise a signal; instead, <code>open</code> returns <code>-1</code>.
+In general, errors that are necessarily associated with certain library
+functions are reported by returning a value that indicates an error.
+The errors which raise signals are those which can happen anywhere in
+the program, not just in library calls.  These include division by zero
+and invalid memory addresses.
+</p>
+<p>An external event generally has to do with I/O or other processes.
+These include the arrival of input, the expiration of a timer, and the
+termination of a child process.
+</p>
+<p>An explicit request means the use of a library function such as
+<code>kill</code> whose purpose is specifically to generate a signal.
+</p>
+<p>Signals may be generated <em>synchronously</em> or <em>asynchronously</em>.  A
+synchronous signal pertains to a specific action in the program, and is
+delivered (unless blocked) during that action.  Most errors generate
+signals synchronously, and so do explicit requests by a process to
+generate a signal for that same process.  On some machines, certain
+kinds of hardware errors (usually floating-point exceptions) are not
+reported completely synchronously, but may arrive a few instructions
+later.
+</p>
+<p>Asynchronous signals are generated by events outside the control of the
+process that receives them.  These signals arrive at unpredictable times
+during execution.  External events generate signals asynchronously, and
+so do explicit requests that apply to some other process.
+</p>
+<p>A given type of signal is either typically synchronous or typically
+asynchronous.  For example, signals for errors are typically synchronous
+because errors generate signals synchronously.  But any type of signal
+can be generated synchronously or asynchronously with an explicit
+request.
+</p>
+<hr>
+<div class="header">
+<p>
+Next: <a href="Delivery-of-Signal.html#Delivery-of-Signal" accesskey="n" rel="next">Delivery of Signal</a>, Previous: <a href="Kinds-of-Signals.html#Kinds-of-Signals" accesskey="p" rel="prev">Kinds of Signals</a>, Up: <a href="Concepts-of-Signals.html#Concepts-of-Signals" accesskey="u" rel="up">Concepts of Signals</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

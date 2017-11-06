@@ -1,0 +1,124 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Adding Severity Classes</title>
+
+<meta name="description" content="The GNU C Library: Adding Severity Classes">
+<meta name="keywords" content="The GNU C Library: Adding Severity Classes">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Formatted-Messages.html#Formatted-Messages" rel="up" title="Formatted Messages">
+<link href="Example.html#Example" rel="next" title="Example">
+<link href="Printing-Formatted-Messages.html#Printing-Formatted-Messages" rel="prev" title="Printing Formatted Messages">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Adding-Severity-Classes"></a>
+<div class="header">
+<p>
+Next: <a href="Example.html#Example" accesskey="n" rel="next">Example</a>, Previous: <a href="Printing-Formatted-Messages.html#Printing-Formatted-Messages" accesskey="p" rel="prev">Printing Formatted Messages</a>, Up: <a href="Formatted-Messages.html#Formatted-Messages" accesskey="u" rel="up">Formatted Messages</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Adding-Severity-Classes-1"></a>
+<h4 class="subsection">12.22.2 Adding Severity Classes</h4>
+<a name="index-severity-class-1"></a>
+
+<p>There is another possibility to introduce severity classes besides using
+the environment variable <code>SEV_LEVEL</code>.  This simplifies the task of
+introducing new classes in a running program.  One could use the
+<code>setenv</code> or <code>putenv</code> function to set the environment variable,
+but this is toilsome.
+</p>
+<dl>
+<dt><a name="index-addseverity"></a>Function: <em>int</em> <strong>addseverity</strong> <em>(int <var>severity</var>, const char *<var>string</var>)</em></dt>
+<dd><p>Preliminary:
+| MT-Safe 
+| AS-Unsafe heap lock
+| AC-Unsafe lock mem
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function allows the introduction of new severity classes which can be
+addressed by the <var>severity</var> parameter of the <code>fmtmsg</code> function.
+The <var>severity</var> parameter of <code>addseverity</code> must match the value
+for the parameter with the same name of <code>fmtmsg</code>, and <var>string</var>
+is the string printed in the actual messages instead of the numeric
+value.
+</p>
+<p>If <var>string</var> is <code>NULL</code> the severity class with the numeric value
+according to <var>severity</var> is removed.
+</p>
+<p>It is not possible to overwrite or remove one of the default severity
+classes.  All calls to <code>addseverity</code> with <var>severity</var> set to one
+of the values for the default classes will fail.
+</p>
+<p>The return value is <code>MM_OK</code> if the task was successfully performed.
+If the return value is <code>MM_NOTOK</code> something went wrong.  This could
+mean that no more memory is available or a class is not available when
+it has to be removed.
+</p>
+<p>This function is not specified in the X/Open Portability Guide although
+the <code>fmtsmg</code> function is.  It is available on System V systems.
+</p></dd></dl>
+
+
+
+
+
+</body>
+</html>

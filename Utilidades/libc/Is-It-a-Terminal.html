@@ -1,0 +1,169 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Is It a Terminal</title>
+
+<meta name="description" content="The GNU C Library: Is It a Terminal">
+<meta name="keywords" content="The GNU C Library: Is It a Terminal">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Low_002dLevel-Terminal-Interface.html#Low_002dLevel-Terminal-Interface" rel="up" title="Low-Level Terminal Interface">
+<link href="I_002fO-Queues.html#I_002fO-Queues" rel="next" title="I/O Queues">
+<link href="Low_002dLevel-Terminal-Interface.html#Low_002dLevel-Terminal-Interface" rel="prev" title="Low-Level Terminal Interface">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Is-It-a-Terminal"></a>
+<div class="header">
+<p>
+Next: <a href="I_002fO-Queues.html#I_002fO-Queues" accesskey="n" rel="next">I/O Queues</a>, Up: <a href="Low_002dLevel-Terminal-Interface.html#Low_002dLevel-Terminal-Interface" accesskey="u" rel="up">Low-Level Terminal Interface</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Identifying-Terminals"></a>
+<h3 class="section">17.1 Identifying Terminals</h3>
+<a name="index-terminal-identification"></a>
+<a name="index-identifying-terminals"></a>
+
+<p>The functions described in this chapter only work on files that
+correspond to terminal devices.  You can find out whether a file
+descriptor is associated with a terminal by using the <code>isatty</code>
+function.
+</p>
+<a name="index-unistd_002eh-13"></a>
+<p>Prototypes for the functions in this section are declared in the header
+file <samp>unistd.h</samp>.
+</p>
+<dl>
+<dt><a name="index-isatty"></a>Function: <em>int</em> <strong>isatty</strong> <em>(int <var>filedes</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function returns <code>1</code> if <var>filedes</var> is a file descriptor
+associated with an open terminal device, and <em>0</em> otherwise.
+</p></dd></dl>
+
+<p>If a file descriptor is associated with a terminal, you can get its
+associated file name using the <code>ttyname</code> function.  See also the
+<code>ctermid</code> function, described in <a href="Identifying-the-Terminal.html#Identifying-the-Terminal">Identifying the Terminal</a>.
+</p>
+<dl>
+<dt><a name="index-ttyname"></a>Function: <em>char *</em> <strong>ttyname</strong> <em>(int <var>filedes</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Unsafe race:ttyname
+| AS-Unsafe heap lock
+| AC-Unsafe lock fd mem
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>If the file descriptor <var>filedes</var> is associated with a terminal
+device, the <code>ttyname</code> function returns a pointer to a
+statically-allocated, null-terminated string containing the file name of
+the terminal file.  The value is a null pointer if the file descriptor
+isn&rsquo;t associated with a terminal, or the file name cannot be determined.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-ttyname_005fr"></a>Function: <em>int</em> <strong>ttyname_r</strong> <em>(int <var>filedes</var>, char *<var>buf</var>, size_t <var>len</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Unsafe heap
+| AC-Unsafe mem fd
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>ttyname_r</code> function is similar to the <code>ttyname</code> function
+except that it places its result into the user-specified buffer starting
+at <var>buf</var> with length <var>len</var>.
+</p>
+<p>The normal return value from <code>ttyname_r</code> is <em>0</em>.  Otherwise an
+error number is returned to indicate the error.  The following
+<code>errno</code> error conditions are defined for this function:
+</p>
+<dl compact="compact">
+<dt><code>EBADF</code></dt>
+<dd><p>The <var>filedes</var> argument is not a valid file descriptor.
+</p>
+</dd>
+<dt><code>ENOTTY</code></dt>
+<dd><p>The <var>filedes</var> is not associated with a terminal.
+</p>
+</dd>
+<dt><code>ERANGE</code></dt>
+<dd><p>The buffer length <var>len</var> is too small to store the string to be
+returned.
+</p></dd>
+</dl>
+</dd></dl>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="I_002fO-Queues.html#I_002fO-Queues" accesskey="n" rel="next">I/O Queues</a>, Up: <a href="Low_002dLevel-Terminal-Interface.html#Low_002dLevel-Terminal-Interface" accesskey="u" rel="up">Low-Level Terminal Interface</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,333 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Testing File Type</title>
+
+<meta name="description" content="The GNU C Library: Testing File Type">
+<meta name="keywords" content="The GNU C Library: Testing File Type">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="File-Attributes.html#File-Attributes" rel="up" title="File Attributes">
+<link href="File-Owner.html#File-Owner" rel="next" title="File Owner">
+<link href="Reading-Attributes.html#Reading-Attributes" rel="prev" title="Reading Attributes">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Testing-File-Type"></a>
+<div class="header">
+<p>
+Next: <a href="File-Owner.html#File-Owner" accesskey="n" rel="next">File Owner</a>, Previous: <a href="Reading-Attributes.html#Reading-Attributes" accesskey="p" rel="prev">Reading Attributes</a>, Up: <a href="File-Attributes.html#File-Attributes" accesskey="u" rel="up">File Attributes</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Testing-the-Type-of-a-File"></a>
+<h4 class="subsection">14.9.3 Testing the Type of a File</h4>
+
+<p>The <em>file mode</em>, stored in the <code>st_mode</code> field of the file
+attributes, contains two kinds of information: the file type code, and
+the access permission bits.  This section discusses only the type code,
+which you can use to tell whether the file is a directory, socket,
+symbolic link, and so on.  For details about access permissions see
+<a href="Permission-Bits.html#Permission-Bits">Permission Bits</a>.
+</p>
+<p>There are two ways you can access the file type information in a file
+mode.  Firstly, for each file type there is a <em>predicate macro</em>
+which examines a given file mode and returns whether it is of that type
+or not.  Secondly, you can mask out the rest of the file mode to leave
+just the file type code, and compare this against constants for each of
+the supported file types.
+</p>
+<p>All of the symbols listed in this section are defined in the header file
+<samp>sys/stat.h</samp>.
+<a name="index-sys_002fstat_002eh-3"></a>
+</p>
+<p>The following predicate macros test the type of a file, given the value
+<var>m</var> which is the <code>st_mode</code> field returned by <code>stat</code> on
+that file:
+</p>
+<dl>
+<dt><a name="index-S_005fISDIR"></a>Macro: <em>int</em> <strong>S_ISDIR</strong> <em>(mode_t <var>m</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This macro returns non-zero if the file is a directory.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-S_005fISCHR"></a>Macro: <em>int</em> <strong>S_ISCHR</strong> <em>(mode_t <var>m</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This macro returns non-zero if the file is a character special file (a
+device like a terminal).
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-S_005fISBLK"></a>Macro: <em>int</em> <strong>S_ISBLK</strong> <em>(mode_t <var>m</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This macro returns non-zero if the file is a block special file (a device
+like a disk).
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-S_005fISREG"></a>Macro: <em>int</em> <strong>S_ISREG</strong> <em>(mode_t <var>m</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This macro returns non-zero if the file is a regular file.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-S_005fISFIFO"></a>Macro: <em>int</em> <strong>S_ISFIFO</strong> <em>(mode_t <var>m</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This macro returns non-zero if the file is a FIFO special file, or a
+pipe.  See <a href="Pipes-and-FIFOs.html#Pipes-and-FIFOs">Pipes and FIFOs</a>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-S_005fISLNK"></a>Macro: <em>int</em> <strong>S_ISLNK</strong> <em>(mode_t <var>m</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This macro returns non-zero if the file is a symbolic link.
+See <a href="Symbolic-Links.html#Symbolic-Links">Symbolic Links</a>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-S_005fISSOCK"></a>Macro: <em>int</em> <strong>S_ISSOCK</strong> <em>(mode_t <var>m</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This macro returns non-zero if the file is a socket.  See <a href="Sockets.html#Sockets">Sockets</a>.
+</p></dd></dl>
+
+<p>An alternate non-POSIX method of testing the file type is supported for
+compatibility with BSD.  The mode can be bitwise AND-ed with
+<code>S_IFMT</code> to extract the file type code, and compared to the
+appropriate constant.  For example,
+</p>
+<div class="smallexample">
+<pre class="smallexample">S_ISCHR (<var>mode</var>)
+</pre></div>
+
+<p>is equivalent to:
+</p>
+<div class="smallexample">
+<pre class="smallexample">((<var>mode</var> &amp; S_IFMT) == S_IFCHR)
+</pre></div>
+
+<dl>
+<dt><a name="index-S_005fIFMT"></a>Macro: <em>int</em> <strong>S_IFMT</strong></dt>
+<dd>
+<p>This is a bit mask used to extract the file type code from a mode value.
+</p></dd></dl>
+
+<p>These are the symbolic names for the different file type codes:
+</p>
+<dl compact="compact">
+<dt><code>S_IFDIR</code>
+<a name="index-S_005fIFDIR"></a>
+</dt>
+<dd>
+<p>This is the file type constant of a directory file.
+</p>
+</dd>
+<dt><code>S_IFCHR</code>
+<a name="index-S_005fIFCHR"></a>
+</dt>
+<dd>
+<p>This is the file type constant of a character-oriented device file.
+</p>
+</dd>
+<dt><code>S_IFBLK</code>
+<a name="index-S_005fIFBLK"></a>
+</dt>
+<dd>
+<p>This is the file type constant of a block-oriented device file.
+</p>
+</dd>
+<dt><code>S_IFREG</code>
+<a name="index-S_005fIFREG"></a>
+</dt>
+<dd>
+<p>This is the file type constant of a regular file.
+</p>
+</dd>
+<dt><code>S_IFLNK</code>
+<a name="index-S_005fIFLNK"></a>
+</dt>
+<dd>
+<p>This is the file type constant of a symbolic link.
+</p>
+</dd>
+<dt><code>S_IFSOCK</code>
+<a name="index-S_005fIFSOCK"></a>
+</dt>
+<dd>
+<p>This is the file type constant of a socket.
+</p>
+</dd>
+<dt><code>S_IFIFO</code>
+<a name="index-S_005fIFIFO"></a>
+</dt>
+<dd>
+<p>This is the file type constant of a FIFO or pipe.
+</p></dd>
+</dl>
+
+<p>The POSIX.1b standard introduced a few more objects which possibly can
+be implemented as objects in the filesystem.  These are message queues,
+semaphores, and shared memory objects.  To allow differentiating these
+objects from other files the POSIX standard introduced three new test
+macros.  But unlike the other macros they do not take the value of the
+<code>st_mode</code> field as the parameter.  Instead they expect a pointer to
+the whole <code>struct stat</code> structure.
+</p>
+<dl>
+<dt><a name="index-S_005fTYPEISMQ"></a>Macro: <em>int</em> <strong>S_TYPEISMQ</strong> <em>(struct stat *<var>s</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>If the system implements POSIX message queues as distinct objects and the
+file is a message queue object, this macro returns a non-zero value.
+In all other cases the result is zero.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-S_005fTYPEISSEM"></a>Macro: <em>int</em> <strong>S_TYPEISSEM</strong> <em>(struct stat *<var>s</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>If the system implements POSIX semaphores as distinct objects and the
+file is a semaphore object, this macro returns a non-zero value.
+In all other cases the result is zero.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-S_005fTYPEISSHM"></a>Macro: <em>int</em> <strong>S_TYPEISSHM</strong> <em>(struct stat *<var>s</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>If the system implements POSIX shared memory objects as distinct objects
+and the file is a shared memory object, this macro returns a non-zero
+value.  In all other cases the result is zero.
+</p></dd></dl>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="File-Owner.html#File-Owner" accesskey="n" rel="next">File Owner</a>, Previous: <a href="Reading-Attributes.html#Reading-Attributes" accesskey="p" rel="prev">Reading Attributes</a>, Up: <a href="File-Attributes.html#File-Attributes" accesskey="u" rel="up">File Attributes</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,197 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Pipe to a Subprocess</title>
+
+<meta name="description" content="The GNU C Library: Pipe to a Subprocess">
+<meta name="keywords" content="The GNU C Library: Pipe to a Subprocess">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Pipes-and-FIFOs.html#Pipes-and-FIFOs" rel="up" title="Pipes and FIFOs">
+<link href="FIFO-Special-Files.html#FIFO-Special-Files" rel="next" title="FIFO Special Files">
+<link href="Creating-a-Pipe.html#Creating-a-Pipe" rel="prev" title="Creating a Pipe">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Pipe-to-a-Subprocess"></a>
+<div class="header">
+<p>
+Next: <a href="FIFO-Special-Files.html#FIFO-Special-Files" accesskey="n" rel="next">FIFO Special Files</a>, Previous: <a href="Creating-a-Pipe.html#Creating-a-Pipe" accesskey="p" rel="prev">Creating a Pipe</a>, Up: <a href="Pipes-and-FIFOs.html#Pipes-and-FIFOs" accesskey="u" rel="up">Pipes and FIFOs</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Pipe-to-a-Subprocess-1"></a>
+<h3 class="section">15.2 Pipe to a Subprocess</h3>
+<a name="index-creating-a-pipe-to-a-subprocess"></a>
+<a name="index-pipe-to-a-subprocess"></a>
+<a name="index-filtering-i_002fo-through-subprocess"></a>
+
+<p>A common use of pipes is to send data to or receive data from a program
+being run as a subprocess.  One way of doing this is by using a combination of
+<code>pipe</code> (to create the pipe), <code>fork</code> (to create the subprocess),
+<code>dup2</code> (to force the subprocess to use the pipe as its standard input
+or output channel), and <code>exec</code> (to execute the new program).  Or,
+you can use <code>popen</code> and <code>pclose</code>.
+</p>
+<p>The advantage of using <code>popen</code> and <code>pclose</code> is that the
+interface is much simpler and easier to use.  But it doesn&rsquo;t offer as
+much flexibility as using the low-level functions directly.
+</p>
+<dl>
+<dt><a name="index-popen"></a>Function: <em>FILE *</em> <strong>popen</strong> <em>(const char *<var>command</var>, const char *<var>mode</var>)</em></dt>
+<dd>
+
+
+<p>Preliminary:
+| MT-Safe 
+| AS-Unsafe heap corrupt
+| AC-Unsafe corrupt lock fd mem
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>popen</code> function is closely related to the <code>system</code>
+function; see <a href="Running-a-Command.html#Running-a-Command">Running a Command</a>.  It executes the shell command
+<var>command</var> as a subprocess.  However, instead of waiting for the
+command to complete, it creates a pipe to the subprocess and returns a
+stream that corresponds to that pipe.
+</p>
+<p>If you specify a <var>mode</var> argument of <code>&quot;r&quot;</code>, you can read from the
+stream to retrieve data from the standard output channel of the subprocess.
+The subprocess inherits its standard input channel from the parent process.
+</p>
+<p>Similarly, if you specify a <var>mode</var> argument of <code>&quot;w&quot;</code>, you can
+write to the stream to send data to the standard input channel of the
+subprocess.  The subprocess inherits its standard output channel from
+the parent process.
+</p>
+<p>In the event of an error <code>popen</code> returns a null pointer.  This
+might happen if the pipe or stream cannot be created, if the subprocess
+cannot be forked, or if the program cannot be executed.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-pclose"></a>Function: <em>int</em> <strong>pclose</strong> <em>(FILE *<var>stream</var>)</em></dt>
+<dd>
+
+
+<p>Preliminary:
+| MT-Safe 
+| AS-Unsafe heap plugin corrupt lock
+| AC-Unsafe corrupt lock fd mem
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>pclose</code> function is used to close a stream created by <code>popen</code>.
+It waits for the child process to terminate and returns its status value,
+as for the <code>system</code> function.
+</p></dd></dl>
+
+<p>Here is an example showing how to use <code>popen</code> and <code>pclose</code> to
+filter output through another program, in this case the paging program
+<code>more</code>.
+</p>
+<div class="smallexample">
+<pre class="smallexample">
+
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+void
+write_data (FILE * stream)
+{
+  int i;
+  for (i = 0; i &lt; 100; i++)
+    fprintf (stream, &quot;%d\n&quot;, i);
+  if (ferror (stream))
+    {
+      fprintf (stderr, &quot;Output to stream failed.\n&quot;);
+      exit (EXIT_FAILURE);
+    }
+}
+
+</pre><pre class="smallexample">int
+main (void)
+{
+  FILE *output;
+
+  output = popen (&quot;more&quot;, &quot;w&quot;);
+  if (!output)
+    {
+      fprintf (stderr,
+               &quot;incorrect parameters or too many files.\n&quot;);
+      return EXIT_FAILURE;
+    }
+  write_data (output);
+  if (pclose (output) != 0)
+    {
+      fprintf (stderr,
+               &quot;Could not run more or other error.\n&quot;);
+    }
+  return EXIT_SUCCESS;
+}
+</pre></div>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="FIFO-Special-Files.html#FIFO-Special-Files" accesskey="n" rel="next">FIFO Special Files</a>, Previous: <a href="Creating-a-Pipe.html#Creating-a-Pipe" accesskey="p" rel="prev">Creating a Pipe</a>, Up: <a href="Pipes-and-FIFOs.html#Pipes-and-FIFOs" accesskey="u" rel="up">Pipes and FIFOs</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

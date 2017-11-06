@@ -1,0 +1,211 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Consistency Checking</title>
+
+<meta name="description" content="The GNU C Library: Consistency Checking">
+<meta name="keywords" content="The GNU C Library: Consistency Checking">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Language-Features.html#Language-Features" rel="up" title="Language Features">
+<link href="Variadic-Functions.html#Variadic-Functions" rel="next" title="Variadic Functions">
+<link href="Language-Features.html#Language-Features" rel="prev" title="Language Features">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Consistency-Checking"></a>
+<div class="header">
+<p>
+Next: <a href="Variadic-Functions.html#Variadic-Functions" accesskey="n" rel="next">Variadic Functions</a>, Up: <a href="Language-Features.html#Language-Features" accesskey="u" rel="up">Language Features</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Explicitly-Checking-Internal-Consistency"></a>
+<h3 class="section">A.1 Explicitly Checking Internal Consistency</h3>
+<a name="index-consistency-checking"></a>
+<a name="index-impossible-events"></a>
+<a name="index-assertions"></a>
+
+<p>When you&rsquo;re writing a program, it&rsquo;s often a good idea to put in checks
+at strategic places for &ldquo;impossible&rdquo; errors or violations of basic
+assumptions.  These kinds of checks are helpful in debugging problems
+with the interfaces between different parts of the program, for example.
+</p>
+<a name="index-assert_002eh"></a>
+<p>The <code>assert</code> macro, defined in the header file <samp>assert.h</samp>,
+provides a convenient way to abort the program while printing a message
+about where in the program the error was detected.
+</p>
+<a name="index-NDEBUG"></a>
+<p>Once you think your program is debugged, you can disable the error
+checks performed by the <code>assert</code> macro by recompiling with the
+macro <code>NDEBUG</code> defined.  This means you don&rsquo;t actually have to
+change the program source code to disable these checks.
+</p>
+<p>But disabling these consistency checks is undesirable unless they make
+the program significantly slower.  All else being equal, more error
+checking is good no matter who is running the program.  A wise user
+would rather have a program crash, visibly, than have it return nonsense
+without indicating anything might be wrong.
+</p>
+<dl>
+<dt><a name="index-assert"></a>Macro: <em>void</em> <strong>assert</strong> <em>(int <var>expression</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Unsafe heap corrupt
+| AC-Unsafe mem lock corrupt
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>Verify the programmer&rsquo;s belief that <var>expression</var> is nonzero at
+this point in the program.
+</p>
+<p>If <code>NDEBUG</code> is not defined, <code>assert</code> tests the value of
+<var>expression</var>.  If it is false (zero), <code>assert</code> aborts the
+program (see <a href="Aborting-a-Program.html#Aborting-a-Program">Aborting a Program</a>) after printing a message of the
+form:
+</p>
+<div class="smallexample">
+<pre class="smallexample"><samp><var>file</var></samp>:<var>linenum</var>: <var>function</var>: Assertion `<var>expression</var>' failed.
+</pre></div>
+
+<p>on the standard error stream <code>stderr</code> (see <a href="Standard-Streams.html#Standard-Streams">Standard Streams</a>).
+The filename and line number are taken from the C preprocessor macros
+<code>__FILE__</code> and <code>__LINE__</code> and specify where the call to
+<code>assert</code> was made.  When using the GNU C compiler, the name of
+the function which calls <code>assert</code> is taken from the built-in
+variable <code>__PRETTY_FUNCTION__</code>; with older compilers, the function
+name and following colon are omitted.
+</p>
+<p>If the preprocessor macro <code>NDEBUG</code> is defined before
+<samp>assert.h</samp> is included, the <code>assert</code> macro is defined to do
+absolutely nothing.
+</p>
+<p><strong>Warning:</strong> Even the argument expression <var>expression</var> is not
+evaluated if <code>NDEBUG</code> is in effect.  So never use <code>assert</code>
+with arguments that involve side effects.  For example, <code>assert
+(++i &gt; 0);</code> is a bad idea, because <code>i</code> will not be incremented if
+<code>NDEBUG</code> is defined.
+</p></dd></dl>
+
+<p>Sometimes the &ldquo;impossible&rdquo; condition you want to check for is an error
+return from an operating system function.  Then it is useful to display
+not only where the program crashes, but also what error was returned.
+The <code>assert_perror</code> macro makes this easy.
+</p>
+<dl>
+<dt><a name="index-assert_005fperror"></a>Macro: <em>void</em> <strong>assert_perror</strong> <em>(int <var>errnum</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Unsafe heap corrupt
+| AC-Unsafe mem lock corrupt
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>Similar to <code>assert</code>, but verifies that <var>errnum</var> is zero.
+</p>
+<p>If <code>NDEBUG</code> is not defined, <code>assert_perror</code> tests the value of
+<var>errnum</var>.  If it is nonzero, <code>assert_perror</code> aborts the program
+after printing a message of the form:
+</p>
+<div class="smallexample">
+<pre class="smallexample"><samp><var>file</var></samp>:<var>linenum</var>: <var>function</var>: <var>error text</var>
+</pre></div>
+
+<p>on the standard error stream.  The file name, line number, and function
+name are as for <code>assert</code>.  The error text is the result of
+<code>strerror&nbsp;(<var>errnum</var>)</code><!-- /@w -->.  See <a href="Error-Messages.html#Error-Messages">Error Messages</a>.
+</p>
+<p>Like <code>assert</code>, if <code>NDEBUG</code> is defined before <samp>assert.h</samp>
+is included, the <code>assert_perror</code> macro does absolutely nothing.  It
+does not evaluate the argument, so <var>errnum</var> should not have any side
+effects.  It is best for <var>errnum</var> to be just a simple variable
+reference; often it will be <code>errno</code>.
+</p>
+<p>This macro is a GNU extension.
+</p></dd></dl>
+
+<p><strong>Usage note:</strong> The <code>assert</code> facility is designed for
+detecting <em>internal inconsistency</em>; it is not suitable for
+reporting invalid input or improper usage by the <em>user</em> of the
+program.
+</p>
+<p>The information in the diagnostic messages printed by the <code>assert</code>
+and <code>assert_perror</code> macro is intended to help you, the programmer,
+track down the cause of a bug, but is not really useful for telling a user
+of your program why his or her input was invalid or why a command could not
+be carried out.  What&rsquo;s more, your program should not abort when given
+invalid input, as <code>assert</code> would do&mdash;it should exit with nonzero
+status (see <a href="Exit-Status.html#Exit-Status">Exit Status</a>) after printing its error messages, or perhaps
+read another command or move on to the next input file.
+</p>
+<p>See <a href="Error-Messages.html#Error-Messages">Error Messages</a>, for information on printing error messages for
+problems that <em>do not</em> represent bugs in the program.
+</p>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Variadic-Functions.html#Variadic-Functions" accesskey="n" rel="next">Variadic Functions</a>, Up: <a href="Language-Features.html#Language-Features" accesskey="u" rel="up">Language Features</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

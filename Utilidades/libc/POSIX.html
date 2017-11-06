@@ -1,0 +1,137 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: POSIX</title>
+
+<meta name="description" content="The GNU C Library: POSIX">
+<meta name="keywords" content="The GNU C Library: POSIX">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Standards-and-Portability.html#Standards-and-Portability" rel="up" title="Standards and Portability">
+<link href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts" rel="next" title="POSIX Safety Concepts">
+<link href="ISO-C.html#ISO-C" rel="prev" title="ISO C">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="POSIX"></a>
+<div class="header">
+<p>
+Next: <a href="Berkeley-Unix.html#Berkeley-Unix" accesskey="n" rel="next">Berkeley Unix</a>, Previous: <a href="ISO-C.html#ISO-C" accesskey="p" rel="prev">ISO C</a>, Up: <a href="Standards-and-Portability.html#Standards-and-Portability" accesskey="u" rel="up">Standards and Portability</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="POSIX-_0028The-Portable-Operating-System-Interface_0029"></a>
+<h4 class="subsection">1.2.2 POSIX (The Portable Operating System Interface)</h4>
+<a name="index-POSIX"></a>
+<a name="index-POSIX_002e1"></a>
+<a name="index-IEEE-Std-1003_002e1"></a>
+<a name="index-ISO_002fIEC-9945_002d1"></a>
+<a name="index-POSIX_002e2"></a>
+<a name="index-IEEE-Std-1003_002e2"></a>
+<a name="index-ISO_002fIEC-9945_002d2"></a>
+
+<p>The GNU C Library is also compatible with the ISO <em>POSIX</em> family of
+standards, known more formally as the <em>Portable Operating System
+Interface for Computer Environments</em> (ISO/IEC 9945).  They were also
+published as ANSI/IEEE Std 1003.  POSIX is derived mostly from various
+versions of the Unix operating system.
+</p>
+<p>The library facilities specified by the POSIX standards are a superset
+of those required by ISO&nbsp;C<!-- /@w -->; POSIX specifies additional features for
+ISO&nbsp;C<!-- /@w --> functions, as well as specifying new additional functions.  In
+general, the additional requirements and functionality defined by the
+POSIX standards are aimed at providing lower-level support for a
+particular kind of operating system environment, rather than general
+programming language support which can run in many diverse operating
+system environments.
+</p>
+<p>The GNU C Library implements all of the functions specified in
+<cite>ISO/IEC 9945-1:1996, the POSIX System Application Program
+Interface</cite>, commonly referred to as POSIX.1.  The primary extensions to
+the ISO&nbsp;C<!-- /@w --> facilities specified by this standard include file system
+interface primitives (see <a href="File-System-Interface.html#File-System-Interface">File System Interface</a>), device-specific
+terminal control functions (see <a href="Low_002dLevel-Terminal-Interface.html#Low_002dLevel-Terminal-Interface">Low-Level Terminal Interface</a>), and
+process control functions (see <a href="Processes.html#Processes">Processes</a>).
+</p>
+<p>Some facilities from <cite>ISO/IEC 9945-2:1993, the POSIX Shell and
+Utilities standard</cite> (POSIX.2) are also implemented in the GNU C Library.
+These include utilities for dealing with regular expressions and other
+pattern matching facilities (see <a href="Pattern-Matching.html#Pattern-Matching">Pattern Matching</a>).
+</p>
+<table class="menu" border="0" cellspacing="0">
+<tr><td align="left" valign="top">&bull; <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts" accesskey="1">POSIX Safety Concepts</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Safety concepts from POSIX.
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Unsafe-Features.html#Unsafe-Features" accesskey="2">Unsafe Features</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Features that make functions unsafe.
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Conditionally-Safe-Features.html#Conditionally-Safe-Features" accesskey="3">Conditionally Safe Features</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Features that make functions unsafe
+                                 in the absence of workarounds.
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Other-Safety-Remarks.html#Other-Safety-Remarks" accesskey="4">Other Safety Remarks</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Additional safety features and remarks.
+</td></tr>
+</table>
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Berkeley-Unix.html#Berkeley-Unix" accesskey="n" rel="next">Berkeley Unix</a>, Previous: <a href="ISO-C.html#ISO-C" accesskey="p" rel="prev">ISO C</a>, Up: <a href="Standards-and-Portability.html#Standards-and-Portability" accesskey="u" rel="up">Standards and Portability</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

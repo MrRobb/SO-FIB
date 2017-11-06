@@ -1,0 +1,158 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Regexp Cleanup</title>
+
+<meta name="description" content="The GNU C Library: Regexp Cleanup">
+<meta name="keywords" content="The GNU C Library: Regexp Cleanup">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Regular-Expressions.html#Regular-Expressions" rel="up" title="Regular Expressions">
+<link href="Word-Expansion.html#Word-Expansion" rel="next" title="Word Expansion">
+<link href="Subexpression-Complications.html#Subexpression-Complications" rel="prev" title="Subexpression Complications">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Regexp-Cleanup"></a>
+<div class="header">
+<p>
+Previous: <a href="Subexpression-Complications.html#Subexpression-Complications" accesskey="p" rel="prev">Subexpression Complications</a>, Up: <a href="Regular-Expressions.html#Regular-Expressions" accesskey="u" rel="up">Regular Expressions</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="POSIX-Regexp-Matching-Cleanup"></a>
+<h4 class="subsection">10.3.6 POSIX Regexp Matching Cleanup</h4>
+
+<p>When you are finished using a compiled regular expression, you can
+free the storage it uses by calling <code>regfree</code>.
+</p>
+<dl>
+<dt><a name="index-regfree"></a>Function: <em>void</em> <strong>regfree</strong> <em>(regex_t *<var>compiled</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Unsafe heap
+| AC-Unsafe mem
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>Calling <code>regfree</code> frees all the storage that <code>*<var>compiled</var></code>
+points to.  This includes various internal fields of the <code>regex_t</code>
+structure that aren&rsquo;t documented in this manual.
+</p>
+<p><code>regfree</code> does not free the object <code>*<var>compiled</var></code> itself.
+</p></dd></dl>
+
+<p>You should always free the space in a <code>regex_t</code> structure with
+<code>regfree</code> before using the structure to compile another regular
+expression.
+</p>
+<p>When <code>regcomp</code> or <code>regexec</code> reports an error, you can use
+the function <code>regerror</code> to turn it into an error message string.
+</p>
+<dl>
+<dt><a name="index-regerror"></a>Function: <em>size_t</em> <strong>regerror</strong> <em>(int <var>errcode</var>, const regex_t *restrict <var>compiled</var>, char *restrict <var>buffer</var>, size_t <var>length</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe env
+| AS-Unsafe corrupt heap lock dlopen
+| AC-Unsafe corrupt lock fd mem
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function produces an error message string for the error code
+<var>errcode</var>, and stores the string in <var>length</var> bytes of memory
+starting at <var>buffer</var>.  For the <var>compiled</var> argument, supply the
+same compiled regular expression structure that <code>regcomp</code> or
+<code>regexec</code> was working with when it got the error.  Alternatively,
+you can supply <code>NULL</code> for <var>compiled</var>; you will still get a
+meaningful error message, but it might not be as detailed.
+</p>
+<p>If the error message can&rsquo;t fit in <var>length</var> bytes (including a
+terminating null character), then <code>regerror</code> truncates it.
+The string that <code>regerror</code> stores is always null-terminated
+even if it has been truncated.
+</p>
+<p>The return value of <code>regerror</code> is the minimum length needed to
+store the entire error message.  If this is less than <var>length</var>, then
+the error message was not truncated, and you can use it.  Otherwise, you
+should call <code>regerror</code> again with a larger buffer.
+</p>
+<p>Here is a function which uses <code>regerror</code>, but always dynamically
+allocates a buffer for the error message:
+</p>
+<div class="smallexample">
+<pre class="smallexample">char *get_regerror (int errcode, regex_t *compiled)
+{
+  size_t length = regerror (errcode, compiled, NULL, 0);
+  char *buffer = xmalloc (length);
+  (void) regerror (errcode, compiled, buffer, length);
+  return buffer;
+}
+</pre></div>
+</dd></dl>
+
+<hr>
+<div class="header">
+<p>
+Previous: <a href="Subexpression-Complications.html#Subexpression-Complications" accesskey="p" rel="prev">Subexpression Complications</a>, Up: <a href="Regular-Expressions.html#Regular-Expressions" accesskey="u" rel="up">Regular Expressions</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

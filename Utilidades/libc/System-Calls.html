@@ -1,0 +1,202 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: System Calls</title>
+
+<meta name="description" content="The GNU C Library: System Calls">
+<meta name="keywords" content="The GNU C Library: System Calls">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Program-Basics.html#Program-Basics" rel="up" title="Program Basics">
+<link href="Program-Termination.html#Program-Termination" rel="next" title="Program Termination">
+<link href="Auxiliary-Vector.html#Auxiliary-Vector" rel="prev" title="Auxiliary Vector">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="System-Calls"></a>
+<div class="header">
+<p>
+Next: <a href="Program-Termination.html#Program-Termination" accesskey="n" rel="next">Program Termination</a>, Previous: <a href="Auxiliary-Vector.html#Auxiliary-Vector" accesskey="p" rel="prev">Auxiliary Vector</a>, Up: <a href="Program-Basics.html#Program-Basics" accesskey="u" rel="up">Program Basics</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="System-Calls-1"></a>
+<h3 class="section">25.6 System Calls</h3>
+
+<a name="index-system-call"></a>
+<p>A system call is a request for service that a program makes of the
+kernel.  The service is generally something that only the kernel has
+the privilege to do, such as doing I/O.  Programmers don&rsquo;t normally
+need to be concerned with system calls because there are functions in
+the GNU C Library to do virtually everything that system calls do.
+These functions work by making system calls themselves.  For example,
+there is a system call that changes the permissions of a file, but
+you don&rsquo;t need to know about it because you can just use the GNU C Library&rsquo;s
+<code>chmod</code> function.
+</p>
+<a name="index-kernel-call"></a>
+<p>System calls are sometimes called kernel calls.
+</p>
+<p>However, there are times when you want to make a system call explicitly,
+and for that, the GNU C Library provides the <code>syscall</code> function.
+<code>syscall</code> is harder to use and less portable than functions like
+<code>chmod</code>, but easier and more portable than coding the system call
+in assembler instructions.
+</p>
+<p><code>syscall</code> is most useful when you are working with a system call
+which is special to your system or is newer than the GNU C Library you
+are using.  <code>syscall</code> is implemented in an entirely generic way;
+the function does not know anything about what a particular system
+call does or even if it is valid.
+</p>
+<p>The description of <code>syscall</code> in this section assumes a certain
+protocol for system calls on the various platforms on which the GNU C Library
+runs.  That protocol is not defined by any strong authority, but
+we won&rsquo;t describe it here either because anyone who is coding
+<code>syscall</code> probably won&rsquo;t accept anything less than kernel and C
+library source code as a specification of the interface between them
+anyway.
+</p>
+
+<p><code>syscall</code> is declared in <samp>unistd.h</samp>.
+</p>
+<dl>
+<dt><a name="index-syscall"></a>Function: <em>long int</em> <strong>syscall</strong> <em>(long int <var>sysno</var>, &hellip;)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+
+<p><code>syscall</code> performs a generic system call.
+</p>
+<a name="index-system-call-number"></a>
+<p><var>sysno</var> is the system call number.  Each kind of system call is
+identified by a number.  Macros for all the possible system call numbers
+are defined in <samp>sys/syscall.h</samp>
+</p>
+<p>The remaining arguments are the arguments for the system call, in
+order, and their meanings depend on the kind of system call.  Each kind
+of system call has a definite number of arguments, from zero to five.
+If you code more arguments than the system call takes, the extra ones to
+the right are ignored.
+</p>
+<p>The return value is the return value from the system call, unless the
+system call failed.  In that case, <code>syscall</code> returns <code>-1</code> and
+sets <code>errno</code> to an error code that the system call returned.  Note
+that system calls do not return <code>-1</code> when they succeed.
+<a name="index-errno"></a>
+</p>
+<p>If you specify an invalid <var>sysno</var>, <code>syscall</code> returns <code>-1</code>
+with <code>errno</code> = <code>ENOSYS</code>.
+</p>
+<p>Example:
+</p>
+<div class="smallexample">
+<pre class="smallexample">
+
+#include &lt;unistd.h&gt;
+#include &lt;sys/syscall.h&gt;
+#include &lt;errno.h&gt;
+
+&hellip;
+
+int rc;
+
+rc = syscall(SYS_chmod, &quot;/etc/passwd&quot;, 0444);
+
+if (rc == -1)
+   fprintf(stderr, &quot;chmod failed, errno = %d\n&quot;, errno);
+
+</pre></div>
+
+<p>This, if all the compatibility stars are aligned, is equivalent to the
+following preferable code:
+</p>
+<div class="smallexample">
+<pre class="smallexample">
+
+#include &lt;sys/types.h&gt;
+#include &lt;sys/stat.h&gt;
+#include &lt;errno.h&gt;
+
+&hellip;
+
+int rc;
+
+rc = chmod(&quot;/etc/passwd&quot;, 0444);
+if (rc == -1)
+   fprintf(stderr, &quot;chmod failed, errno = %d\n&quot;, errno);
+
+</pre></div>
+
+</dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Program-Termination.html#Program-Termination" accesskey="n" rel="next">Program Termination</a>, Previous: <a href="Auxiliary-Vector.html#Auxiliary-Vector" accesskey="p" rel="prev">Auxiliary Vector</a>, Up: <a href="Program-Basics.html#Program-Basics" accesskey="u" rel="up">Program Basics</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

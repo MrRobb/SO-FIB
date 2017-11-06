@@ -1,0 +1,253 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: PowerPC</title>
+
+<meta name="description" content="The GNU C Library: PowerPC">
+<meta name="keywords" content="The GNU C Library: PowerPC">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Platform.html#Platform" rel="up" title="Platform">
+<link href="Contributors.html#Contributors" rel="next" title="Contributors">
+<link href="Platform.html#Platform" rel="prev" title="Platform">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="PowerPC"></a>
+<div class="header">
+<p>
+Up: <a href="Platform.html#Platform" accesskey="u" rel="up">Platform</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="PowerPC_002dspecific-Facilities"></a>
+<h3 class="appendixsec">E.1 PowerPC-specific Facilities</h3>
+
+<p>Facilities specific to PowerPC that are not specific to a particular
+operating system are declared in <samp>sys/platform/ppc.h</samp>.
+</p>
+<dl>
+<dt><a name="index-_005f_005fppc_005fget_005ftimebase"></a>Function: <em>uint64_t</em> <strong>__ppc_get_timebase</strong> <em>(void)</em></dt>
+<dd><p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>Read the current value of the Time Base Register.
+</p>
+<p>The <em>Time Base Register</em> is a 64-bit register that stores a monotonically
+incremented value updated at a system-dependent frequency that may be
+different from the processor frequency.  More information is available in
+<cite>Power ISA 2.06b - Book II - Section 5.2</cite>.
+</p>
+<p><code>__ppc_get_timebase</code> uses the processor&rsquo;s time base facility directly
+without requiring assistance from the operating system, so it is very
+efficient.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-_005f_005fppc_005fget_005ftimebase_005ffreq"></a>Function: <em>uint64_t</em> <strong>__ppc_get_timebase_freq</strong> <em>(void)</em></dt>
+<dd><p>Preliminary:
+| MT-Unsafe init
+| AS-Unsafe corrupt:init
+| AC-Unsafe corrupt:init
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>Read the current frequency at which the Time Base Register is updated.
+</p>
+<p>This frequency is not related to the processor clock or the bus clock.
+It is also possible that this frequency is not constant.  More information is
+available in <cite>Power ISA 2.06b - Book II - Section 5.2</cite>.
+</p></dd></dl>
+
+<p>The following functions provide hints about the usage of resources that are
+shared with other processors.  They can be used, for example, if a program
+waiting on a lock intends to divert the shared resources to be used by other
+processors.  More information is available in <cite>Power ISA 2.06b - Book II -
+Section 3.2</cite>.
+</p>
+<dl>
+<dt><a name="index-_005f_005fppc_005fyield"></a>Function: <em>void</em> <strong>__ppc_yield</strong> <em>(void)</em></dt>
+<dd><p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>Provide a hint that performance will probably be improved if shared resources
+dedicated to the executing processor are released for use by other processors.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-_005f_005fppc_005fmdoio"></a>Function: <em>void</em> <strong>__ppc_mdoio</strong> <em>(void)</em></dt>
+<dd><p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>Provide a hint that performance will probably be improved if shared resources
+dedicated to the executing processor are released until all outstanding storage
+accesses to caching-inhibited storage have been completed.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-_005f_005fppc_005fmdoom"></a>Function: <em>void</em> <strong>__ppc_mdoom</strong> <em>(void)</em></dt>
+<dd><p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>Provide a hint that performance will probably be improved if shared resources
+dedicated to the executing processor are released until all outstanding storage
+accesses to cacheable storage for which the data is not in the cache have been
+completed.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-_005f_005fppc_005fset_005fppr_005fmed"></a>Function: <em>void</em> <strong>__ppc_set_ppr_med</strong> <em>(void)</em></dt>
+<dd><p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>Set the Program Priority Register to medium value (default).
+</p>
+<p>The <em>Program Priority Register</em> (PPR) is a 64-bit register that controls
+the program&rsquo;s priority.  By adjusting the PPR value the programmer may
+improve system throughput by causing the system resources to be used
+more efficiently, especially in contention situations.
+The three unprivileged states available are covered by the functions
+<code>__ppc_set_ppr_med</code> (medium &ndash; default), <code>__ppc_set_ppc_low</code> (low)
+and <code>__ppc_set_ppc_med_low</code> (medium low).  More information
+available in <cite>Power ISA 2.06b - Book II - Section 3.1</cite>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-_005f_005fppc_005fset_005fppr_005flow"></a>Function: <em>void</em> <strong>__ppc_set_ppr_low</strong> <em>(void)</em></dt>
+<dd><p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>Set the Program Priority Register to low value.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-_005f_005fppc_005fset_005fppr_005fmed_005flow"></a>Function: <em>void</em> <strong>__ppc_set_ppr_med_low</strong> <em>(void)</em></dt>
+<dd><p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>Set the Program Priority Register to medium low value.
+</p></dd></dl>
+
+<p>Power ISA 2.07 extends the priorities that can be set to the Program Priority
+Register (PPR).  The following functions implement the new priority levels:
+very low and medium high.
+</p>
+<dl>
+<dt><a name="index-_005f_005fppc_005fset_005fppr_005fvery_005flow"></a>Function: <em>void</em> <strong>__ppc_set_ppr_very_low</strong> <em>(void)</em></dt>
+<dd><p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>Set the Program Priority Register to very low value.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-_005f_005fppc_005fset_005fppr_005fmed_005fhigh"></a>Function: <em>void</em> <strong>__ppc_set_ppr_med_high</strong> <em>(void)</em></dt>
+<dd><p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>Set the Program Priority Register to medium high value.  The medium high
+priority is privileged and may only be set during certain time intervals by
+problem-state programs.  If the program priority is medium high when the time
+interval expires or if an attempt is made to set the priority to medium high
+when it is not allowed, the priority is set to medium.
+</p></dd></dl>
+<hr>
+<div class="header">
+<p>
+Up: <a href="Platform.html#Platform" accesskey="u" rel="up">Platform</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

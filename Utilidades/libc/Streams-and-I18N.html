@@ -1,0 +1,228 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Streams and I18N</title>
+
+<meta name="description" content="The GNU C Library: Streams and I18N">
+<meta name="keywords" content="The GNU C Library: Streams and I18N">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="I_002fO-on-Streams.html#I_002fO-on-Streams" rel="up" title="I/O on Streams">
+<link href="Simple-Output.html#Simple-Output" rel="next" title="Simple Output">
+<link href="Streams-and-Threads.html#Streams-and-Threads" rel="prev" title="Streams and Threads">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Streams-and-I18N"></a>
+<div class="header">
+<p>
+Next: <a href="Simple-Output.html#Simple-Output" accesskey="n" rel="next">Simple Output</a>, Previous: <a href="Streams-and-Threads.html#Streams-and-Threads" accesskey="p" rel="prev">Streams and Threads</a>, Up: <a href="I_002fO-on-Streams.html#I_002fO-on-Streams" accesskey="u" rel="up">I/O on Streams</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Streams-in-Internationalized-Applications"></a>
+<h3 class="section">12.6 Streams in Internationalized Applications</h3>
+
+<p>ISO&nbsp;C90<!-- /@w --> introduced the new type <code>wchar_t</code> to allow handling
+larger character sets.  What was missing was a possibility to output
+strings of <code>wchar_t</code> directly.  One had to convert them into
+multibyte strings using <code>mbstowcs</code> (there was no <code>mbsrtowcs</code>
+yet) and then use the normal stream functions.  While this is doable it
+is very cumbersome since performing the conversions is not trivial and
+greatly increases program complexity and size.
+</p>
+<p>The Unix standard early on (I think in XPG4.2) introduced two additional
+format specifiers for the <code>printf</code> and <code>scanf</code> families of
+functions.  Printing and reading of single wide characters was made
+possible using the <code>%C</code> specifier and wide character strings can be
+handled with <code>%S</code>.  These modifiers behave just like <code>%c</code> and
+<code>%s</code> only that they expect the corresponding argument to have the
+wide character type and that the wide character and string are
+transformed into/from multibyte strings before being used.
+</p>
+<p>This was a beginning but it is still not good enough.  Not always is it
+desirable to use <code>printf</code> and <code>scanf</code>.  The other, smaller and
+faster functions cannot handle wide characters.  Second, it is not
+possible to have a format string for <code>printf</code> and <code>scanf</code>
+consisting of wide characters.  The result is that format strings would
+have to be generated if they have to contain non-basic characters.
+</p>
+<a name="index-C_002b_002b-streams"></a>
+<a name="index-streams_002c-C_002b_002b"></a>
+<p>In the Amendment&nbsp;1<!-- /@w --> to ISO&nbsp;C90<!-- /@w --> a whole new set of functions was
+added to solve the problem.  Most of the stream functions got a
+counterpart which take a wide character or wide character string instead
+of a character or string respectively.  The new functions operate on the
+same streams (like <code>stdout</code>).  This is different from the model of
+the C++ runtime library where separate streams for wide and normal I/O
+are used.
+</p>
+<a name="index-orientation_002c-stream-1"></a>
+<a name="index-stream-orientation-1"></a>
+<p>Being able to use the same stream for wide and normal operations comes
+with a restriction: a stream can be used either for wide operations or
+for normal operations.  Once it is decided there is no way back.  Only a
+call to <code>freopen</code> or <code>freopen64</code> can reset the
+<em>orientation</em>.  The orientation can be decided in three ways:
+</p>
+<ul>
+<li> If any of the normal character functions are used (this includes the
+<code>fread</code> and <code>fwrite</code> functions) the stream is marked as not
+wide oriented.
+
+</li><li> If any of the wide character functions are used the stream is marked as
+wide oriented.
+
+</li><li> The <code>fwide</code> function can be used to set the orientation either way.
+</li></ul>
+
+<p>It is important to never mix the use of wide and not wide operations on
+a stream.  There are no diagnostics issued.  The application behavior
+will simply be strange or the application will simply crash.  The
+<code>fwide</code> function can help avoid this.
+</p>
+<dl>
+<dt><a name="index-fwide"></a>Function: <em>int</em> <strong>fwide</strong> <em>(FILE *<var>stream</var>, int <var>mode</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Unsafe corrupt
+| AC-Unsafe lock
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+
+<p>The <code>fwide</code> function can be used to set and query the state of the
+orientation of the stream <var>stream</var>.  If the <var>mode</var> parameter has
+a positive value the streams get wide oriented, for negative values
+narrow oriented.  It is not possible to overwrite previous orientations
+with <code>fwide</code>.  I.e., if the stream <var>stream</var> was already
+oriented before the call nothing is done.
+</p>
+<p>If <var>mode</var> is zero the current orientation state is queried and
+nothing is changed.
+</p>
+<p>The <code>fwide</code> function returns a negative value, zero, or a positive
+value if the stream is narrow, not at all, or wide oriented
+respectively.
+</p>
+<p>This function was introduced in Amendment&nbsp;1<!-- /@w --> to ISO&nbsp;C90<!-- /@w --> and is
+declared in <samp>wchar.h</samp>.
+</p></dd></dl>
+
+<p>It is generally a good idea to orient a stream as early as possible.
+This can prevent surprise especially for the standard streams
+<code>stdin</code>, <code>stdout</code>, and <code>stderr</code>.  If some library
+function in some situations uses one of these streams and this use
+orients the stream in a different way the rest of the application
+expects it one might end up with hard to reproduce errors.  Remember
+that no errors are signal if the streams are used incorrectly.  Leaving
+a stream unoriented after creation is normally only necessary for
+library functions which create streams which can be used in different
+contexts.
+</p>
+<p>When writing code which uses streams and which can be used in different
+contexts it is important to query the orientation of the stream before
+using it (unless the rules of the library interface demand a specific
+orientation).  The following little, silly function illustrates this.
+</p>
+<div class="smallexample">
+<pre class="smallexample">void
+print_f (FILE *fp)
+{
+  if (fwide (fp, 0) &gt; 0)
+    /* <span class="roman">Positive return value means wide orientation.</span>  */
+    fputwc (L'f', fp);
+  else
+    fputc ('f', fp);
+}
+</pre></div>
+
+<p>Note that in this case the function <code>print_f</code> decides about the
+orientation of the stream if it was unoriented before (will not happen
+if the advice above is followed).
+</p>
+<p>The encoding used for the <code>wchar_t</code> values is unspecified and the
+user must not make any assumptions about it.  For I/O of <code>wchar_t</code>
+values this means that it is impossible to write these values directly
+to the stream.  This is not what follows from the ISO&nbsp;C<!-- /@w --> locale model
+either.  What happens instead is that the bytes read from or written to
+the underlying media are first converted into the internal encoding
+chosen by the implementation for <code>wchar_t</code>.  The external encoding
+is determined by the <code>LC_CTYPE</code> category of the current locale or
+by the &lsquo;<samp>ccs</samp>&rsquo; part of the mode specification given to <code>fopen</code>,
+<code>fopen64</code>, <code>freopen</code>, or <code>freopen64</code>.  How and when the
+conversion happens is unspecified and it happens invisibly to the user.
+</p>
+<p>Since a stream is created in the unoriented state it has at that point
+no conversion associated with it.  The conversion which will be used is
+determined by the <code>LC_CTYPE</code> category selected at the time the
+stream is oriented.  If the locales are changed at the runtime this
+might produce surprising results unless one pays attention.  This is
+just another good reason to orient the stream explicitly as soon as
+possible, perhaps with a call to <code>fwide</code>.
+</p>
+<hr>
+<div class="header">
+<p>
+Next: <a href="Simple-Output.html#Simple-Output" accesskey="n" rel="next">Simple Output</a>, Previous: <a href="Streams-and-Threads.html#Streams-and-Threads" accesskey="p" rel="prev">Streams and Threads</a>, Up: <a href="I_002fO-on-Streams.html#I_002fO-on-Streams" accesskey="u" rel="up">I/O on Streams</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

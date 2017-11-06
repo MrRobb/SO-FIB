@@ -1,0 +1,283 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Basic Signal Handling</title>
+
+<meta name="description" content="The GNU C Library: Basic Signal Handling">
+<meta name="keywords" content="The GNU C Library: Basic Signal Handling">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Signal-Actions.html#Signal-Actions" rel="up" title="Signal Actions">
+<link href="Advanced-Signal-Handling.html#Advanced-Signal-Handling" rel="next" title="Advanced Signal Handling">
+<link href="Signal-Actions.html#Signal-Actions" rel="prev" title="Signal Actions">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Basic-Signal-Handling"></a>
+<div class="header">
+<p>
+Next: <a href="Advanced-Signal-Handling.html#Advanced-Signal-Handling" accesskey="n" rel="next">Advanced Signal Handling</a>, Up: <a href="Signal-Actions.html#Signal-Actions" accesskey="u" rel="up">Signal Actions</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Basic-Signal-Handling-1"></a>
+<h4 class="subsection">24.3.1 Basic Signal Handling</h4>
+<a name="index-signal-function"></a>
+
+<p>The <code>signal</code> function provides a simple interface for establishing
+an action for a particular signal.  The function and associated macros
+are declared in the header file <samp>signal.h</samp>.
+<a name="index-signal_002eh-2"></a>
+</p>
+<dl>
+<dt><a name="index-sighandler_005ft"></a>Data Type: <strong>sighandler_t</strong></dt>
+<dd>
+<p>This is the type of signal handler functions.  Signal handlers take one
+integer argument specifying the signal number, and have return type
+<code>void</code>.  So, you should define handler functions like this:
+</p>
+<div class="smallexample">
+<pre class="smallexample">void <var>handler</var> (int <code>signum</code>) { &hellip; }
+</pre></div>
+
+<p>The name <code>sighandler_t</code> for this data type is a GNU extension.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-signal-2"></a>Function: <em>sighandler_t</em> <strong>signal</strong> <em>(int <var>signum</var>, sighandler_t <var>action</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe sigintr
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>signal</code> function establishes <var>action</var> as the action for
+the signal <var>signum</var>.
+</p>
+<p>The first argument, <var>signum</var>, identifies the signal whose behavior
+you want to control, and should be a signal number.  The proper way to
+specify a signal number is with one of the symbolic signal names
+(see <a href="Standard-Signals.html#Standard-Signals">Standard Signals</a>)&mdash;don&rsquo;t use an explicit number, because
+the numerical code for a given kind of signal may vary from operating
+system to operating system.
+</p>
+<p>The second argument, <var>action</var>, specifies the action to use for the
+signal <var>signum</var>.  This can be one of the following:
+</p>
+<dl compact="compact">
+<dt><code>SIG_DFL</code></dt>
+<dd><a name="index-SIG_005fDFL"></a>
+<a name="index-default-action-for-a-signal"></a>
+<p><code>SIG_DFL</code> specifies the default action for the particular signal.
+The default actions for various kinds of signals are stated in
+<a href="Standard-Signals.html#Standard-Signals">Standard Signals</a>.
+</p>
+</dd>
+<dt><code>SIG_IGN</code></dt>
+<dd><a name="index-SIG_005fIGN"></a>
+<a name="index-ignore-action-for-a-signal"></a>
+<p><code>SIG_IGN</code> specifies that the signal should be ignored.
+</p>
+<p>Your program generally should not ignore signals that represent serious
+events or that are normally used to request termination.  You cannot
+ignore the <code>SIGKILL</code> or <code>SIGSTOP</code> signals at all.  You can
+ignore program error signals like <code>SIGSEGV</code>, but ignoring the error
+won&rsquo;t enable the program to continue executing meaningfully.  Ignoring
+user requests such as <code>SIGINT</code>, <code>SIGQUIT</code>, and <code>SIGTSTP</code>
+is unfriendly.
+</p>
+<p>When you do not wish signals to be delivered during a certain part of
+the program, the thing to do is to block them, not ignore them.
+See <a href="Blocking-Signals.html#Blocking-Signals">Blocking Signals</a>.
+</p>
+</dd>
+<dt><code><var>handler</var></code></dt>
+<dd><p>Supply the address of a handler function in your program, to specify
+running this handler as the way to deliver the signal.
+</p>
+<p>For more information about defining signal handler functions,
+see <a href="Defining-Handlers.html#Defining-Handlers">Defining Handlers</a>.
+</p></dd>
+</dl>
+
+<p>If you set the action for a signal to <code>SIG_IGN</code>, or if you set it
+to <code>SIG_DFL</code> and the default action is to ignore that signal, then
+any pending signals of that type are discarded (even if they are
+blocked).  Discarding the pending signals means that they will never be
+delivered, not even if you subsequently specify another action and
+unblock this kind of signal.
+</p>
+<p>The <code>signal</code> function returns the action that was previously in
+effect for the specified <var>signum</var>.  You can save this value and
+restore it later by calling <code>signal</code> again.
+</p>
+<p>If <code>signal</code> can&rsquo;t honor the request, it returns <code>SIG_ERR</code>
+instead.  The following <code>errno</code> error conditions are defined for
+this function:
+</p>
+<dl compact="compact">
+<dt><code>EINVAL</code></dt>
+<dd><p>You specified an invalid <var>signum</var>; or you tried to ignore or provide
+a handler for <code>SIGKILL</code> or <code>SIGSTOP</code>.
+</p></dd>
+</dl>
+</dd></dl>
+
+<p><strong>Compatibility Note:</strong> A problem encountered when working with the
+<code>signal</code> function is that it has different semantics on BSD and
+SVID systems.  The difference is that on SVID systems the signal handler
+is deinstalled after signal delivery.  On BSD systems the
+handler must be explicitly deinstalled.  In the GNU C Library we use the
+BSD version by default.  To use the SVID version you can either use the
+function <code>sysv_signal</code> (see below) or use the <code>_XOPEN_SOURCE</code>
+feature select macro (see <a href="Feature-Test-Macros.html#Feature-Test-Macros">Feature Test Macros</a>).  In general, use of these
+functions should be avoided because of compatibility problems.  It
+is better to use <code>sigaction</code> if it is available since the results
+are much more reliable.
+</p>
+<p>Here is a simple example of setting up a handler to delete temporary
+files when certain fatal signals happen:
+</p>
+<div class="smallexample">
+<pre class="smallexample">#include &lt;signal.h&gt;
+
+void
+termination_handler (int signum)
+{
+  struct temp_file *p;
+
+  for (p = temp_file_list; p; p = p-&gt;next)
+    unlink (p-&gt;name);
+}
+
+int
+main (void)
+{
+  &hellip;
+  if (signal (SIGINT, termination_handler) == SIG_IGN)
+    signal (SIGINT, SIG_IGN);
+  if (signal (SIGHUP, termination_handler) == SIG_IGN)
+    signal (SIGHUP, SIG_IGN);
+  if (signal (SIGTERM, termination_handler) == SIG_IGN)
+    signal (SIGTERM, SIG_IGN);
+  &hellip;
+}
+</pre></div>
+
+<p>Note that if a given signal was previously set to be ignored, this code
+avoids altering that setting.  This is because non-job-control shells
+often ignore certain signals when starting children, and it is important
+for the children to respect this.
+</p>
+<p>We do not handle <code>SIGQUIT</code> or the program error signals in this
+example because these are designed to provide information for debugging
+(a core dump), and the temporary files may give useful information.
+</p>
+<dl>
+<dt><a name="index-sysv_005fsignal"></a>Function: <em>sighandler_t</em> <strong>sysv_signal</strong> <em>(int <var>signum</var>, sighandler_t <var>action</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>sysv_signal</code> implements the behavior of the standard
+<code>signal</code> function as found on SVID systems.  The difference to BSD
+systems is that the handler is deinstalled after a delivery of a signal.
+</p>
+<p><strong>Compatibility Note:</strong> As said above for <code>signal</code>, this
+function should be avoided when possible.  <code>sigaction</code> is the
+preferred method.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-ssignal"></a>Function: <em>sighandler_t</em> <strong>ssignal</strong> <em>(int <var>signum</var>, sighandler_t <var>action</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe sigintr
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>ssignal</code> function does the same thing as <code>signal</code>; it is
+provided only for compatibility with SVID.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-SIG_005fERR"></a>Macro: <em>sighandler_t</em> <strong>SIG_ERR</strong></dt>
+<dd>
+<p>The value of this macro is used as the return value from <code>signal</code>
+to indicate an error.
+</p></dd></dl>
+
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Advanced-Signal-Handling.html#Advanced-Signal-Handling" accesskey="n" rel="next">Advanced Signal Handling</a>, Up: <a href="Signal-Actions.html#Signal-Actions" accesskey="u" rel="up">Signal Actions</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

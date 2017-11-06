@@ -1,0 +1,195 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Source Layout</title>
+
+<meta name="description" content="The GNU C Library: Source Layout">
+<meta name="keywords" content="The GNU C Library: Source Layout">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Maintenance.html#Maintenance" rel="up" title="Maintenance">
+<link href="Adding-Platform_002dspecific.html#Adding-Platform_002dspecific" rel="next" title="Adding Platform-specific">
+<link href="Maintenance.html#Maintenance" rel="prev" title="Maintenance">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Source-Layout"></a>
+<div class="header">
+<p>
+Next: <a href="Porting.html#Porting" accesskey="n" rel="next">Porting</a>, Up: <a href="Maintenance.html#Maintenance" accesskey="u" rel="up">Maintenance</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Adding-New-Functions"></a>
+<h3 class="appendixsec">D.1 Adding New Functions</h3>
+
+<p>The process of building the library is driven by the makefiles, which
+make heavy use of special features of GNU <code>make</code>.  The makefiles
+are very complex, and you probably don&rsquo;t want to try to understand them.
+But what they do is fairly straightforward, and only requires that you
+define a few variables in the right places.
+</p>
+<p>The library sources are divided into subdirectories, grouped by topic.
+</p>
+<p>The <samp>string</samp> subdirectory has all the string-manipulation
+functions, <samp>math</samp> has all the mathematical functions, etc.
+</p>
+<p>Each subdirectory contains a simple makefile, called <samp>Makefile</samp>,
+which defines a few <code>make</code> variables and then includes the global
+makefile <samp>Rules</samp> with a line like:
+</p>
+<div class="smallexample">
+<pre class="smallexample">include ../Rules
+</pre></div>
+
+<p>The basic variables that a subdirectory makefile defines are:
+</p>
+<dl compact="compact">
+<dt><code>subdir</code></dt>
+<dd><p>The name of the subdirectory, for example <samp>stdio</samp>.
+This variable <strong>must</strong> be defined.
+</p>
+</dd>
+<dt><code>headers</code></dt>
+<dd><p>The names of the header files in this section of the library,
+such as <samp>stdio.h</samp>.
+</p>
+</dd>
+<dt><code>routines</code></dt>
+<dt><code>aux</code></dt>
+<dd><p>The names of the modules (source files) in this section of the library.
+These should be simple names, such as &lsquo;<samp>strlen</samp>&rsquo; (rather than
+complete file names, such as <samp>strlen.c</samp>).  Use <code>routines</code> for
+modules that define functions in the library, and <code>aux</code> for
+auxiliary modules containing things like data definitions.  But the
+values of <code>routines</code> and <code>aux</code> are just concatenated, so there
+really is no practical difference.
+</p>
+</dd>
+<dt><code>tests</code></dt>
+<dd><p>The names of test programs for this section of the library.  These
+should be simple names, such as &lsquo;<samp>tester</samp>&rsquo; (rather than complete file
+names, such as <samp>tester.c</samp>).  &lsquo;<samp>make&nbsp;tests</samp>&rsquo;<!-- /@w --> will build and
+run all the test programs.  If a test program needs input, put the test
+data in a file called <samp><var>test-program</var>.input</samp>; it will be given to
+the test program on its standard input.  If a test program wants to be
+run with arguments, put the arguments (all on a single line) in a file
+called <samp><var>test-program</var>.args</samp>.  Test programs should exit with
+zero status when the test passes, and nonzero status when the test
+indicates a bug in the library or error in building.
+</p>
+</dd>
+<dt><code>others</code></dt>
+<dd><p>The names of &ldquo;other&rdquo; programs associated with this section of the
+library.  These are programs which are not tests per se, but are other
+small programs included with the library.  They are built by
+&lsquo;<samp>make&nbsp;others</samp>&rsquo;<!-- /@w -->.
+</p>
+</dd>
+<dt><code>install-lib</code></dt>
+<dt><code>install-data</code></dt>
+<dt><code>install</code></dt>
+<dd><p>Files to be installed by &lsquo;<samp>make&nbsp;install</samp>&rsquo;<!-- /@w -->.  Files listed in
+&lsquo;<samp>install-lib</samp>&rsquo; are installed in the directory specified by
+&lsquo;<samp>libdir</samp>&rsquo; in <samp>configparms</samp> or <samp>Makeconfig</samp>
+(see <a href="Installation.html#Installation">Installation</a>).  Files listed in <code>install-data</code> are
+installed in the directory specified by &lsquo;<samp>datadir</samp>&rsquo; in
+<samp>configparms</samp> or <samp>Makeconfig</samp>.  Files listed in <code>install</code>
+are installed in the directory specified by &lsquo;<samp>bindir</samp>&rsquo; in
+<samp>configparms</samp> or <samp>Makeconfig</samp>.
+</p>
+</dd>
+<dt><code>distribute</code></dt>
+<dd><p>Other files from this subdirectory which should be put into a
+distribution tar file.  You need not list here the makefile itself or
+the source and header files listed in the other standard variables.
+Only define <code>distribute</code> if there are files used in an unusual way
+that should go into the distribution.
+</p>
+</dd>
+<dt><code>generated</code></dt>
+<dd><p>Files which are generated by <samp>Makefile</samp> in this subdirectory.
+These files will be removed by &lsquo;<samp>make&nbsp;clean</samp>&rsquo;<!-- /@w -->, and they will
+never go into a distribution.
+</p>
+</dd>
+<dt><code>extra-objs</code></dt>
+<dd><p>Extra object files which are built by <samp>Makefile</samp> in this
+subdirectory.  This should be a list of file names like <samp>foo.o</samp>;
+the files will actually be found in whatever directory object files are
+being built in.  These files will be removed by &lsquo;<samp>make&nbsp;clean</samp>&rsquo;<!-- /@w -->.
+This variable is used for secondary object files needed to build
+<code>others</code> or <code>tests</code>.
+</p></dd>
+</dl>
+
+<table class="menu" border="0" cellspacing="0">
+<tr><td align="left" valign="top">&bull; <a href="Adding-Platform_002dspecific.html#Adding-Platform_002dspecific" accesskey="1">Platform</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Adding platform-specific
+                                         features.
+</td></tr>
+</table>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Porting.html#Porting" accesskey="n" rel="next">Porting</a>, Up: <a href="Maintenance.html#Maintenance" accesskey="u" rel="up">Maintenance</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

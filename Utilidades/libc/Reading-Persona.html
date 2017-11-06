@@ -1,0 +1,204 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Reading Persona</title>
+
+<meta name="description" content="The GNU C Library: Reading Persona">
+<meta name="keywords" content="The GNU C Library: Reading Persona">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Users-and-Groups.html#Users-and-Groups" rel="up" title="Users and Groups">
+<link href="Setting-User-ID.html#Setting-User-ID" rel="next" title="Setting User ID">
+<link href="How-Change-Persona.html#How-Change-Persona" rel="prev" title="How Change Persona">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Reading-Persona"></a>
+<div class="header">
+<p>
+Next: <a href="Setting-User-ID.html#Setting-User-ID" accesskey="n" rel="next">Setting User ID</a>, Previous: <a href="How-Change-Persona.html#How-Change-Persona" accesskey="p" rel="prev">How Change Persona</a>, Up: <a href="Users-and-Groups.html#Users-and-Groups" accesskey="u" rel="up">Users and Groups</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Reading-the-Persona-of-a-Process"></a>
+<h3 class="section">30.5 Reading the Persona of a Process</h3>
+
+<p>Here are detailed descriptions of the functions for reading the user and
+group IDs of a process, both real and effective.  To use these
+facilities, you must include the header files <samp>sys/types.h</samp> and
+<samp>unistd.h</samp>.
+<a name="index-unistd_002eh-22"></a>
+<a name="index-sys_002ftypes_002eh-4"></a>
+</p>
+<dl>
+<dt><a name="index-uid_005ft"></a>Data Type: <strong>uid_t</strong></dt>
+<dd>
+<p>This is an integer data type used to represent user IDs.  In
+the GNU C Library, this is an alias for <code>unsigned int</code>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-gid_005ft"></a>Data Type: <strong>gid_t</strong></dt>
+<dd>
+<p>This is an integer data type used to represent group IDs.  In
+the GNU C Library, this is an alias for <code>unsigned int</code>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-getuid"></a>Function: <em>uid_t</em> <strong>getuid</strong> <em>(void)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>getuid</code> function returns the real user ID of the process.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-getgid"></a>Function: <em>gid_t</em> <strong>getgid</strong> <em>(void)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>getgid</code> function returns the real group ID of the process.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-geteuid"></a>Function: <em>uid_t</em> <strong>geteuid</strong> <em>(void)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>geteuid</code> function returns the effective user ID of the process.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-getegid"></a>Function: <em>gid_t</em> <strong>getegid</strong> <em>(void)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>getegid</code> function returns the effective group ID of the process.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-getgroups"></a>Function: <em>int</em> <strong>getgroups</strong> <em>(int <var>count</var>, gid_t *<var>groups</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>getgroups</code> function is used to inquire about the supplementary
+group IDs of the process.  Up to <var>count</var> of these group IDs are
+stored in the array <var>groups</var>; the return value from the function is
+the number of group IDs actually stored.  If <var>count</var> is smaller than
+the total number of supplementary group IDs, then <code>getgroups</code>
+returns a value of <code>-1</code> and <code>errno</code> is set to <code>EINVAL</code>.
+</p>
+<p>If <var>count</var> is zero, then <code>getgroups</code> just returns the total
+number of supplementary group IDs.  On systems that do not support
+supplementary groups, this will always be zero.
+</p>
+<p>Here&rsquo;s how to use <code>getgroups</code> to read all the supplementary group
+IDs:
+</p>
+<div class="smallexample">
+<pre class="smallexample">gid_t *
+read_all_groups (void)
+{
+  int ngroups = getgroups (0, NULL);
+  gid_t *groups
+    = (gid_t *) xmalloc (ngroups * sizeof (gid_t));
+  int val = getgroups (ngroups, groups);
+  if (val &lt; 0)
+    {
+      free (groups);
+      return NULL;
+    }
+  return groups;
+}
+</pre></div>
+</dd></dl>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Setting-User-ID.html#Setting-User-ID" accesskey="n" rel="next">Setting User ID</a>, Previous: <a href="How-Change-Persona.html#How-Change-Persona" accesskey="p" rel="prev">How Change Persona</a>, Up: <a href="Users-and-Groups.html#Users-and-Groups" accesskey="u" rel="up">Users and Groups</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,198 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Flags for Globbing</title>
+
+<meta name="description" content="The GNU C Library: Flags for Globbing">
+<meta name="keywords" content="The GNU C Library: Flags for Globbing">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Globbing.html#Globbing" rel="up" title="Globbing">
+<link href="More-Flags-for-Globbing.html#More-Flags-for-Globbing" rel="next" title="More Flags for Globbing">
+<link href="Calling-Glob.html#Calling-Glob" rel="prev" title="Calling Glob">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Flags-for-Globbing"></a>
+<div class="header">
+<p>
+Next: <a href="More-Flags-for-Globbing.html#More-Flags-for-Globbing" accesskey="n" rel="next">More Flags for Globbing</a>, Previous: <a href="Calling-Glob.html#Calling-Glob" accesskey="p" rel="prev">Calling Glob</a>, Up: <a href="Globbing.html#Globbing" accesskey="u" rel="up">Globbing</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Flags-for-Globbing-1"></a>
+<h4 class="subsection">10.2.2 Flags for Globbing</h4>
+
+<p>This section describes the standard flags that you can specify in the
+<var>flags</var> argument to <code>glob</code>.  Choose the flags you want,
+and combine them with the C bitwise OR operator <code>|</code>.
+</p>
+<p>Note that there are <a href="More-Flags-for-Globbing.html#More-Flags-for-Globbing">More Flags for Globbing</a> available as GNU extensions.
+</p>
+<dl compact="compact">
+<dt><code>GLOB_APPEND</code>
+<a name="index-GLOB_005fAPPEND"></a>
+</dt>
+<dd>
+<p>Append the words from this expansion to the vector of words produced by
+previous calls to <code>glob</code>.  This way you can effectively expand
+several words as if they were concatenated with spaces between them.
+</p>
+<p>In order for appending to work, you must not modify the contents of the
+word vector structure between calls to <code>glob</code>.  And, if you set
+<code>GLOB_DOOFFS</code> in the first call to <code>glob</code>, you must also
+set it when you append to the results.
+</p>
+<p>Note that the pointer stored in <code>gl_pathv</code> may no longer be valid
+after you call <code>glob</code> the second time, because <code>glob</code> might
+have relocated the vector.  So always fetch <code>gl_pathv</code> from the
+<code>glob_t</code> structure after each <code>glob</code> call; <strong>never</strong> save
+the pointer across calls.
+</p>
+</dd>
+<dt><code>GLOB_DOOFFS</code>
+<a name="index-GLOB_005fDOOFFS"></a>
+</dt>
+<dd>
+<p>Leave blank slots at the beginning of the vector of words.
+The <code>gl_offs</code> field says how many slots to leave.
+The blank slots contain null pointers.
+</p>
+</dd>
+<dt><code>GLOB_ERR</code>
+<a name="index-GLOB_005fERR"></a>
+</dt>
+<dd>
+<p>Give up right away and report an error if there is any difficulty
+reading the directories that must be read in order to expand <var>pattern</var>
+fully.  Such difficulties might include a directory in which you don&rsquo;t
+have the requisite access.  Normally, <code>glob</code> tries its best to keep
+on going despite any errors, reading whatever directories it can.
+</p>
+<p>You can exercise even more control than this by specifying an
+error-handler function <var>errfunc</var> when you call <code>glob</code>.  If
+<var>errfunc</var> is not a null pointer, then <code>glob</code> doesn&rsquo;t give up
+right away when it can&rsquo;t read a directory; instead, it calls
+<var>errfunc</var> with two arguments, like this:
+</p>
+<div class="smallexample">
+<pre class="smallexample">(*<var>errfunc</var>) (<var>filename</var>, <var>error-code</var>)
+</pre></div>
+
+<p>The argument <var>filename</var> is the name of the directory that
+<code>glob</code> couldn&rsquo;t open or couldn&rsquo;t read, and <var>error-code</var> is the
+<code>errno</code> value that was reported to <code>glob</code>.
+</p>
+<p>If the error handler function returns nonzero, then <code>glob</code> gives up
+right away.  Otherwise, it continues.
+</p>
+</dd>
+<dt><code>GLOB_MARK</code>
+<a name="index-GLOB_005fMARK"></a>
+</dt>
+<dd>
+<p>If the pattern matches the name of a directory, append &lsquo;<samp>/</samp>&rsquo; to the
+directory&rsquo;s name when returning it.
+</p>
+</dd>
+<dt><code>GLOB_NOCHECK</code>
+<a name="index-GLOB_005fNOCHECK"></a>
+</dt>
+<dd>
+<p>If the pattern doesn&rsquo;t match any file names, return the pattern itself
+as if it were a file name that had been matched.  (Normally, when the
+pattern doesn&rsquo;t match anything, <code>glob</code> returns that there were no
+matches.)
+</p>
+</dd>
+<dt><code>GLOB_NOESCAPE</code>
+<a name="index-GLOB_005fNOESCAPE"></a>
+</dt>
+<dd>
+<p>Don&rsquo;t treat the &lsquo;<samp>\</samp>&rsquo; character specially in patterns.  Normally,
+&lsquo;<samp>\</samp>&rsquo; quotes the following character, turning off its special meaning
+(if any) so that it matches only itself.  When quoting is enabled, the
+pattern &lsquo;<samp>\?</samp>&rsquo; matches only the string &lsquo;<samp>?</samp>&rsquo;, because the question
+mark in the pattern acts like an ordinary character.
+</p>
+<p>If you use <code>GLOB_NOESCAPE</code>, then &lsquo;<samp>\</samp>&rsquo; is an ordinary character.
+</p>
+<p><code>glob</code> does its work by calling the function <code>fnmatch</code>
+repeatedly.  It handles the flag <code>GLOB_NOESCAPE</code> by turning on the
+<code>FNM_NOESCAPE</code> flag in calls to <code>fnmatch</code>.
+</p>
+</dd>
+<dt><code>GLOB_NOSORT</code>
+<a name="index-GLOB_005fNOSORT"></a>
+</dt>
+<dd>
+<p>Don&rsquo;t sort the file names; return them in no particular order.
+(In practice, the order will depend on the order of the entries in
+the directory.)  The only reason <em>not</em> to sort is to save time.
+</p></dd>
+</dl>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="More-Flags-for-Globbing.html#More-Flags-for-Globbing" accesskey="n" rel="next">More Flags for Globbing</a>, Previous: <a href="Calling-Glob.html#Calling-Glob" accesskey="p" rel="prev">Calling Glob</a>, Up: <a href="Globbing.html#Globbing" accesskey="u" rel="up">Globbing</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

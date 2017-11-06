@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Netgroup Data</title>
+
+<meta name="description" content="The GNU C Library: Netgroup Data">
+<meta name="keywords" content="The GNU C Library: Netgroup Data">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Netgroup-Database.html#Netgroup-Database" rel="up" title="Netgroup Database">
+<link href="Lookup-Netgroup.html#Lookup-Netgroup" rel="next" title="Lookup Netgroup">
+<link href="Netgroup-Database.html#Netgroup-Database" rel="prev" title="Netgroup Database">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Netgroup-Data"></a>
+<div class="header">
+<p>
+Next: <a href="Lookup-Netgroup.html#Lookup-Netgroup" accesskey="n" rel="next">Lookup Netgroup</a>, Up: <a href="Netgroup-Database.html#Netgroup-Database" accesskey="u" rel="up">Netgroup Database</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Netgroup-Data-1"></a>
+<h4 class="subsection">30.16.1 Netgroup Data</h4>
+
+<a name="index-Netgroup"></a>
+<p>Sometimes it is useful to group users according to other criteria
+(see <a href="Group-Database.html#Group-Database">Group Database</a>).  E.g., it is useful to associate a certain
+group of users with a certain machine.  On the other hand grouping of
+host names is not supported so far.
+</p>
+<p>In Sun Microsystems&rsquo; SunOS appeared a new kind of database, the netgroup
+database.  It allows grouping hosts, users, and domains freely, giving
+them individual names.  To be more concrete, a netgroup is a list of triples
+consisting of a host name, a user name, and a domain name where any of
+the entries can be a wildcard entry matching all inputs.  A last
+possibility is that names of other netgroups can also be given in the
+list specifying a netgroup.  So one can construct arbitrary hierarchies
+without loops.
+</p>
+<p>Sun&rsquo;s implementation allows netgroups only for the <code>nis</code> or
+<code>nisplus</code> service, see <a href="Services-in-the-NSS-configuration.html#Services-in-the-NSS-configuration">Services in the NSS configuration</a>.  The
+implementation in the GNU C Library has no such restriction.  An entry
+in either of the input services must have the following form:
+</p>
+<div class="smallexample">
+<pre class="smallexample"><var>groupname</var> ( <var>groupname</var> | <code>(</code><var>hostname</var><code>,</code><var>username</var><code>,</code><code>domainname</code><code>)</code> )+
+</pre></div>
+
+<p>Any of the fields in the triple can be empty which means anything
+matches.  While describing the functions we will see that the opposite
+case is useful as well.  I.e., there may be entries which will not
+match any input.  For entries like this, a name consisting of the single
+character <code>-</code> shall be used.
+</p>
+
+
+
+</body>
+</html>

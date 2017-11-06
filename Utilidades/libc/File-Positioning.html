@@ -1,0 +1,336 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: File Positioning</title>
+
+<meta name="description" content="The GNU C Library: File Positioning">
+<meta name="keywords" content="The GNU C Library: File Positioning">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="I_002fO-on-Streams.html#I_002fO-on-Streams" rel="up" title="I/O on Streams">
+<link href="Portable-Positioning.html#Portable-Positioning" rel="next" title="Portable Positioning">
+<link href="Binary-Streams.html#Binary-Streams" rel="prev" title="Binary Streams">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="File-Positioning"></a>
+<div class="header">
+<p>
+Next: <a href="Portable-Positioning.html#Portable-Positioning" accesskey="n" rel="next">Portable Positioning</a>, Previous: <a href="Binary-Streams.html#Binary-Streams" accesskey="p" rel="prev">Binary Streams</a>, Up: <a href="I_002fO-on-Streams.html#I_002fO-on-Streams" accesskey="u" rel="up">I/O on Streams</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="File-Positioning-1"></a>
+<h3 class="section">12.18 File Positioning</h3>
+<a name="index-file-positioning-on-a-stream"></a>
+<a name="index-positioning-a-stream"></a>
+<a name="index-seeking-on-a-stream"></a>
+
+<p>The <em>file position</em> of a stream describes where in the file the
+stream is currently reading or writing.  I/O on the stream advances the
+file position through the file.  On GNU systems, the file position is
+represented as an integer, which counts the number of bytes from the
+beginning of the file.  See <a href="File-Position.html#File-Position">File Position</a>.
+</p>
+<p>During I/O to an ordinary disk file, you can change the file position
+whenever you wish, so as to read or write any portion of the file.  Some
+other kinds of files may also permit this.  Files which support changing
+the file position are sometimes referred to as <em>random-access</em>
+files.
+</p>
+<p>You can use the functions in this section to examine or modify the file
+position indicator associated with a stream.  The symbols listed below
+are declared in the header file <samp>stdio.h</samp>.
+<a name="index-stdio_002eh-9"></a>
+</p>
+<dl>
+<dt><a name="index-ftell"></a>Function: <em>long int</em> <strong>ftell</strong> <em>(FILE *<var>stream</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Unsafe corrupt
+| AC-Unsafe lock corrupt
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function returns the current file position of the stream
+<var>stream</var>.
+</p>
+<p>This function can fail if the stream doesn&rsquo;t support file positioning,
+or if the file position can&rsquo;t be represented in a <code>long int</code>, and
+possibly for other reasons as well.  If a failure occurs, a value of
+<code>-1</code> is returned.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-ftello"></a>Function: <em>off_t</em> <strong>ftello</strong> <em>(FILE *<var>stream</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Unsafe corrupt
+| AC-Unsafe lock corrupt
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>ftello</code> function is similar to <code>ftell</code>, except that it
+returns a value of type <code>off_t</code>.  Systems which support this type
+use it to describe all file positions, unlike the POSIX specification
+which uses a long int.  The two are not necessarily the same size.
+Therefore, using ftell can lead to problems if the implementation is
+written on top of a POSIX compliant low-level I/O implementation, and using
+<code>ftello</code> is preferable whenever it is available.
+</p>
+<p>If this function fails it returns <code>(off_t) -1</code>.  This can happen due
+to missing support for file positioning or internal errors.  Otherwise
+the return value is the current file position.
+</p>
+<p>The function is an extension defined in the Unix Single Specification
+version 2.
+</p>
+<p>When the sources are compiled with <code>_FILE_OFFSET_BITS == 64</code> on a
+32 bit system this function is in fact <code>ftello64</code>.  I.e., the
+LFS interface transparently replaces the old interface.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-ftello64"></a>Function: <em>off64_t</em> <strong>ftello64</strong> <em>(FILE *<var>stream</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Unsafe corrupt
+| AC-Unsafe lock corrupt
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function is similar to <code>ftello</code> with the only difference that
+the return value is of type <code>off64_t</code>.  This also requires that the
+stream <var>stream</var> was opened using either <code>fopen64</code>,
+<code>freopen64</code>, or <code>tmpfile64</code> since otherwise the underlying
+file operations to position the file pointer beyond the 2^31
+bytes limit might fail.
+</p>
+<p>If the sources are compiled with <code>_FILE_OFFSET_BITS == 64</code> on a 32
+bits machine this function is available under the name <code>ftello</code>
+and so transparently replaces the old interface.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-fseek"></a>Function: <em>int</em> <strong>fseek</strong> <em>(FILE *<var>stream</var>, long int <var>offset</var>, int <var>whence</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Unsafe corrupt
+| AC-Unsafe lock corrupt
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>fseek</code> function is used to change the file position of the
+stream <var>stream</var>.  The value of <var>whence</var> must be one of the
+constants <code>SEEK_SET</code>, <code>SEEK_CUR</code>, or <code>SEEK_END</code>, to
+indicate whether the <var>offset</var> is relative to the beginning of the
+file, the current file position, or the end of the file, respectively.
+</p>
+<p>This function returns a value of zero if the operation was successful,
+and a nonzero value to indicate failure.  A successful call also clears
+the end-of-file indicator of <var>stream</var> and discards any characters
+that were &ldquo;pushed back&rdquo; by the use of <code>ungetc</code>.
+</p>
+<p><code>fseek</code> either flushes any buffered output before setting the file
+position or else remembers it so it will be written later in its proper
+place in the file.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-fseeko"></a>Function: <em>int</em> <strong>fseeko</strong> <em>(FILE *<var>stream</var>, off_t <var>offset</var>, int <var>whence</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Unsafe corrupt
+| AC-Unsafe lock corrupt
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function is similar to <code>fseek</code> but it corrects a problem with
+<code>fseek</code> in a system with POSIX types.  Using a value of type
+<code>long int</code> for the offset is not compatible with POSIX.
+<code>fseeko</code> uses the correct type <code>off_t</code> for the <var>offset</var>
+parameter.
+</p>
+<p>For this reason it is a good idea to prefer <code>ftello</code> whenever it is
+available since its functionality is (if different at all) closer the
+underlying definition.
+</p>
+<p>The functionality and return value are the same as for <code>fseek</code>.
+</p>
+<p>The function is an extension defined in the Unix Single Specification
+version 2.
+</p>
+<p>When the sources are compiled with <code>_FILE_OFFSET_BITS == 64</code> on a
+32 bit system this function is in fact <code>fseeko64</code>.  I.e., the
+LFS interface transparently replaces the old interface.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-fseeko64"></a>Function: <em>int</em> <strong>fseeko64</strong> <em>(FILE *<var>stream</var>, off64_t <var>offset</var>, int <var>whence</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Unsafe corrupt
+| AC-Unsafe lock corrupt
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function is similar to <code>fseeko</code> with the only difference that
+the <var>offset</var> parameter is of type <code>off64_t</code>.  This also
+requires that the stream <var>stream</var> was opened using either
+<code>fopen64</code>, <code>freopen64</code>, or <code>tmpfile64</code> since otherwise
+the underlying file operations to position the file pointer beyond the
+2^31 bytes limit might fail.
+</p>
+<p>If the sources are compiled with <code>_FILE_OFFSET_BITS == 64</code> on a 32
+bits machine this function is available under the name <code>fseeko</code>
+and so transparently replaces the old interface.
+</p></dd></dl>
+
+<p><strong>Portability Note:</strong> In non-POSIX systems, <code>ftell</code>,
+<code>ftello</code>, <code>fseek</code> and <code>fseeko</code> might work reliably only
+on binary streams.  See <a href="Binary-Streams.html#Binary-Streams">Binary Streams</a>.
+</p>
+<p>The following symbolic constants are defined for use as the <var>whence</var>
+argument to <code>fseek</code>.  They are also used with the <code>lseek</code>
+function (see <a href="I_002fO-Primitives.html#I_002fO-Primitives">I/O Primitives</a>) and to specify offsets for file locks
+(see <a href="Control-Operations.html#Control-Operations">Control Operations</a>).
+</p>
+<dl>
+<dt><a name="index-SEEK_005fSET"></a>Macro: <em>int</em> <strong>SEEK_SET</strong></dt>
+<dd>
+<p>This is an integer constant which, when used as the <var>whence</var>
+argument to the <code>fseek</code> or <code>fseeko</code> functions, specifies that
+the offset provided is relative to the beginning of the file.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-SEEK_005fCUR"></a>Macro: <em>int</em> <strong>SEEK_CUR</strong></dt>
+<dd>
+<p>This is an integer constant which, when used as the <var>whence</var>
+argument to the <code>fseek</code> or <code>fseeko</code> functions, specifies that
+the offset provided is relative to the current file position.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-SEEK_005fEND"></a>Macro: <em>int</em> <strong>SEEK_END</strong></dt>
+<dd>
+<p>This is an integer constant which, when used as the <var>whence</var>
+argument to the <code>fseek</code> or <code>fseeko</code> functions, specifies that
+the offset provided is relative to the end of the file.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-rewind"></a>Function: <em>void</em> <strong>rewind</strong> <em>(FILE *<var>stream</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Unsafe corrupt
+| AC-Unsafe lock corrupt
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>rewind</code> function positions the stream <var>stream</var> at the
+beginning of the file.  It is equivalent to calling <code>fseek</code> or
+<code>fseeko</code> on the <var>stream</var> with an <var>offset</var> argument of
+<code>0L</code> and a <var>whence</var> argument of <code>SEEK_SET</code>, except that
+the return value is discarded and the error indicator for the stream is
+reset.
+</p></dd></dl>
+
+<p>These three aliases for the &lsquo;<samp>SEEK_&hellip;</samp>&rsquo; constants exist for the
+sake of compatibility with older BSD systems.  They are defined in two
+different header files: <samp>fcntl.h</samp> and <samp>sys/file.h</samp>.
+</p>
+<dl compact="compact">
+<dt><code>L_SET</code>
+<a name="index-L_005fSET"></a>
+</dt>
+<dd>
+<p>An alias for <code>SEEK_SET</code>.
+</p>
+</dd>
+<dt><code>L_INCR</code>
+<a name="index-L_005fINCR"></a>
+</dt>
+<dd>
+<p>An alias for <code>SEEK_CUR</code>.
+</p>
+</dd>
+<dt><code>L_XTND</code>
+<a name="index-L_005fXTND"></a>
+</dt>
+<dd>
+<p>An alias for <code>SEEK_END</code>.
+</p></dd>
+</dl>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Portable-Positioning.html#Portable-Positioning" accesskey="n" rel="next">Portable Positioning</a>, Previous: <a href="Binary-Streams.html#Binary-Streams" accesskey="p" rel="prev">Binary Streams</a>, Up: <a href="I_002fO-on-Streams.html#I_002fO-on-Streams" accesskey="u" rel="up">I/O on Streams</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

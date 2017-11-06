@@ -1,0 +1,287 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Pathconf</title>
+
+<meta name="description" content="The GNU C Library: Pathconf">
+<meta name="keywords" content="The GNU C Library: Pathconf">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="System-Configuration.html#System-Configuration" rel="up" title="System Configuration">
+<link href="Utility-Limits.html#Utility-Limits" rel="next" title="Utility Limits">
+<link href="File-Minimums.html#File-Minimums" rel="prev" title="File Minimums">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Pathconf"></a>
+<div class="header">
+<p>
+Next: <a href="Utility-Limits.html#Utility-Limits" accesskey="n" rel="next">Utility Limits</a>, Previous: <a href="File-Minimums.html#File-Minimums" accesskey="p" rel="prev">File Minimums</a>, Up: <a href="System-Configuration.html#System-Configuration" accesskey="u" rel="up">System Configuration</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Using-pathconf"></a>
+<h3 class="section">32.9 Using <code>pathconf</code></h3>
+
+<p>When your machine allows different files to have different values for a
+file system parameter, you can use the functions in this section to find
+out the value that applies to any particular file.
+</p>
+<p>These functions and the associated constants for the <var>parameter</var>
+argument are declared in the header file <samp>unistd.h</samp>.
+</p>
+<dl>
+<dt><a name="index-pathconf"></a>Function: <em>long int</em> <strong>pathconf</strong> <em>(const char *<var>filename</var>, int <var>parameter</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Unsafe lock heap
+| AC-Unsafe lock fd mem
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function is used to inquire about the limits that apply to
+the file named <var>filename</var>.
+</p>
+<p>The <var>parameter</var> argument should be one of the &lsquo;<samp>_PC_</samp>&rsquo; constants
+listed below.
+</p>
+<p>The normal return value from <code>pathconf</code> is the value you requested.
+A value of <code>-1</code> is returned both if the implementation does not
+impose a limit, and in case of an error.  In the former case,
+<code>errno</code> is not set, while in the latter case, <code>errno</code> is set
+to indicate the cause of the problem.  So the only way to use this
+function robustly is to store <code>0</code> into <code>errno</code> just before
+calling it.
+</p>
+<p>Besides the usual file name errors (see <a href="File-Name-Errors.html#File-Name-Errors">File Name Errors</a>),
+the following error condition is defined for this function:
+</p>
+<dl compact="compact">
+<dt><code>EINVAL</code></dt>
+<dd><p>The value of <var>parameter</var> is invalid, or the implementation doesn&rsquo;t
+support the <var>parameter</var> for the specific file.
+</p></dd>
+</dl>
+</dd></dl>
+
+<dl>
+<dt><a name="index-fpathconf"></a>Function: <em>long int</em> <strong>fpathconf</strong> <em>(int <var>filedes</var>, int <var>parameter</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Unsafe lock heap
+| AC-Unsafe lock fd mem
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This is just like <code>pathconf</code> except that an open file descriptor
+is used to specify the file for which information is requested, instead
+of a file name.
+</p>
+<p>The following <code>errno</code> error conditions are defined for this function:
+</p>
+<dl compact="compact">
+<dt><code>EBADF</code></dt>
+<dd><p>The <var>filedes</var> argument is not a valid file descriptor.
+</p>
+</dd>
+<dt><code>EINVAL</code></dt>
+<dd><p>The value of <var>parameter</var> is invalid, or the implementation doesn&rsquo;t
+support the <var>parameter</var> for the specific file.
+</p></dd>
+</dl>
+</dd></dl>
+
+<p>Here are the symbolic constants that you can use as the <var>parameter</var>
+argument to <code>pathconf</code> and <code>fpathconf</code>.  The values are all
+integer constants.
+</p>
+<dl compact="compact">
+<dt><code>_PC_LINK_MAX</code>
+<a name="index-_005fPC_005fLINK_005fMAX"></a>
+</dt>
+<dd>
+<p>Inquire about the value of <code>LINK_MAX</code>.
+</p>
+</dd>
+<dt><code>_PC_MAX_CANON</code>
+<a name="index-_005fPC_005fMAX_005fCANON"></a>
+</dt>
+<dd>
+<p>Inquire about the value of <code>MAX_CANON</code>.
+</p>
+</dd>
+<dt><code>_PC_MAX_INPUT</code>
+<a name="index-_005fPC_005fMAX_005fINPUT"></a>
+</dt>
+<dd>
+<p>Inquire about the value of <code>MAX_INPUT</code>.
+</p>
+</dd>
+<dt><code>_PC_NAME_MAX</code>
+<a name="index-_005fPC_005fNAME_005fMAX"></a>
+</dt>
+<dd>
+<p>Inquire about the value of <code>NAME_MAX</code>.
+</p>
+</dd>
+<dt><code>_PC_PATH_MAX</code>
+<a name="index-_005fPC_005fPATH_005fMAX"></a>
+</dt>
+<dd>
+<p>Inquire about the value of <code>PATH_MAX</code>.
+</p>
+</dd>
+<dt><code>_PC_PIPE_BUF</code>
+<a name="index-_005fPC_005fPIPE_005fBUF"></a>
+</dt>
+<dd>
+<p>Inquire about the value of <code>PIPE_BUF</code>.
+</p>
+</dd>
+<dt><code>_PC_CHOWN_RESTRICTED</code>
+<a name="index-_005fPC_005fCHOWN_005fRESTRICTED"></a>
+</dt>
+<dd>
+<p>Inquire about the value of <code>_POSIX_CHOWN_RESTRICTED</code>.
+</p>
+</dd>
+<dt><code>_PC_NO_TRUNC</code>
+<a name="index-_005fPC_005fNO_005fTRUNC"></a>
+</dt>
+<dd>
+<p>Inquire about the value of <code>_POSIX_NO_TRUNC</code>.
+</p>
+</dd>
+<dt><code>_PC_VDISABLE</code>
+<a name="index-_005fPC_005fVDISABLE"></a>
+</dt>
+<dd>
+<p>Inquire about the value of <code>_POSIX_VDISABLE</code>.
+</p>
+</dd>
+<dt><code>_PC_SYNC_IO</code>
+<a name="index-_005fPC_005fSYNC_005fIO"></a>
+</dt>
+<dd>
+<p>Inquire about the value of <code>_POSIX_SYNC_IO</code>.
+</p>
+</dd>
+<dt><code>_PC_ASYNC_IO</code>
+<a name="index-_005fPC_005fASYNC_005fIO"></a>
+</dt>
+<dd>
+<p>Inquire about the value of <code>_POSIX_ASYNC_IO</code>.
+</p>
+</dd>
+<dt><code>_PC_PRIO_IO</code>
+<a name="index-_005fPC_005fPRIO_005fIO"></a>
+</dt>
+<dd>
+<p>Inquire about the value of <code>_POSIX_PRIO_IO</code>.
+</p>
+</dd>
+<dt><code>_PC_FILESIZEBITS</code>
+<a name="index-_005fPC_005fFILESIZEBITS"></a>
+</dt>
+<dd>
+<p>Inquire about the availability of large files on the filesystem.
+</p>
+</dd>
+<dt><code>_PC_REC_INCR_XFER_SIZE</code>
+<a name="index-_005fPC_005fREC_005fINCR_005fXFER_005fSIZE"></a>
+</dt>
+<dd>
+<p>Inquire about the value of <code>POSIX_REC_INCR_XFER_SIZE</code>.
+</p>
+</dd>
+<dt><code>_PC_REC_MAX_XFER_SIZE</code>
+<a name="index-_005fPC_005fREC_005fMAX_005fXFER_005fSIZE"></a>
+</dt>
+<dd>
+<p>Inquire about the value of <code>POSIX_REC_MAX_XFER_SIZE</code>.
+</p>
+</dd>
+<dt><code>_PC_REC_MIN_XFER_SIZE</code>
+<a name="index-_005fPC_005fREC_005fMIN_005fXFER_005fSIZE"></a>
+</dt>
+<dd>
+<p>Inquire about the value of <code>POSIX_REC_MIN_XFER_SIZE</code>.
+</p>
+</dd>
+<dt><code>_PC_REC_XFER_ALIGN</code>
+<a name="index-_005fPC_005fREC_005fXFER_005fALIGN"></a>
+</dt>
+<dd>
+<p>Inquire about the value of <code>POSIX_REC_XFER_ALIGN</code>.
+</p></dd>
+</dl>
+
+<p><strong>Portability Note:</strong> On some systems, the GNU C Library does not
+enforce <code>_PC_NAME_MAX</code> or <code>_PC_PATH_MAX</code> limits.
+</p>
+<hr>
+<div class="header">
+<p>
+Next: <a href="Utility-Limits.html#Utility-Limits" accesskey="n" rel="next">Utility Limits</a>, Previous: <a href="File-Minimums.html#File-Minimums" accesskey="p" rel="prev">File Minimums</a>, Up: <a href="System-Configuration.html#System-Configuration" accesskey="u" rel="up">System Configuration</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

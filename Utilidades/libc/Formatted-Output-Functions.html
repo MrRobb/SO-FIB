@@ -1,0 +1,284 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Formatted Output Functions</title>
+
+<meta name="description" content="The GNU C Library: Formatted Output Functions">
+<meta name="keywords" content="The GNU C Library: Formatted Output Functions">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Formatted-Output.html#Formatted-Output" rel="up" title="Formatted Output">
+<link href="Dynamic-Output.html#Dynamic-Output" rel="next" title="Dynamic Output">
+<link href="Other-Output-Conversions.html#Other-Output-Conversions" rel="prev" title="Other Output Conversions">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Formatted-Output-Functions"></a>
+<div class="header">
+<p>
+Next: <a href="Dynamic-Output.html#Dynamic-Output" accesskey="n" rel="next">Dynamic Output</a>, Previous: <a href="Other-Output-Conversions.html#Other-Output-Conversions" accesskey="p" rel="prev">Other Output Conversions</a>, Up: <a href="Formatted-Output.html#Formatted-Output" accesskey="u" rel="up">Formatted Output</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Formatted-Output-Functions-1"></a>
+<h4 class="subsection">12.12.7 Formatted Output Functions</h4>
+
+<p>This section describes how to call <code>printf</code> and related functions.
+Prototypes for these functions are in the header file <samp>stdio.h</samp>.
+Because these functions take a variable number of arguments, you
+<em>must</em> declare prototypes for them before using them.  Of course,
+the easiest way to make sure you have all the right prototypes is to
+just include <samp>stdio.h</samp>.
+<a name="index-stdio_002eh-6"></a>
+</p>
+<dl>
+<dt><a name="index-printf"></a>Function: <em>int</em> <strong>printf</strong> <em>(const char *<var>template</var>, &hellip;)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe locale
+| AS-Unsafe corrupt heap
+| AC-Unsafe mem lock corrupt
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>printf</code> function prints the optional arguments under the
+control of the template string <var>template</var> to the stream
+<code>stdout</code>.  It returns the number of characters printed, or a
+negative value if there was an output error.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-wprintf"></a>Function: <em>int</em> <strong>wprintf</strong> <em>(const wchar_t *<var>template</var>, &hellip;)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe locale
+| AS-Unsafe corrupt heap
+| AC-Unsafe mem lock corrupt
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>wprintf</code> function prints the optional arguments under the
+control of the wide template string <var>template</var> to the stream
+<code>stdout</code>.  It returns the number of wide characters printed, or a
+negative value if there was an output error.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-fprintf"></a>Function: <em>int</em> <strong>fprintf</strong> <em>(FILE *<var>stream</var>, const char *<var>template</var>, &hellip;)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe locale
+| AS-Unsafe corrupt heap
+| AC-Unsafe mem lock corrupt
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function is just like <code>printf</code>, except that the output is
+written to the stream <var>stream</var> instead of <code>stdout</code>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-fwprintf"></a>Function: <em>int</em> <strong>fwprintf</strong> <em>(FILE *<var>stream</var>, const wchar_t *<var>template</var>, &hellip;)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe locale
+| AS-Unsafe corrupt heap
+| AC-Unsafe mem lock corrupt
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function is just like <code>wprintf</code>, except that the output is
+written to the stream <var>stream</var> instead of <code>stdout</code>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-sprintf"></a>Function: <em>int</em> <strong>sprintf</strong> <em>(char *<var>s</var>, const char *<var>template</var>, &hellip;)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe locale
+| AS-Unsafe heap
+| AC-Unsafe mem
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This is like <code>printf</code>, except that the output is stored in the character
+array <var>s</var> instead of written to a stream.  A null character is written
+to mark the end of the string.
+</p>
+<p>The <code>sprintf</code> function returns the number of characters stored in
+the array <var>s</var>, not including the terminating null character.
+</p>
+<p>The behavior of this function is undefined if copying takes place
+between objects that overlap&mdash;for example, if <var>s</var> is also given
+as an argument to be printed under control of the &lsquo;<samp>%s</samp>&rsquo; conversion.
+See <a href="Copying-Strings-and-Arrays.html#Copying-Strings-and-Arrays">Copying Strings and Arrays</a>.
+</p>
+<p><strong>Warning:</strong> The <code>sprintf</code> function can be <strong>dangerous</strong>
+because it can potentially output more characters than can fit in the
+allocation size of the string <var>s</var>.  Remember that the field width
+given in a conversion specification is only a <em>minimum</em> value.
+</p>
+<p>To avoid this problem, you can use <code>snprintf</code> or <code>asprintf</code>,
+described below.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-swprintf"></a>Function: <em>int</em> <strong>swprintf</strong> <em>(wchar_t *<var>ws</var>, size_t <var>size</var>, const wchar_t *<var>template</var>, &hellip;)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe locale
+| AS-Unsafe heap
+| AC-Unsafe mem
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This is like <code>wprintf</code>, except that the output is stored in the
+wide character array <var>ws</var> instead of written to a stream.  A null
+wide character is written to mark the end of the string.  The <var>size</var>
+argument specifies the maximum number of characters to produce.  The
+trailing null character is counted towards this limit, so you should
+allocate at least <var>size</var> wide characters for the string <var>ws</var>.
+</p>
+<p>The return value is the number of characters generated for the given
+input, excluding the trailing null.  If not all output fits into the
+provided buffer a negative value is returned.  You should try again with
+a bigger output string.  <em>Note:</em> this is different from how
+<code>snprintf</code> handles this situation.
+</p>
+<p>Note that the corresponding narrow stream function takes fewer
+parameters.  <code>swprintf</code> in fact corresponds to the <code>snprintf</code>
+function.  Since the <code>sprintf</code> function can be dangerous and should
+be avoided the ISO&nbsp;C<!-- /@w --> committee refused to make the same mistake
+again and decided to not define a function exactly corresponding to
+<code>sprintf</code>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-snprintf"></a>Function: <em>int</em> <strong>snprintf</strong> <em>(char *<var>s</var>, size_t <var>size</var>, const char *<var>template</var>, &hellip;)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe locale
+| AS-Unsafe heap
+| AC-Unsafe mem
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>snprintf</code> function is similar to <code>sprintf</code>, except that
+the <var>size</var> argument specifies the maximum number of characters to
+produce.  The trailing null character is counted towards this limit, so
+you should allocate at least <var>size</var> characters for the string <var>s</var>.
+If <var>size</var> is zero, nothing, not even the null byte, shall be written and
+<var>s</var> may be a null pointer.
+</p>
+<p>The return value is the number of characters which would be generated
+for the given input, excluding the trailing null.  If this value is
+greater than or equal to <var>size</var>, not all characters from the result have
+been stored in <var>s</var>.  You should try again with a bigger output
+string.  Here is an example of doing this:
+</p>
+<div class="smallexample">
+<pre class="smallexample">/* <span class="roman">Construct a message describing the value of a variable</span>
+   <span class="roman">whose name is <var>name</var> and whose value is <var>value</var>.</span> */
+char *
+make_message (char *name, char *value)
+{
+  /* <span class="roman">Guess we need no more than 100 chars of space.</span> */
+  int size = 100;
+  char *buffer = (char *) xmalloc (size);
+  int nchars;
+</pre><pre class="smallexample">  if (buffer == NULL)
+    return NULL;
+
+ /* <span class="roman">Try to print in the allocated space.</span> */
+  nchars = snprintf (buffer, size, &quot;value of %s is %s&quot;,
+		     name, value);
+</pre><pre class="smallexample">  if (nchars &gt;= size)
+    {
+      /* <span class="roman">Reallocate buffer now that we know
+	 how much space is needed.</span> */
+      size = nchars + 1;
+      buffer = (char *) xrealloc (buffer, size);
+
+      if (buffer != NULL)
+	/* <span class="roman">Try again.</span> */
+	snprintf (buffer, size, &quot;value of %s is %s&quot;,
+		  name, value);
+    }
+  /* <span class="roman">The last call worked, return the string.</span> */
+  return buffer;
+}
+</pre></div>
+
+<p>In practice, it is often easier just to use <code>asprintf</code>, below.
+</p>
+<p><strong>Attention:</strong> In versions of the GNU C Library prior to 2.1 the
+return value is the number of characters stored, not including the
+terminating null; unless there was not enough space in <var>s</var> to
+store the result in which case <code>-1</code> is returned.  This was
+changed in order to comply with the ISO&nbsp;C99<!-- /@w --> standard.
+</p></dd></dl>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Dynamic-Output.html#Dynamic-Output" accesskey="n" rel="next">Dynamic Output</a>, Previous: <a href="Other-Output-Conversions.html#Other-Output-Conversions" accesskey="p" rel="prev">Other Output Conversions</a>, Up: <a href="Formatted-Output.html#Formatted-Output" accesskey="u" rel="up">Formatted Output</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

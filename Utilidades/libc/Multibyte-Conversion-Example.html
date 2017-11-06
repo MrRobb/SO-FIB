@@ -1,0 +1,176 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Multibyte Conversion Example</title>
+
+<meta name="description" content="The GNU C Library: Multibyte Conversion Example">
+<meta name="keywords" content="The GNU C Library: Multibyte Conversion Example">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Restartable-multibyte-conversion.html#Restartable-multibyte-conversion" rel="up" title="Restartable multibyte conversion">
+<link href="Non_002dreentrant-Conversion.html#Non_002dreentrant-Conversion" rel="next" title="Non-reentrant Conversion">
+<link href="Converting-Strings.html#Converting-Strings" rel="prev" title="Converting Strings">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Multibyte-Conversion-Example"></a>
+<div class="header">
+<p>
+Previous: <a href="Converting-Strings.html#Converting-Strings" accesskey="p" rel="prev">Converting Strings</a>, Up: <a href="Restartable-multibyte-conversion.html#Restartable-multibyte-conversion" accesskey="u" rel="up">Restartable multibyte conversion</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="A-Complete-Multibyte-Conversion-Example"></a>
+<h4 class="subsection">6.3.5 A Complete Multibyte Conversion Example</h4>
+
+<p>The example programs given in the last sections are only brief and do
+not contain all the error checking, etc.  Presented here is a complete
+and documented example.  It features the <code>mbrtowc</code> function but it
+should be easy to derive versions using the other functions.
+</p>
+<div class="smallexample">
+<pre class="smallexample">int
+file_mbsrtowcs (int input, int output)
+{
+  /* <span class="roman">Note the use of <code>MB_LEN_MAX</code>.</span>
+     <span class="roman"><code>MB_CUR_MAX</code> cannot portably be used here.</span>  */
+  char buffer[BUFSIZ + MB_LEN_MAX];
+  mbstate_t state;
+  int filled = 0;
+  int eof = 0;
+
+  /* <span class="roman">Initialize the state.</span>  */
+  memset (&amp;state, '\0', sizeof (state));
+
+  while (!eof)
+    {
+      ssize_t nread;
+      ssize_t nwrite;
+      char *inp = buffer;
+      wchar_t outbuf[BUFSIZ];
+      wchar_t *outp = outbuf;
+
+      /* <span class="roman">Fill up the buffer from the input file.</span>  */
+      nread = read (input, buffer + filled, BUFSIZ);
+      if (nread &lt; 0)
+        {
+          perror (&quot;read&quot;);
+          return 0;
+        }
+      /* <span class="roman">If we reach end of file, make a note to read no more.</span> */
+      if (nread == 0)
+        eof = 1;
+
+      /* <span class="roman"><code>filled</code> is now the number of bytes in <code>buffer</code>.</span> */
+      filled += nread;
+
+      /* <span class="roman">Convert those bytes to wide characters&ndash;as many as we can.</span> */
+      while (1)
+        {
+          size_t thislen = mbrtowc (outp, inp, filled, &amp;state);
+          /* <span class="roman">Stop converting at invalid character;</span>
+             <span class="roman">this can mean we have read just the first part</span>
+             <span class="roman">of a valid character.</span>  */
+          if (thislen == (size_t) -1)
+            break;
+          /* <span class="roman">We want to handle embedded NUL bytes</span>
+             <span class="roman">but the return value is 0.  Correct this.</span>  */
+          if (thislen == 0)
+            thislen = 1;
+          /* <span class="roman">Advance past this character.</span> */
+          inp += thislen;
+          filled -= thislen;
+          ++outp;
+        }
+
+      /* <span class="roman">Write the wide characters we just made.</span>  */
+      nwrite = write (output, outbuf,
+                      (outp - outbuf) * sizeof (wchar_t));
+      if (nwrite &lt; 0)
+        {
+          perror (&quot;write&quot;);
+          return 0;
+        }
+
+      /* <span class="roman">See if we have a <em>real</em> invalid character.</span> */
+      if ((eof &amp;&amp; filled &gt; 0) || filled &gt;= MB_CUR_MAX)
+        {
+          error (0, 0, &quot;invalid multibyte character&quot;);
+          return 0;
+        }
+
+      /* <span class="roman">If any characters must be carried forward,</span>
+         <span class="roman">put them at the beginning of <code>buffer</code>.</span> */
+      if (filled &gt; 0)
+        memmove (buffer, inp, filled);
+    }
+
+  return 1;
+}
+</pre></div>
+
+
+<hr>
+<div class="header">
+<p>
+Previous: <a href="Converting-Strings.html#Converting-Strings" accesskey="p" rel="prev">Converting Strings</a>, Up: <a href="Restartable-multibyte-conversion.html#Restartable-multibyte-conversion" accesskey="u" rel="up">Restartable multibyte conversion</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

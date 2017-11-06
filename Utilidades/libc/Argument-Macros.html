@@ -1,0 +1,205 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Argument Macros</title>
+
+<meta name="description" content="The GNU C Library: Argument Macros">
+<meta name="keywords" content="The GNU C Library: Argument Macros">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="How-Variadic.html#How-Variadic" rel="up" title="How Variadic">
+<link href="Variadic-Example.html#Variadic-Example" rel="next" title="Variadic Example">
+<link href="Calling-Variadics.html#Calling-Variadics" rel="prev" title="Calling Variadics">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Argument-Macros"></a>
+<div class="header">
+<p>
+Previous: <a href="Calling-Variadics.html#Calling-Variadics" accesskey="p" rel="prev">Calling Variadics</a>, Up: <a href="How-Variadic.html#How-Variadic" accesskey="u" rel="up">How Variadic</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Argument-Access-Macros"></a>
+<h4 class="subsubsection">A.2.2.5 Argument Access Macros</h4>
+
+<p>Here are descriptions of the macros used to retrieve variable arguments.
+These macros are defined in the header file <samp>stdarg.h</samp>.
+<a name="index-stdarg_002eh-1"></a>
+</p>
+<dl>
+<dt><a name="index-va_005flist"></a>Data Type: <strong>va_list</strong></dt>
+<dd>
+<p>The type <code>va_list</code> is used for argument pointer variables.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-va_005fstart"></a>Macro: <em>void</em> <strong>va_start</strong> <em>(va_list <var>ap</var>, <var>last-required</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This macro initializes the argument pointer variable <var>ap</var> to point
+to the first of the optional arguments of the current function;
+<var>last-required</var> must be the last required argument to the function.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-va_005farg"></a>Macro: <em><var>type</var></em> <strong>va_arg</strong> <em>(va_list <var>ap</var>, <var>type</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe race:ap
+| AS-Safe 
+| AC-Unsafe corrupt
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>va_arg</code> macro returns the value of the next optional argument,
+and modifies the value of <var>ap</var> to point to the subsequent argument.
+Thus, successive uses of <code>va_arg</code> return successive optional
+arguments.
+</p>
+<p>The type of the value returned by <code>va_arg</code> is <var>type</var> as
+specified in the call.  <var>type</var> must be a self-promoting type (not
+<code>char</code> or <code>short int</code> or <code>float</code>) that matches the type
+of the actual argument.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-va_005fend"></a>Macro: <em>void</em> <strong>va_end</strong> <em>(va_list <var>ap</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This ends the use of <var>ap</var>.  After a <code>va_end</code> call, further
+<code>va_arg</code> calls with the same <var>ap</var> may not work.  You should invoke
+<code>va_end</code> before returning from the function in which <code>va_start</code>
+was invoked with the same <var>ap</var> argument.
+</p>
+<p>In the GNU C Library, <code>va_end</code> does nothing, and you need not ever
+use it except for reasons of portability.
+
+</p></dd></dl>
+
+<p>Sometimes it is necessary to parse the list of parameters more than once
+or one wants to remember a certain position in the parameter list.  To
+do this, one will have to make a copy of the current value of the
+argument.  But <code>va_list</code> is an opaque type and one cannot necessarily
+assign the value of one variable of type <code>va_list</code> to another variable
+of the same type.
+</p>
+<dl>
+<dt><a name="index-va_005fcopy-1"></a>Macro: <em>void</em> <strong>va_copy</strong> <em>(va_list <var>dest</var>, va_list <var>src</var>)</em></dt>
+<dt><a name="index-_005f_005fva_005fcopy"></a>Macro: <em>void</em> <strong>__va_copy</strong> <em>(va_list <var>dest</var>, va_list <var>src</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>va_copy</code> macro allows copying of objects of type
+<code>va_list</code> even if this is not an integral type.  The argument pointer
+in <var>dest</var> is initialized to point to the same argument as the
+pointer in <var>src</var>.
+</p>
+<p>This macro was added in ISO C99.  When building for strict conformance
+to ISO C90 (&lsquo;<samp>gcc -ansi</samp>&rsquo;), it is not available.  The macro
+<code>__va_copy</code> is available as a GNU extension in any standards
+mode; before GCC 3.0, it was the only macro for this functionality.
+</p></dd></dl>
+
+<p>If you want to use <code>va_copy</code> and be portable to pre-C99 systems,
+you should always be prepared for the
+possibility that this macro will not be available.  On architectures where a
+simple assignment is invalid, hopefully <code>va_copy</code> <em>will</em> be available,
+so one should always write something like this if concerned about
+pre-C99 portability:
+</p>
+<div class="smallexample">
+<pre class="smallexample">{
+  va_list ap, save;
+  &hellip;
+#ifdef va_copy
+  va_copy (save, ap);
+#else
+  save = ap;
+#endif
+  &hellip;
+}
+</pre></div>
+
+
+<hr>
+<div class="header">
+<p>
+Previous: <a href="Calling-Variadics.html#Calling-Variadics" accesskey="p" rel="prev">Calling Variadics</a>, Up: <a href="How-Variadic.html#How-Variadic" accesskey="u" rel="up">How Variadic</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

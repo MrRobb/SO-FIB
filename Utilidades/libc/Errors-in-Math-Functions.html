@@ -1,0 +1,1155 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Errors in Math Functions</title>
+
+<meta name="description" content="The GNU C Library: Errors in Math Functions">
+<meta name="keywords" content="The GNU C Library: Errors in Math Functions">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Mathematics.html#Mathematics" rel="up" title="Mathematics">
+<link href="Pseudo_002dRandom-Numbers.html#Pseudo_002dRandom-Numbers" rel="next" title="Pseudo-Random Numbers">
+<link href="Special-Functions.html#Special-Functions" rel="prev" title="Special Functions">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Errors-in-Math-Functions"></a>
+<div class="header">
+<p>
+Next: <a href="Pseudo_002dRandom-Numbers.html#Pseudo_002dRandom-Numbers" accesskey="n" rel="next">Pseudo-Random Numbers</a>, Previous: <a href="Special-Functions.html#Special-Functions" accesskey="p" rel="prev">Special Functions</a>, Up: <a href="Mathematics.html#Mathematics" accesskey="u" rel="up">Mathematics</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Known-Maximum-Errors-in-Math-Functions"></a>
+<h3 class="section">19.7 Known Maximum Errors in Math Functions</h3>
+<a name="index-math-errors"></a>
+<a name="index-ulps"></a>
+
+<p>This section lists the known errors of the functions in the math
+library.  Errors are measured in &ldquo;units of the last place&rdquo;.  This is a
+measure for the relative error.  For a number <em>z</em> with the
+representation <em>d.d&hellip;d&amp;middot;2^e</em> (we assume IEEE
+floating-point numbers with base 2) the ULP is represented by
+</p>
+<div class="smallexample">
+<pre class="smallexample">|d.d...d - (z / 2^e)| / 2^(p - 1)
+</pre></div>
+
+<p>where <em>p</em> is the number of bits in the mantissa of the
+floating-point number representation.  Ideally the error for all
+functions is always less than 0.5ulps in round-to-nearest mode.  Using
+rounding bits this is also
+possible and normally implemented for the basic operations.  Except
+for certain functions such as <code>sqrt</code>, <code>fma</code> and <code>rint</code>
+whose results are fully specified by reference to corresponding IEEE
+754 floating-point operations, and conversions between strings and
+floating point, the GNU C Library does not aim for correctly rounded results
+for functions in the math library, and does not aim for correctness in
+whether &ldquo;inexact&rdquo; exceptions are raised.  Instead, the goals for
+accuracy of functions without fully specified results are as follows;
+some functions have bugs meaning they do not meet these goals in all
+cases.  In the future, the GNU C Library may provide some other correctly
+rounding functions under the names such as <code>crsin</code> proposed for
+an extension to ISO C.
+</p>
+<ul>
+<li> Each function with a floating-point result behaves as if it computes
+an infinite-precision result that is within a few ulp (in both real
+and complex parts, for functions with complex results) of the
+mathematically correct value of the function (interpreted together
+with ISO C or POSIX semantics for the function in question) at the
+exact value passed as the input.  Exceptions are raised appropriately
+for this value and in accordance with IEEE 754 / ISO C / POSIX
+semantics, and it is then rounded according to the current rounding
+direction to the result that is returned to the user.  <code>errno</code>
+may also be set (see <a href="Math-Error-Reporting.html#Math-Error-Reporting">Math Error Reporting</a>).  (The &ldquo;inexact&rdquo;
+exception may be raised, or not raised, even if this is inconsistent
+with the infinite-precision value.)
+
+</li><li> For the IBM <code>long double</code> format, as used on PowerPC GNU/Linux,
+the accuracy goal is weaker for input values not exactly representable
+in 106 bits of precision; it is as if the input value is some value
+within 0.5ulp of the value actually passed, where &ldquo;ulp&rdquo; is
+interpreted in terms of a fixed-precision 106-bit mantissa, but not
+necessarily the exact value actually passed with discontiguous
+mantissa bits.
+
+</li><li> For the IBM <code>long double</code> format, functions whose results are
+fully specified by reference to corresponding IEEE 754 floating-point
+operations have the same accuracy goals as other functions, but with
+the error bound being the same as that for division (3ulp).
+Furthermore, &ldquo;inexact&rdquo; and &ldquo;underflow&rdquo; exceptions may be raised
+for all functions for any inputs, even where such exceptions are
+inconsistent with the returned value, since the underlying
+floating-point arithmetic has that property.
+
+</li><li> Functions behave as if the infinite-precision result computed is zero,
+infinity or NaN if and only if that is the mathematically correct
+infinite-precision result.  They behave as if the infinite-precision
+result computed always has the same sign as the mathematically correct
+result.
+
+</li><li> If the mathematical result is more than a few ulp above the overflow
+threshold for the current rounding direction, the value returned is
+the appropriate overflow value for the current rounding direction,
+with the overflow exception raised.
+
+</li><li> If the mathematical result has magnitude well below half the least
+subnormal magnitude, the returned value is either zero or the least
+subnormal (in each case, with the correct sign), according to the
+current rounding direction and with the underflow exception raised.
+
+</li><li> Where the mathematical result underflows (before rounding) and is not
+exactly representable as a floating-point value, the function does not
+behave as if the computed infinite-precision result is an exact value
+in the subnormal range.  This means that the underflow exception is
+raised other than possibly for cases where the mathematical result is
+very close to the underflow threshold and the function behaves as if
+it computes an infinite-precision result that does not underflow.  (So
+there may be spurious underflow exceptions in cases where the
+underflowing result is exact, but not missing underflow exceptions in
+cases where it is inexact.)
+
+</li><li> The GNU C Library does not aim for functions to satisfy other properties of
+the underlying mathematical function, such as monotonicity, where not
+implied by the above goals.
+
+</li><li> All the above applies to both real and complex parts, for complex
+functions.
+
+</li></ul>
+
+<p>Therefore many of the functions in the math library have errors.  The
+table lists the maximum error for each function which is exposed by one
+of the existing tests in the test suite.  The table tries to cover as much
+as possible and list the actual maximum error (or at least a ballpark
+figure) but this is often not achieved due to the large search space.
+</p>
+<p>The table lists the ULP values for different architectures.  Different
+architectures have different results since their hardware support for
+floating-point operations varies and also the existing hardware support
+is different.  Only the round-to-nearest rounding mode is covered by
+this table, and vector versions of functions are not covered.
+Functions not listed do not have known errors.
+</p>
+<table>
+<tr><td>Function</td><td>AArch64</td><td>ARM</td><td>Alpha</td><td>ColdFire</td><td>Generic</td></tr>
+<tr><td>acosf</td><td>1</td><td>1</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>acos</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>acosl</td><td>1</td><td>-</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>acosf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>acoshf</td><td>2</td><td>2</td><td>2</td><td>-</td><td>-</td></tr>
+<tr><td>acosh</td><td>2</td><td>2</td><td>2</td><td>-</td><td>-</td></tr>
+<tr><td>acoshl</td><td>2</td><td>-</td><td>2</td><td>-</td><td>-</td></tr>
+<tr><td>acoshf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>asinf</td><td>1</td><td>1</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>asin</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>asinl</td><td>1</td><td>-</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>asinf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>asinhf</td><td>1</td><td>1</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>asinh</td><td>1</td><td>1</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>asinhl</td><td>3</td><td>-</td><td>3</td><td>-</td><td>-</td></tr>
+<tr><td>asinhf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>atanf</td><td>1</td><td>1</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>atan</td><td>1</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>atanl</td><td>1</td><td>-</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>atanf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>atan2f</td><td>1</td><td>1</td><td>1</td><td>1</td><td>-</td></tr>
+<tr><td>atan2</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>atan2l</td><td>1</td><td>-</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>atan2f128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>atanhf</td><td>2</td><td>2</td><td>2</td><td>1</td><td>-</td></tr>
+<tr><td>atanh</td><td>2</td><td>2</td><td>2</td><td>-</td><td>-</td></tr>
+<tr><td>atanhl</td><td>3</td><td>-</td><td>3</td><td>-</td><td>-</td></tr>
+<tr><td>atanhf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>cabsf</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>cabs</td><td>1</td><td>1</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>cabsl</td><td>1</td><td>-</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>cabsf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>cacosf</td><td>2 + i 2</td><td>2 + i 2</td><td>2 + i 2</td><td>-</td><td>-</td></tr>
+<tr><td>cacos</td><td>1 + i 2</td><td>1 + i 2</td><td>1 + i 2</td><td>-</td><td>-</td></tr>
+<tr><td>cacosl</td><td>2 + i 2</td><td>-</td><td>2 + i 2</td><td>-</td><td>-</td></tr>
+<tr><td>cacosf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>cacoshf</td><td>2 + i 2</td><td>2 + i 2</td><td>2 + i 2</td><td>0 + i 1</td><td>-</td></tr>
+<tr><td>cacosh</td><td>2 + i 1</td><td>2 + i 1</td><td>2 + i 1</td><td>-</td><td>-</td></tr>
+<tr><td>cacoshl</td><td>2 + i 2</td><td>-</td><td>2 + i 2</td><td>-</td><td>-</td></tr>
+<tr><td>cacoshf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>cargf</td><td>1</td><td>1</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>carg</td><td>1</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>cargl</td><td>2</td><td>-</td><td>2</td><td>-</td><td>-</td></tr>
+<tr><td>cargf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>casinf</td><td>1 + i 2</td><td>1 + i 2</td><td>1 + i 2</td><td>1 + i 0</td><td>-</td></tr>
+<tr><td>casin</td><td>1 + i 2</td><td>1 + i 2</td><td>1 + i 2</td><td>1 + i 0</td><td>-</td></tr>
+<tr><td>casinl</td><td>2 + i 2</td><td>-</td><td>2 + i 2</td><td>-</td><td>-</td></tr>
+<tr><td>casinf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>casinhf</td><td>2 + i 1</td><td>2 + i 1</td><td>2 + i 1</td><td>1 + i 6</td><td>-</td></tr>
+<tr><td>casinh</td><td>2 + i 1</td><td>2 + i 1</td><td>2 + i 1</td><td>5 + i 3</td><td>-</td></tr>
+<tr><td>casinhl</td><td>2 + i 2</td><td>-</td><td>2 + i 2</td><td>-</td><td>-</td></tr>
+<tr><td>casinhf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>catanf</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>0 + i 1</td><td>-</td></tr>
+<tr><td>catan</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>0 + i 1</td><td>-</td></tr>
+<tr><td>catanl</td><td>1 + i 1</td><td>-</td><td>1 + i 1</td><td>-</td><td>-</td></tr>
+<tr><td>catanf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>catanhf</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>-</td><td>-</td></tr>
+<tr><td>catanh</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>4 + i 0</td><td>-</td></tr>
+<tr><td>catanhl</td><td>1 + i 1</td><td>-</td><td>1 + i 1</td><td>-</td><td>-</td></tr>
+<tr><td>catanhf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>cbrtf</td><td>1</td><td>1</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>cbrt</td><td>3</td><td>3</td><td>3</td><td>1</td><td>-</td></tr>
+<tr><td>cbrtl</td><td>1</td><td>-</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>cbrtf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>ccosf</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>-</td></tr>
+<tr><td>ccos</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 0</td><td>-</td></tr>
+<tr><td>ccosl</td><td>1 + i 1</td><td>-</td><td>1 + i 1</td><td>-</td><td>-</td></tr>
+<tr><td>ccosf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>ccoshf</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>-</td></tr>
+<tr><td>ccosh</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 0</td><td>-</td></tr>
+<tr><td>ccoshl</td><td>1 + i 1</td><td>-</td><td>1 + i 1</td><td>-</td><td>-</td></tr>
+<tr><td>ccoshf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>cexpf</td><td>1 + i 2</td><td>1 + i 2</td><td>1 + i 2</td><td>1 + i 1</td><td>-</td></tr>
+<tr><td>cexp</td><td>2 + i 1</td><td>2 + i 1</td><td>2 + i 1</td><td>-</td><td>-</td></tr>
+<tr><td>cexpl</td><td>1 + i 1</td><td>-</td><td>1 + i 1</td><td>-</td><td>-</td></tr>
+<tr><td>cexpf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>clogf</td><td>3 + i 1</td><td>3 + i 1</td><td>3 + i 1</td><td>1 + i 0</td><td>-</td></tr>
+<tr><td>clog</td><td>3 + i 1</td><td>3 + i 0</td><td>3 + i 0</td><td>-</td><td>-</td></tr>
+<tr><td>clogl</td><td>2 + i 1</td><td>-</td><td>2 + i 1</td><td>-</td><td>-</td></tr>
+<tr><td>clogf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>clog10f</td><td>4 + i 2</td><td>4 + i 2</td><td>4 + i 2</td><td>1 + i 1</td><td>-</td></tr>
+<tr><td>clog10</td><td>3 + i 2</td><td>3 + i 2</td><td>3 + i 2</td><td>0 + i 1</td><td>-</td></tr>
+<tr><td>clog10l</td><td>2 + i 2</td><td>-</td><td>2 + i 2</td><td>-</td><td>-</td></tr>
+<tr><td>clog10f128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>cosf</td><td>1</td><td>1</td><td>1</td><td>1</td><td>-</td></tr>
+<tr><td>cos</td><td>-</td><td>-</td><td>-</td><td>2</td><td>-</td></tr>
+<tr><td>cosl</td><td>1</td><td>-</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>cosf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>coshf</td><td>1</td><td>1</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>cosh</td><td>1</td><td>1</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>coshl</td><td>1</td><td>-</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>coshf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>cpowf</td><td>5 + i 2</td><td>4 + i 2</td><td>4 + i 2</td><td>4 + i 2</td><td>-</td></tr>
+<tr><td>cpow</td><td>2 + i 0</td><td>2 + i 0</td><td>2 + i 0</td><td>2 + i 2</td><td>-</td></tr>
+<tr><td>cpowl</td><td>4 + i 1</td><td>-</td><td>4 + i 1</td><td>-</td><td>-</td></tr>
+<tr><td>cpowf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>csinf</td><td>1 + i 0</td><td>1 + i 0</td><td>1 + i 0</td><td>-</td><td>-</td></tr>
+<tr><td>csin</td><td>1 + i 0</td><td>1 + i 0</td><td>1 + i 0</td><td>-</td><td>-</td></tr>
+<tr><td>csinl</td><td>1 + i 1</td><td>-</td><td>1 + i 1</td><td>-</td><td>-</td></tr>
+<tr><td>csinf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>csinhf</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>-</td></tr>
+<tr><td>csinh</td><td>0 + i 1</td><td>0 + i 1</td><td>0 + i 1</td><td>0 + i 1</td><td>-</td></tr>
+<tr><td>csinhl</td><td>1 + i 1</td><td>-</td><td>1 + i 1</td><td>-</td><td>-</td></tr>
+<tr><td>csinhf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>csqrtf</td><td>2 + i 2</td><td>2 + i 2</td><td>2 + i 2</td><td>1 + i 0</td><td>-</td></tr>
+<tr><td>csqrt</td><td>2 + i 2</td><td>2 + i 2</td><td>2 + i 2</td><td>-</td><td>-</td></tr>
+<tr><td>csqrtl</td><td>2 + i 2</td><td>-</td><td>2 + i 2</td><td>-</td><td>-</td></tr>
+<tr><td>csqrtf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>ctanf</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>-</td><td>-</td></tr>
+<tr><td>ctan</td><td>1 + i 2</td><td>1 + i 2</td><td>1 + i 2</td><td>0 + i 1</td><td>-</td></tr>
+<tr><td>ctanl</td><td>3 + i 3</td><td>-</td><td>3 + i 3</td><td>-</td><td>-</td></tr>
+<tr><td>ctanf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>ctanhf</td><td>2 + i 1</td><td>1 + i 2</td><td>1 + i 2</td><td>2 + i 1</td><td>-</td></tr>
+<tr><td>ctanh</td><td>2 + i 2</td><td>2 + i 2</td><td>2 + i 2</td><td>1 + i 0</td><td>-</td></tr>
+<tr><td>ctanhl</td><td>3 + i 3</td><td>-</td><td>3 + i 3</td><td>-</td><td>-</td></tr>
+<tr><td>ctanhf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>erff</td><td>1</td><td>1</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>erf</td><td>1</td><td>1</td><td>1</td><td>1</td><td>-</td></tr>
+<tr><td>erfl</td><td>1</td><td>-</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>erff128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>erfcf</td><td>2</td><td>2</td><td>2</td><td>-</td><td>-</td></tr>
+<tr><td>erfc</td><td>2</td><td>3</td><td>3</td><td>1</td><td>-</td></tr>
+<tr><td>erfcl</td><td>2</td><td>-</td><td>2</td><td>-</td><td>-</td></tr>
+<tr><td>erfcf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>expf</td><td>1</td><td>1</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>exp</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>expl</td><td>1</td><td>-</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>expf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>exp10f</td><td>-</td><td>-</td><td>-</td><td>2</td><td>-</td></tr>
+<tr><td>exp10</td><td>2</td><td>2</td><td>2</td><td>6</td><td>-</td></tr>
+<tr><td>exp10l</td><td>2</td><td>-</td><td>2</td><td>-</td><td>-</td></tr>
+<tr><td>exp10f128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>exp2f</td><td>1</td><td>1</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>exp2</td><td>1</td><td>1</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>exp2l</td><td>1</td><td>-</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>exp2f128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>expm1f</td><td>1</td><td>1</td><td>1</td><td>1</td><td>-</td></tr>
+<tr><td>expm1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>-</td></tr>
+<tr><td>expm1l</td><td>1</td><td>-</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>expm1f128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>fmaf</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>fma</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>fmal</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>fmaf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>fmodf</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>fmod</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>fmodl</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>fmodf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>gammaf</td><td>4</td><td>4</td><td>4</td><td>-</td><td>-</td></tr>
+<tr><td>gamma</td><td>3</td><td>4</td><td>4</td><td>-</td><td>-</td></tr>
+<tr><td>gammal</td><td>5</td><td>-</td><td>5</td><td>-</td><td>-</td></tr>
+<tr><td>gammaf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>hypotf</td><td>-</td><td>-</td><td>-</td><td>1</td><td>-</td></tr>
+<tr><td>hypot</td><td>1</td><td>1</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>hypotl</td><td>1</td><td>-</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>hypotf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>j0f</td><td>2</td><td>2</td><td>2</td><td>2</td><td>-</td></tr>
+<tr><td>j0</td><td>2</td><td>2</td><td>2</td><td>2</td><td>-</td></tr>
+<tr><td>j0l</td><td>2</td><td>-</td><td>2</td><td>-</td><td>-</td></tr>
+<tr><td>j0f128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>j1f</td><td>2</td><td>2</td><td>2</td><td>2</td><td>-</td></tr>
+<tr><td>j1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>-</td></tr>
+<tr><td>j1l</td><td>4</td><td>-</td><td>4</td><td>-</td><td>-</td></tr>
+<tr><td>j1f128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>jnf</td><td>4</td><td>4</td><td>4</td><td>4</td><td>-</td></tr>
+<tr><td>jn</td><td>4</td><td>4</td><td>4</td><td>4</td><td>-</td></tr>
+<tr><td>jnl</td><td>7</td><td>-</td><td>7</td><td>-</td><td>-</td></tr>
+<tr><td>jnf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>lgammaf</td><td>4</td><td>4</td><td>4</td><td>2</td><td>-</td></tr>
+<tr><td>lgamma</td><td>3</td><td>4</td><td>4</td><td>1</td><td>-</td></tr>
+<tr><td>lgammal</td><td>5</td><td>-</td><td>5</td><td>-</td><td>-</td></tr>
+<tr><td>lgammaf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>logf</td><td>1</td><td>1</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>log</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>logl</td><td>1</td><td>-</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>logf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>log10f</td><td>2</td><td>2</td><td>2</td><td>2</td><td>-</td></tr>
+<tr><td>log10</td><td>2</td><td>2</td><td>2</td><td>1</td><td>-</td></tr>
+<tr><td>log10l</td><td>1</td><td>-</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>log10f128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>log1pf</td><td>1</td><td>1</td><td>1</td><td>1</td><td>-</td></tr>
+<tr><td>log1p</td><td>1</td><td>1</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>log1pl</td><td>2</td><td>-</td><td>2</td><td>-</td><td>-</td></tr>
+<tr><td>log1pf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>log2f</td><td>1</td><td>1</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>log2</td><td>1</td><td>2</td><td>2</td><td>-</td><td>-</td></tr>
+<tr><td>log2l</td><td>2</td><td>-</td><td>2</td><td>-</td><td>-</td></tr>
+<tr><td>log2f128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>powf</td><td>1</td><td>1</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>pow</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>powl</td><td>2</td><td>-</td><td>2</td><td>-</td><td>-</td></tr>
+<tr><td>powf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>pow10f</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>pow10</td><td>2</td><td>2</td><td>2</td><td>-</td><td>-</td></tr>
+<tr><td>pow10l</td><td>2</td><td>-</td><td>2</td><td>-</td><td>-</td></tr>
+<tr><td>pow10f128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>sinf</td><td>1</td><td>1</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>sin</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>sinl</td><td>1</td><td>-</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>sinf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>sincosf</td><td>1</td><td>1</td><td>1</td><td>1</td><td>-</td></tr>
+<tr><td>sincos</td><td>-</td><td>-</td><td>-</td><td>1</td><td>-</td></tr>
+<tr><td>sincosl</td><td>1</td><td>-</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>sincosf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>sinhf</td><td>2</td><td>2</td><td>2</td><td>-</td><td>-</td></tr>
+<tr><td>sinh</td><td>2</td><td>2</td><td>2</td><td>-</td><td>-</td></tr>
+<tr><td>sinhl</td><td>2</td><td>-</td><td>2</td><td>-</td><td>-</td></tr>
+<tr><td>sinhf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>sqrtf</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>sqrt</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>sqrtl</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>sqrtf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>tanf</td><td>1</td><td>1</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>tan</td><td>-</td><td>-</td><td>-</td><td>1</td><td>-</td></tr>
+<tr><td>tanl</td><td>1</td><td>-</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>tanf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>tanhf</td><td>2</td><td>2</td><td>2</td><td>-</td><td>-</td></tr>
+<tr><td>tanh</td><td>2</td><td>2</td><td>2</td><td>-</td><td>-</td></tr>
+<tr><td>tanhl</td><td>2</td><td>-</td><td>2</td><td>-</td><td>-</td></tr>
+<tr><td>tanhf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>tgammaf</td><td>4</td><td>4</td><td>4</td><td>1</td><td>-</td></tr>
+<tr><td>tgamma</td><td>5</td><td>5</td><td>5</td><td>1</td><td>-</td></tr>
+<tr><td>tgammal</td><td>4</td><td>-</td><td>4</td><td>-</td><td>-</td></tr>
+<tr><td>tgammaf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>y0f</td><td>1</td><td>1</td><td>1</td><td>1</td><td>-</td></tr>
+<tr><td>y0</td><td>2</td><td>2</td><td>2</td><td>2</td><td>-</td></tr>
+<tr><td>y0l</td><td>3</td><td>-</td><td>3</td><td>-</td><td>-</td></tr>
+<tr><td>y0f128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>y1f</td><td>2</td><td>2</td><td>2</td><td>2</td><td>-</td></tr>
+<tr><td>y1</td><td>3</td><td>3</td><td>3</td><td>3</td><td>-</td></tr>
+<tr><td>y1l</td><td>2</td><td>-</td><td>2</td><td>-</td><td>-</td></tr>
+<tr><td>y1f128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>ynf</td><td>2</td><td>2</td><td>2</td><td>2</td><td>-</td></tr>
+<tr><td>yn</td><td>3</td><td>3</td><td>3</td><td>3</td><td>-</td></tr>
+<tr><td>ynl</td><td>5</td><td>-</td><td>5</td><td>-</td><td>-</td></tr>
+<tr><td>ynf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+</table>
+<table>
+<tr><td>Function</td><td>HPPA</td><td>IA64</td><td>M68k</td><td>MIPS 32-bit</td><td>MIPS 64-bit</td></tr>
+<tr><td>acosf</td><td>1</td><td>-</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>acos</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>acosl</td><td>-</td><td>-</td><td>-</td><td>-</td><td>1</td></tr>
+<tr><td>acosf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>acoshf</td><td>2</td><td>-</td><td>1</td><td>2</td><td>2</td></tr>
+<tr><td>acosh</td><td>2</td><td>-</td><td>1</td><td>2</td><td>2</td></tr>
+<tr><td>acoshl</td><td>-</td><td>-</td><td>1</td><td>-</td><td>2</td></tr>
+<tr><td>acoshf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>asinf</td><td>1</td><td>-</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>asin</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>asinl</td><td>-</td><td>-</td><td>-</td><td>-</td><td>1</td></tr>
+<tr><td>asinf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>asinhf</td><td>1</td><td>-</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>asinh</td><td>1</td><td>-</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>asinhl</td><td>-</td><td>-</td><td>1</td><td>-</td><td>3</td></tr>
+<tr><td>asinhf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>atanf</td><td>1</td><td>-</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>atan</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>atanl</td><td>-</td><td>-</td><td>-</td><td>-</td><td>1</td></tr>
+<tr><td>atanf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>atan2f</td><td>1</td><td>-</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>atan2</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>atan2l</td><td>-</td><td>-</td><td>1</td><td>-</td><td>1</td></tr>
+<tr><td>atan2f128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>atanhf</td><td>2</td><td>-</td><td>-</td><td>2</td><td>2</td></tr>
+<tr><td>atanh</td><td>2</td><td>-</td><td>-</td><td>2</td><td>2</td></tr>
+<tr><td>atanhl</td><td>-</td><td>-</td><td>-</td><td>-</td><td>3</td></tr>
+<tr><td>atanhf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>cabsf</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>cabs</td><td>1</td><td>-</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>cabsl</td><td>-</td><td>-</td><td>1</td><td>-</td><td>1</td></tr>
+<tr><td>cabsf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>cacosf</td><td>2 + i 2</td><td>2 + i 2</td><td>2 + i 1</td><td>2 + i 2</td><td>2 + i 2</td></tr>
+<tr><td>cacos</td><td>1 + i 2</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 2</td><td>1 + i 2</td></tr>
+<tr><td>cacosl</td><td>-</td><td>1 + i 2</td><td>1 + i 2</td><td>-</td><td>2 + i 2</td></tr>
+<tr><td>cacosf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>cacoshf</td><td>2 + i 2</td><td>2 + i 2</td><td>1 + i 2</td><td>2 + i 2</td><td>2 + i 2</td></tr>
+<tr><td>cacosh</td><td>2 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>2 + i 1</td><td>2 + i 1</td></tr>
+<tr><td>cacoshl</td><td>-</td><td>2 + i 1</td><td>2 + i 1</td><td>-</td><td>2 + i 2</td></tr>
+<tr><td>cacoshf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>cargf</td><td>1</td><td>-</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>carg</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>cargl</td><td>-</td><td>-</td><td>1</td><td>-</td><td>2</td></tr>
+<tr><td>cargf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>casinf</td><td>1 + i 2</td><td>1 + i 2</td><td>1 + i 1</td><td>1 + i 2</td><td>1 + i 2</td></tr>
+<tr><td>casin</td><td>1 + i 2</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 2</td><td>1 + i 2</td></tr>
+<tr><td>casinl</td><td>1 + i 0</td><td>1 + i 2</td><td>1 + i 2</td><td>-</td><td>2 + i 2</td></tr>
+<tr><td>casinf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>casinhf</td><td>2 + i 1</td><td>2 + i 1</td><td>1 + i 1</td><td>2 + i 1</td><td>2 + i 1</td></tr>
+<tr><td>casinh</td><td>5 + i 3</td><td>1 + i 1</td><td>1 + i 1</td><td>2 + i 1</td><td>2 + i 1</td></tr>
+<tr><td>casinhl</td><td>5 + i 3</td><td>2 + i 1</td><td>2 + i 1</td><td>-</td><td>2 + i 2</td></tr>
+<tr><td>casinhf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>catanf</td><td>1 + i 1</td><td>0 + i 1</td><td>0 + i 1</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>catan</td><td>1 + i 1</td><td>0 + i 1</td><td>0 + i 1</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>catanl</td><td>0 + i 1</td><td>0 + i 1</td><td>1 + i 1</td><td>-</td><td>1 + i 1</td></tr>
+<tr><td>catanf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>catanhf</td><td>1 + i 1</td><td>1 + i 0</td><td>1 + i 0</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>catanh</td><td>4 + i 1</td><td>1 + i 0</td><td>1 + i 0</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>catanhl</td><td>4 + i 0</td><td>1 + i 0</td><td>1 + i 1</td><td>-</td><td>1 + i 1</td></tr>
+<tr><td>catanhf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>cbrtf</td><td>1</td><td>-</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>cbrt</td><td>3</td><td>-</td><td>1</td><td>3</td><td>3</td></tr>
+<tr><td>cbrtl</td><td>1</td><td>-</td><td>1</td><td>-</td><td>1</td></tr>
+<tr><td>cbrtf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>ccosf</td><td>1 + i 1</td><td>0 + i 1</td><td>-</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>ccos</td><td>1 + i 1</td><td>1 + i 1</td><td>-</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>ccosl</td><td>1 + i 0</td><td>1 + i 1</td><td>1 + i 1</td><td>-</td><td>1 + i 1</td></tr>
+<tr><td>ccosf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>ccoshf</td><td>1 + i 1</td><td>1 + i 1</td><td>-</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>ccosh</td><td>1 + i 1</td><td>1 + i 1</td><td>-</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>ccoshl</td><td>1 + i 0</td><td>0 + i 1</td><td>0 + i 1</td><td>-</td><td>1 + i 1</td></tr>
+<tr><td>ccoshf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>cexpf</td><td>1 + i 2</td><td>1 + i 2</td><td>-</td><td>1 + i 2</td><td>1 + i 2</td></tr>
+<tr><td>cexp</td><td>2 + i 1</td><td>2 + i 1</td><td>-</td><td>2 + i 1</td><td>2 + i 1</td></tr>
+<tr><td>cexpl</td><td>-</td><td>1 + i 1</td><td>1 + i 1</td><td>-</td><td>1 + i 1</td></tr>
+<tr><td>cexpf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>clogf</td><td>3 + i 1</td><td>1 + i 0</td><td>2 + i 1</td><td>3 + i 1</td><td>3 + i 1</td></tr>
+<tr><td>clog</td><td>3 + i 0</td><td>1 + i 1</td><td>3 + i 1</td><td>3 + i 0</td><td>3 + i 0</td></tr>
+<tr><td>clogl</td><td>-</td><td>1 + i 1</td><td>3 + i 1</td><td>-</td><td>2 + i 1</td></tr>
+<tr><td>clogf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>clog10f</td><td>4 + i 2</td><td>2 + i 1</td><td>2 + i 1</td><td>4 + i 2</td><td>4 + i 2</td></tr>
+<tr><td>clog10</td><td>3 + i 2</td><td>2 + i 1</td><td>2 + i 1</td><td>3 + i 2</td><td>3 + i 2</td></tr>
+<tr><td>clog10l</td><td>0 + i 1</td><td>1 + i 1</td><td>3 + i 2</td><td>-</td><td>2 + i 2</td></tr>
+<tr><td>clog10f128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>cosf</td><td>1</td><td>-</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>cos</td><td>2</td><td>1</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>cosl</td><td>2</td><td>-</td><td>-</td><td>-</td><td>1</td></tr>
+<tr><td>cosf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>coshf</td><td>1</td><td>-</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>cosh</td><td>1</td><td>-</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>coshl</td><td>-</td><td>-</td><td>-</td><td>-</td><td>1</td></tr>
+<tr><td>coshf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>cpowf</td><td>4 + i 2</td><td>5 + i 2</td><td>3 + i 5</td><td>4 + i 2</td><td>4 + i 2</td></tr>
+<tr><td>cpow</td><td>2 + i 2</td><td>2 + i 0</td><td>1 + i 0</td><td>2 + i 0</td><td>2 + i 0</td></tr>
+<tr><td>cpowl</td><td>2 + i 2</td><td>3 + i 4</td><td>3 + i 1</td><td>-</td><td>4 + i 1</td></tr>
+<tr><td>cpowf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>csinf</td><td>1 + i 0</td><td>1 + i 1</td><td>-</td><td>1 + i 0</td><td>1 + i 0</td></tr>
+<tr><td>csin</td><td>1 + i 0</td><td>1 + i 0</td><td>-</td><td>1 + i 0</td><td>1 + i 0</td></tr>
+<tr><td>csinl</td><td>-</td><td>1 + i 0</td><td>1 + i 0</td><td>-</td><td>1 + i 1</td></tr>
+<tr><td>csinf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>csinhf</td><td>1 + i 1</td><td>1 + i 1</td><td>-</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>csinh</td><td>0 + i 1</td><td>1 + i 1</td><td>-</td><td>0 + i 1</td><td>0 + i 1</td></tr>
+<tr><td>csinhl</td><td>0 + i 1</td><td>1 + i 0</td><td>1 + i 0</td><td>-</td><td>1 + i 1</td></tr>
+<tr><td>csinhf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>csqrtf</td><td>2 + i 2</td><td>1 + i 1</td><td>1 + i 1</td><td>2 + i 2</td><td>2 + i 2</td></tr>
+<tr><td>csqrt</td><td>2 + i 2</td><td>1 + i 1</td><td>1 + i 1</td><td>2 + i 2</td><td>2 + i 2</td></tr>
+<tr><td>csqrtl</td><td>-</td><td>1 + i 1</td><td>2 + i 2</td><td>-</td><td>2 + i 2</td></tr>
+<tr><td>csqrtf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>ctanf</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>ctan</td><td>1 + i 2</td><td>1 + i 2</td><td>1 + i 1</td><td>1 + i 2</td><td>1 + i 2</td></tr>
+<tr><td>ctanl</td><td>0 + i 1</td><td>2 + i 2</td><td>2 + i 2</td><td>-</td><td>3 + i 3</td></tr>
+<tr><td>ctanf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>ctanhf</td><td>1 + i 2</td><td>1 + i 1</td><td>1 + i 2</td><td>1 + i 2</td><td>1 + i 2</td></tr>
+<tr><td>ctanh</td><td>2 + i 2</td><td>2 + i 2</td><td>1 + i 1</td><td>2 + i 2</td><td>2 + i 2</td></tr>
+<tr><td>ctanhl</td><td>1 + i 0</td><td>1 + i 2</td><td>2 + i 2</td><td>-</td><td>3 + i 3</td></tr>
+<tr><td>ctanhf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>erff</td><td>1</td><td>-</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>erf</td><td>1</td><td>-</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>erfl</td><td>1</td><td>-</td><td>1</td><td>-</td><td>1</td></tr>
+<tr><td>erff128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>erfcf</td><td>2</td><td>-</td><td>1</td><td>2</td><td>2</td></tr>
+<tr><td>erfc</td><td>3</td><td>-</td><td>-</td><td>3</td><td>3</td></tr>
+<tr><td>erfcl</td><td>1</td><td>-</td><td>2</td><td>-</td><td>2</td></tr>
+<tr><td>erfcf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>expf</td><td>1</td><td>-</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>exp</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>expl</td><td>-</td><td>-</td><td>-</td><td>-</td><td>1</td></tr>
+<tr><td>expf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>exp10f</td><td>2</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>exp10</td><td>6</td><td>-</td><td>-</td><td>2</td><td>2</td></tr>
+<tr><td>exp10l</td><td>6</td><td>-</td><td>-</td><td>-</td><td>2</td></tr>
+<tr><td>exp10f128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>exp2f</td><td>1</td><td>-</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>exp2</td><td>1</td><td>-</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>exp2l</td><td>-</td><td>-</td><td>-</td><td>-</td><td>1</td></tr>
+<tr><td>exp2f128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>expm1f</td><td>1</td><td>-</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>expm1</td><td>1</td><td>-</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>expm1l</td><td>1</td><td>1</td><td>-</td><td>-</td><td>1</td></tr>
+<tr><td>expm1f128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>fmaf</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>fma</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>fmal</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>fmaf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>fmodf</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>fmod</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>fmodl</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>fmodf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>gammaf</td><td>4</td><td>-</td><td>1</td><td>4</td><td>4</td></tr>
+<tr><td>gamma</td><td>4</td><td>-</td><td>-</td><td>4</td><td>4</td></tr>
+<tr><td>gammal</td><td>-</td><td>-</td><td>2</td><td>-</td><td>5</td></tr>
+<tr><td>gammaf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>hypotf</td><td>1</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>hypot</td><td>1</td><td>-</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>hypotl</td><td>-</td><td>-</td><td>1</td><td>-</td><td>1</td></tr>
+<tr><td>hypotf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>j0f</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td></tr>
+<tr><td>j0</td><td>2</td><td>2</td><td>1</td><td>2</td><td>2</td></tr>
+<tr><td>j0l</td><td>2</td><td>2</td><td>2</td><td>-</td><td>2</td></tr>
+<tr><td>j0f128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>j1f</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td></tr>
+<tr><td>j1</td><td>1</td><td>1</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>j1l</td><td>1</td><td>1</td><td>1</td><td>-</td><td>4</td></tr>
+<tr><td>j1f128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>jnf</td><td>5</td><td>4</td><td>2</td><td>4</td><td>4</td></tr>
+<tr><td>jn</td><td>4</td><td>4</td><td>2</td><td>4</td><td>4</td></tr>
+<tr><td>jnl</td><td>4</td><td>4</td><td>4</td><td>-</td><td>7</td></tr>
+<tr><td>jnf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>lgammaf</td><td>4</td><td>-</td><td>1</td><td>4</td><td>4</td></tr>
+<tr><td>lgamma</td><td>4</td><td>-</td><td>-</td><td>4</td><td>4</td></tr>
+<tr><td>lgammal</td><td>1</td><td>-</td><td>2</td><td>-</td><td>5</td></tr>
+<tr><td>lgammaf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>logf</td><td>1</td><td>-</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>log</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>logl</td><td>-</td><td>-</td><td>-</td><td>-</td><td>1</td></tr>
+<tr><td>logf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>log10f</td><td>2</td><td>-</td><td>-</td><td>2</td><td>2</td></tr>
+<tr><td>log10</td><td>2</td><td>-</td><td>-</td><td>2</td><td>2</td></tr>
+<tr><td>log10l</td><td>1</td><td>-</td><td>-</td><td>-</td><td>1</td></tr>
+<tr><td>log10f128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>log1pf</td><td>1</td><td>-</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>log1p</td><td>1</td><td>-</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>log1pl</td><td>-</td><td>-</td><td>-</td><td>-</td><td>2</td></tr>
+<tr><td>log1pf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>log2f</td><td>1</td><td>-</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>log2</td><td>2</td><td>-</td><td>-</td><td>2</td><td>2</td></tr>
+<tr><td>log2l</td><td>-</td><td>-</td><td>-</td><td>-</td><td>2</td></tr>
+<tr><td>log2f128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>powf</td><td>1</td><td>-</td><td>7</td><td>1</td><td>1</td></tr>
+<tr><td>pow</td><td>-</td><td>-</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>powl</td><td>-</td><td>-</td><td>9</td><td>-</td><td>2</td></tr>
+<tr><td>powf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>pow10f</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>pow10</td><td>2</td><td>-</td><td>-</td><td>2</td><td>2</td></tr>
+<tr><td>pow10l</td><td>-</td><td>-</td><td>-</td><td>-</td><td>2</td></tr>
+<tr><td>pow10f128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>sinf</td><td>1</td><td>-</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>sin</td><td>-</td><td>1</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>sinl</td><td>-</td><td>-</td><td>-</td><td>-</td><td>1</td></tr>
+<tr><td>sinf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>sincosf</td><td>1</td><td>-</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>sincos</td><td>1</td><td>1</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>sincosl</td><td>1</td><td>-</td><td>-</td><td>-</td><td>1</td></tr>
+<tr><td>sincosf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>sinhf</td><td>2</td><td>-</td><td>-</td><td>2</td><td>2</td></tr>
+<tr><td>sinh</td><td>2</td><td>-</td><td>-</td><td>2</td><td>2</td></tr>
+<tr><td>sinhl</td><td>-</td><td>-</td><td>-</td><td>-</td><td>2</td></tr>
+<tr><td>sinhf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>sqrtf</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>sqrt</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>sqrtl</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>sqrtf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>tanf</td><td>1</td><td>-</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>tan</td><td>1</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>tanl</td><td>1</td><td>-</td><td>-</td><td>-</td><td>1</td></tr>
+<tr><td>tanf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>tanhf</td><td>2</td><td>-</td><td>-</td><td>2</td><td>2</td></tr>
+<tr><td>tanh</td><td>2</td><td>-</td><td>-</td><td>2</td><td>2</td></tr>
+<tr><td>tanhl</td><td>-</td><td>-</td><td>-</td><td>-</td><td>2</td></tr>
+<tr><td>tanhf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>tgammaf</td><td>4</td><td>-</td><td>4</td><td>4</td><td>4</td></tr>
+<tr><td>tgamma</td><td>5</td><td>-</td><td>1</td><td>5</td><td>5</td></tr>
+<tr><td>tgammal</td><td>1</td><td>1</td><td>9</td><td>-</td><td>4</td></tr>
+<tr><td>tgammaf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>y0f</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>y0</td><td>2</td><td>2</td><td>1</td><td>2</td><td>2</td></tr>
+<tr><td>y0l</td><td>2</td><td>1</td><td>1</td><td>-</td><td>3</td></tr>
+<tr><td>y0f128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>y1f</td><td>2</td><td>2</td><td>3</td><td>2</td><td>2</td></tr>
+<tr><td>y1</td><td>3</td><td>3</td><td>1</td><td>3</td><td>3</td></tr>
+<tr><td>y1l</td><td>3</td><td>2</td><td>2</td><td>-</td><td>2</td></tr>
+<tr><td>y1f128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>ynf</td><td>2</td><td>3</td><td>3</td><td>2</td><td>2</td></tr>
+<tr><td>yn</td><td>3</td><td>3</td><td>2</td><td>3</td><td>3</td></tr>
+<tr><td>ynl</td><td>3</td><td>2</td><td>4</td><td>-</td><td>5</td></tr>
+<tr><td>ynf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+</table>
+<table>
+<tr><td>Function</td><td>MicroBlaze</td><td>Nios II</td><td>PowerPC</td><td>PowerPC soft-float</td><td>S/390</td></tr>
+<tr><td>acosf</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>acos</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>acosl</td><td>-</td><td>-</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>acosf128</td><td>-</td><td>-</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>acoshf</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td></tr>
+<tr><td>acosh</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td></tr>
+<tr><td>acoshl</td><td>-</td><td>-</td><td>2</td><td>1</td><td>2</td></tr>
+<tr><td>acoshf128</td><td>-</td><td>-</td><td>2</td><td>-</td><td>-</td></tr>
+<tr><td>asinf</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>asin</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>asinl</td><td>-</td><td>-</td><td>2</td><td>2</td><td>1</td></tr>
+<tr><td>asinf128</td><td>-</td><td>-</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>asinhf</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>asinh</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>asinhl</td><td>-</td><td>-</td><td>2</td><td>2</td><td>3</td></tr>
+<tr><td>asinhf128</td><td>-</td><td>-</td><td>3</td><td>-</td><td>-</td></tr>
+<tr><td>atanf</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>atan</td><td>-</td><td>-</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>atanl</td><td>-</td><td>-</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>atanf128</td><td>-</td><td>-</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>atan2f</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>atan2</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>atan2l</td><td>-</td><td>-</td><td>2</td><td>2</td><td>1</td></tr>
+<tr><td>atan2f128</td><td>-</td><td>-</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>atanhf</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td></tr>
+<tr><td>atanh</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td></tr>
+<tr><td>atanhl</td><td>-</td><td>-</td><td>2</td><td>2</td><td>3</td></tr>
+<tr><td>atanhf128</td><td>-</td><td>-</td><td>3</td><td>-</td><td>-</td></tr>
+<tr><td>cabsf</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>cabs</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>cabsl</td><td>-</td><td>-</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>cabsf128</td><td>-</td><td>-</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>cacosf</td><td>2 + i 2</td><td>2 + i 2</td><td>2 + i 2</td><td>2 + i 2</td><td>2 + i 2</td></tr>
+<tr><td>cacos</td><td>1 + i 2</td><td>1 + i 2</td><td>1 + i 2</td><td>1 + i 2</td><td>1 + i 2</td></tr>
+<tr><td>cacosl</td><td>-</td><td>-</td><td>1 + i 2</td><td>2 + i 1</td><td>2 + i 2</td></tr>
+<tr><td>cacosf128</td><td>-</td><td>-</td><td>2 + i 2</td><td>-</td><td>-</td></tr>
+<tr><td>cacoshf</td><td>2 + i 2</td><td>2 + i 2</td><td>2 + i 2</td><td>2 + i 2</td><td>2 + i 2</td></tr>
+<tr><td>cacosh</td><td>2 + i 1</td><td>2 + i 1</td><td>2 + i 1</td><td>2 + i 1</td><td>2 + i 1</td></tr>
+<tr><td>cacoshl</td><td>-</td><td>-</td><td>2 + i 1</td><td>1 + i 2</td><td>2 + i 2</td></tr>
+<tr><td>cacoshf128</td><td>-</td><td>-</td><td>2 + i 2</td><td>-</td><td>-</td></tr>
+<tr><td>cargf</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>carg</td><td>-</td><td>-</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>cargl</td><td>-</td><td>-</td><td>2</td><td>2</td><td>2</td></tr>
+<tr><td>cargf128</td><td>-</td><td>-</td><td>2</td><td>-</td><td>-</td></tr>
+<tr><td>casinf</td><td>1 + i 2</td><td>1 + i 2</td><td>1 + i 2</td><td>1 + i 2</td><td>1 + i 2</td></tr>
+<tr><td>casin</td><td>1 + i 2</td><td>1 + i 2</td><td>1 + i 2</td><td>1 + i 2</td><td>1 + i 2</td></tr>
+<tr><td>casinl</td><td>-</td><td>-</td><td>1 + i 2</td><td>2 + i 1</td><td>2 + i 2</td></tr>
+<tr><td>casinf128</td><td>-</td><td>-</td><td>2 + i 2</td><td>-</td><td>-</td></tr>
+<tr><td>casinhf</td><td>2 + i 1</td><td>2 + i 1</td><td>2 + i 1</td><td>2 + i 1</td><td>2 + i 1</td></tr>
+<tr><td>casinh</td><td>2 + i 1</td><td>2 + i 1</td><td>2 + i 1</td><td>2 + i 1</td><td>2 + i 1</td></tr>
+<tr><td>casinhl</td><td>-</td><td>-</td><td>2 + i 1</td><td>1 + i 2</td><td>2 + i 2</td></tr>
+<tr><td>casinhf128</td><td>-</td><td>-</td><td>2 + i 2</td><td>-</td><td>-</td></tr>
+<tr><td>catanf</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>catan</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>catanl</td><td>-</td><td>-</td><td>3 + i 2</td><td>3 + i 2</td><td>1 + i 1</td></tr>
+<tr><td>catanf128</td><td>-</td><td>-</td><td>1 + i 1</td><td>-</td><td>-</td></tr>
+<tr><td>catanhf</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>catanh</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>catanhl</td><td>-</td><td>-</td><td>2 + i 3</td><td>2 + i 3</td><td>1 + i 1</td></tr>
+<tr><td>catanhf128</td><td>-</td><td>-</td><td>1 + i 1</td><td>-</td><td>-</td></tr>
+<tr><td>cbrtf</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>cbrt</td><td>3</td><td>3</td><td>3</td><td>3</td><td>3</td></tr>
+<tr><td>cbrtl</td><td>-</td><td>-</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>cbrtf128</td><td>-</td><td>-</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>ccosf</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>ccos</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>ccosl</td><td>-</td><td>-</td><td>1 + i 2</td><td>1 + i 2</td><td>1 + i 1</td></tr>
+<tr><td>ccosf128</td><td>-</td><td>-</td><td>1 + i 1</td><td>-</td><td>-</td></tr>
+<tr><td>ccoshf</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>ccosh</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>ccoshl</td><td>-</td><td>-</td><td>1 + i 2</td><td>1 + i 2</td><td>1 + i 1</td></tr>
+<tr><td>ccoshf128</td><td>-</td><td>-</td><td>1 + i 1</td><td>-</td><td>-</td></tr>
+<tr><td>cexpf</td><td>1 + i 2</td><td>1 + i 2</td><td>1 + i 2</td><td>1 + i 2</td><td>1 + i 2</td></tr>
+<tr><td>cexp</td><td>2 + i 1</td><td>2 + i 1</td><td>2 + i 1</td><td>2 + i 1</td><td>2 + i 1</td></tr>
+<tr><td>cexpl</td><td>-</td><td>-</td><td>2 + i 2</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>cexpf128</td><td>-</td><td>-</td><td>1 + i 1</td><td>-</td><td>-</td></tr>
+<tr><td>clogf</td><td>3 + i 1</td><td>3 + i 1</td><td>3 + i 1</td><td>3 + i 1</td><td>3 + i 1</td></tr>
+<tr><td>clog</td><td>3 + i 0</td><td>3 + i 0</td><td>3 + i 1</td><td>3 + i 0</td><td>3 + i 0</td></tr>
+<tr><td>clogl</td><td>-</td><td>-</td><td>5 + i 2</td><td>2 + i 2</td><td>2 + i 1</td></tr>
+<tr><td>clogf128</td><td>-</td><td>-</td><td>2 + i 1</td><td>-</td><td>-</td></tr>
+<tr><td>clog10f</td><td>4 + i 2</td><td>4 + i 2</td><td>4 + i 2</td><td>4 + i 2</td><td>4 + i 2</td></tr>
+<tr><td>clog10</td><td>3 + i 2</td><td>3 + i 2</td><td>3 + i 2</td><td>3 + i 2</td><td>3 + i 2</td></tr>
+<tr><td>clog10l</td><td>-</td><td>-</td><td>3 + i 2</td><td>3 + i 2</td><td>2 + i 2</td></tr>
+<tr><td>clog10f128</td><td>-</td><td>-</td><td>2 + i 2</td><td>-</td><td>-</td></tr>
+<tr><td>cosf</td><td>1</td><td>1</td><td>3</td><td>1</td><td>1</td></tr>
+<tr><td>cos</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>cosl</td><td>-</td><td>-</td><td>4</td><td>4</td><td>1</td></tr>
+<tr><td>cosf128</td><td>-</td><td>-</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>coshf</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>cosh</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>coshl</td><td>-</td><td>-</td><td>3</td><td>3</td><td>1</td></tr>
+<tr><td>coshf128</td><td>-</td><td>-</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>cpowf</td><td>4 + i 2</td><td>4 + i 2</td><td>5 + i 2</td><td>4 + i 2</td><td>5 + i 2</td></tr>
+<tr><td>cpow</td><td>2 + i 0</td><td>2 + i 0</td><td>2 + i 0</td><td>2 + i 0</td><td>2 + i 0</td></tr>
+<tr><td>cpowl</td><td>-</td><td>-</td><td>4 + i 2</td><td>4 + i 1</td><td>4 + i 1</td></tr>
+<tr><td>cpowf128</td><td>-</td><td>-</td><td>4 + i 9</td><td>-</td><td>-</td></tr>
+<tr><td>csinf</td><td>1 + i 0</td><td>1 + i 0</td><td>1 + i 0</td><td>1 + i 0</td><td>1 + i 0</td></tr>
+<tr><td>csin</td><td>1 + i 0</td><td>1 + i 0</td><td>1 + i 0</td><td>1 + i 0</td><td>1 + i 0</td></tr>
+<tr><td>csinl</td><td>-</td><td>-</td><td>2 + i 1</td><td>2 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>csinf128</td><td>-</td><td>-</td><td>1 + i 1</td><td>-</td><td>-</td></tr>
+<tr><td>csinhf</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>csinh</td><td>0 + i 1</td><td>0 + i 1</td><td>0 + i 1</td><td>0 + i 1</td><td>0 + i 1</td></tr>
+<tr><td>csinhl</td><td>-</td><td>-</td><td>1 + i 2</td><td>1 + i 2</td><td>1 + i 1</td></tr>
+<tr><td>csinhf128</td><td>-</td><td>-</td><td>1 + i 1</td><td>-</td><td>-</td></tr>
+<tr><td>csqrtf</td><td>2 + i 2</td><td>2 + i 2</td><td>2 + i 2</td><td>2 + i 2</td><td>2 + i 2</td></tr>
+<tr><td>csqrt</td><td>2 + i 2</td><td>2 + i 2</td><td>2 + i 2</td><td>2 + i 2</td><td>2 + i 2</td></tr>
+<tr><td>csqrtl</td><td>-</td><td>-</td><td>1 + i 1</td><td>1 + i 1</td><td>2 + i 2</td></tr>
+<tr><td>csqrtf128</td><td>-</td><td>-</td><td>2 + i 2</td><td>-</td><td>-</td></tr>
+<tr><td>ctanf</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>ctan</td><td>1 + i 2</td><td>1 + i 2</td><td>1 + i 2</td><td>1 + i 2</td><td>1 + i 2</td></tr>
+<tr><td>ctanl</td><td>-</td><td>-</td><td>3 + i 2</td><td>3 + i 2</td><td>3 + i 3</td></tr>
+<tr><td>ctanf128</td><td>-</td><td>-</td><td>3 + i 3</td><td>-</td><td>-</td></tr>
+<tr><td>ctanhf</td><td>1 + i 2</td><td>1 + i 2</td><td>2 + i 1</td><td>1 + i 2</td><td>2 + i 1</td></tr>
+<tr><td>ctanh</td><td>2 + i 2</td><td>2 + i 2</td><td>2 + i 2</td><td>2 + i 2</td><td>2 + i 2</td></tr>
+<tr><td>ctanhl</td><td>-</td><td>-</td><td>3 + i 3</td><td>2 + i 3</td><td>3 + i 3</td></tr>
+<tr><td>ctanhf128</td><td>-</td><td>-</td><td>3 + i 3</td><td>-</td><td>-</td></tr>
+<tr><td>erff</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>erf</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>erfl</td><td>-</td><td>-</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>erff128</td><td>-</td><td>-</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>erfcf</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td></tr>
+<tr><td>erfc</td><td>3</td><td>3</td><td>2</td><td>3</td><td>2</td></tr>
+<tr><td>erfcl</td><td>-</td><td>-</td><td>3</td><td>3</td><td>2</td></tr>
+<tr><td>erfcf128</td><td>-</td><td>-</td><td>2</td><td>-</td><td>-</td></tr>
+<tr><td>expf</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>exp</td><td>-</td><td>-</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>expl</td><td>-</td><td>-</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>expf128</td><td>-</td><td>-</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>exp10f</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>exp10</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td></tr>
+<tr><td>exp10l</td><td>-</td><td>-</td><td>1</td><td>1</td><td>2</td></tr>
+<tr><td>exp10f128</td><td>-</td><td>-</td><td>2</td><td>-</td><td>-</td></tr>
+<tr><td>exp2f</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>exp2</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>exp2l</td><td>-</td><td>-</td><td>2</td><td>1</td><td>1</td></tr>
+<tr><td>exp2f128</td><td>-</td><td>-</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>expm1f</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>expm1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>expm1l</td><td>-</td><td>-</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>expm1f128</td><td>-</td><td>-</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>fmaf</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>fma</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>fmal</td><td>-</td><td>-</td><td>1</td><td>1</td><td>-</td></tr>
+<tr><td>fmaf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>fmodf</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>fmod</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>fmodl</td><td>-</td><td>-</td><td>1</td><td>1</td><td>-</td></tr>
+<tr><td>fmodf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>gammaf</td><td>4</td><td>4</td><td>4</td><td>4</td><td>4</td></tr>
+<tr><td>gamma</td><td>4</td><td>4</td><td>3</td><td>4</td><td>3</td></tr>
+<tr><td>gammal</td><td>-</td><td>-</td><td>3</td><td>3</td><td>5</td></tr>
+<tr><td>gammaf128</td><td>-</td><td>-</td><td>9</td><td>-</td><td>-</td></tr>
+<tr><td>hypotf</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>hypot</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>hypotl</td><td>-</td><td>-</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>hypotf128</td><td>-</td><td>-</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>j0f</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td></tr>
+<tr><td>j0</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td></tr>
+<tr><td>j0l</td><td>-</td><td>-</td><td>2</td><td>2</td><td>2</td></tr>
+<tr><td>j0f128</td><td>-</td><td>-</td><td>2</td><td>-</td><td>-</td></tr>
+<tr><td>j1f</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td></tr>
+<tr><td>j1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>j1l</td><td>-</td><td>-</td><td>2</td><td>1</td><td>4</td></tr>
+<tr><td>j1f128</td><td>-</td><td>-</td><td>4</td><td>-</td><td>-</td></tr>
+<tr><td>jnf</td><td>4</td><td>4</td><td>4</td><td>4</td><td>4</td></tr>
+<tr><td>jn</td><td>4</td><td>4</td><td>4</td><td>4</td><td>4</td></tr>
+<tr><td>jnl</td><td>-</td><td>-</td><td>4</td><td>4</td><td>7</td></tr>
+<tr><td>jnf128</td><td>-</td><td>-</td><td>7</td><td>-</td><td>-</td></tr>
+<tr><td>lgammaf</td><td>4</td><td>4</td><td>4</td><td>4</td><td>4</td></tr>
+<tr><td>lgamma</td><td>4</td><td>4</td><td>3</td><td>4</td><td>3</td></tr>
+<tr><td>lgammal</td><td>-</td><td>-</td><td>3</td><td>3</td><td>5</td></tr>
+<tr><td>lgammaf128</td><td>-</td><td>-</td><td>9</td><td>-</td><td>-</td></tr>
+<tr><td>logf</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>log</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>logl</td><td>-</td><td>-</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>logf128</td><td>-</td><td>-</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>log10f</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td></tr>
+<tr><td>log10</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td></tr>
+<tr><td>log10l</td><td>-</td><td>-</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>log10f128</td><td>-</td><td>-</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>log1pf</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>log1p</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>log1pl</td><td>-</td><td>-</td><td>2</td><td>2</td><td>2</td></tr>
+<tr><td>log1pf128</td><td>-</td><td>-</td><td>2</td><td>-</td><td>-</td></tr>
+<tr><td>log2f</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>log2</td><td>2</td><td>2</td><td>1</td><td>2</td><td>1</td></tr>
+<tr><td>log2l</td><td>-</td><td>-</td><td>1</td><td>1</td><td>2</td></tr>
+<tr><td>log2f128</td><td>-</td><td>-</td><td>2</td><td>-</td><td>-</td></tr>
+<tr><td>powf</td><td>1</td><td>3</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>pow</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>powl</td><td>-</td><td>-</td><td>1</td><td>1</td><td>2</td></tr>
+<tr><td>powf128</td><td>-</td><td>-</td><td>2</td><td>-</td><td>-</td></tr>
+<tr><td>pow10f</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>pow10</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td></tr>
+<tr><td>pow10l</td><td>-</td><td>-</td><td>1</td><td>1</td><td>2</td></tr>
+<tr><td>pow10f128</td><td>-</td><td>-</td><td>2</td><td>-</td><td>-</td></tr>
+<tr><td>sinf</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>sin</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>sinl</td><td>-</td><td>-</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>sinf128</td><td>-</td><td>-</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>sincosf</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>sincos</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>sincosl</td><td>-</td><td>-</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>sincosf128</td><td>-</td><td>-</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>sinhf</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td></tr>
+<tr><td>sinh</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td></tr>
+<tr><td>sinhl</td><td>-</td><td>-</td><td>3</td><td>3</td><td>2</td></tr>
+<tr><td>sinhf128</td><td>-</td><td>-</td><td>2</td><td>-</td><td>-</td></tr>
+<tr><td>sqrtf</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>sqrt</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>sqrtl</td><td>-</td><td>-</td><td>1</td><td>1</td><td>-</td></tr>
+<tr><td>sqrtf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>tanf</td><td>1</td><td>1</td><td>3</td><td>1</td><td>1</td></tr>
+<tr><td>tan</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>tanl</td><td>-</td><td>-</td><td>2</td><td>2</td><td>1</td></tr>
+<tr><td>tanf128</td><td>-</td><td>-</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>tanhf</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td></tr>
+<tr><td>tanh</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td></tr>
+<tr><td>tanhl</td><td>-</td><td>-</td><td>1</td><td>1</td><td>2</td></tr>
+<tr><td>tanhf128</td><td>-</td><td>-</td><td>2</td><td>-</td><td>-</td></tr>
+<tr><td>tgammaf</td><td>4</td><td>5</td><td>4</td><td>4</td><td>4</td></tr>
+<tr><td>tgamma</td><td>5</td><td>5</td><td>5</td><td>5</td><td>5</td></tr>
+<tr><td>tgammal</td><td>-</td><td>-</td><td>5</td><td>3</td><td>4</td></tr>
+<tr><td>tgammaf128</td><td>-</td><td>-</td><td>4</td><td>-</td><td>-</td></tr>
+<tr><td>y0f</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>y0</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td></tr>
+<tr><td>y0l</td><td>-</td><td>-</td><td>1</td><td>1</td><td>3</td></tr>
+<tr><td>y0f128</td><td>-</td><td>-</td><td>3</td><td>-</td><td>-</td></tr>
+<tr><td>y1f</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td></tr>
+<tr><td>y1</td><td>3</td><td>3</td><td>3</td><td>3</td><td>3</td></tr>
+<tr><td>y1l</td><td>-</td><td>-</td><td>2</td><td>2</td><td>2</td></tr>
+<tr><td>y1f128</td><td>-</td><td>-</td><td>2</td><td>-</td><td>-</td></tr>
+<tr><td>ynf</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td></tr>
+<tr><td>yn</td><td>3</td><td>3</td><td>3</td><td>3</td><td>3</td></tr>
+<tr><td>ynl</td><td>-</td><td>-</td><td>2</td><td>2</td><td>5</td></tr>
+<tr><td>ynf128</td><td>-</td><td>-</td><td>5</td><td>-</td><td>-</td></tr>
+</table>
+<table>
+<tr><td>Function</td><td>SH</td><td>Sparc</td><td>Tile</td><td>i686</td><td>ix86</td></tr>
+<tr><td>acosf</td><td>-</td><td>1</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>acos</td><td>-</td><td>-</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>acosl</td><td>-</td><td>1</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>acosf128</td><td>-</td><td>-</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>acoshf</td><td>-</td><td>2</td><td>2</td><td>-</td><td>-</td></tr>
+<tr><td>acosh</td><td>1</td><td>2</td><td>2</td><td>1</td><td>1</td></tr>
+<tr><td>acoshl</td><td>-</td><td>2</td><td>-</td><td>2</td><td>2</td></tr>
+<tr><td>acoshf128</td><td>-</td><td>-</td><td>-</td><td>2</td><td>2</td></tr>
+<tr><td>asinf</td><td>-</td><td>1</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>asin</td><td>-</td><td>-</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>asinl</td><td>-</td><td>1</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>asinf128</td><td>-</td><td>-</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>asinhf</td><td>1</td><td>1</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>asinh</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>asinhl</td><td>-</td><td>3</td><td>-</td><td>3</td><td>3</td></tr>
+<tr><td>asinhf128</td><td>-</td><td>-</td><td>-</td><td>3</td><td>3</td></tr>
+<tr><td>atanf</td><td>-</td><td>1</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>atan</td><td>-</td><td>-</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>atanl</td><td>-</td><td>1</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>atanf128</td><td>-</td><td>-</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>atan2f</td><td>1</td><td>1</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>atan2</td><td>-</td><td>-</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>atan2l</td><td>-</td><td>1</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>atan2f128</td><td>-</td><td>-</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>atanhf</td><td>1</td><td>2</td><td>2</td><td>-</td><td>-</td></tr>
+<tr><td>atanh</td><td>-</td><td>2</td><td>2</td><td>1</td><td>1</td></tr>
+<tr><td>atanhl</td><td>-</td><td>3</td><td>-</td><td>3</td><td>3</td></tr>
+<tr><td>atanhf128</td><td>-</td><td>-</td><td>-</td><td>3</td><td>3</td></tr>
+<tr><td>cabsf</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>cabs</td><td>-</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>cabsl</td><td>-</td><td>1</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>cabsf128</td><td>-</td><td>-</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>cacosf</td><td>2 + i 2</td><td>2 + i 2</td><td>2 + i 2</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>cacos</td><td>1 + i 1</td><td>1 + i 2</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>cacosl</td><td>-</td><td>2 + i 2</td><td>-</td><td>1 + i 2</td><td>1 + i 2</td></tr>
+<tr><td>cacosf128</td><td>-</td><td>-</td><td>-</td><td>2 + i 2</td><td>2 + i 2</td></tr>
+<tr><td>cacoshf</td><td>2 + i 2</td><td>2 + i 2</td><td>2 + i 2</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>cacosh</td><td>1 + i 1</td><td>2 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>cacoshl</td><td>-</td><td>2 + i 2</td><td>-</td><td>2 + i 1</td><td>2 + i 1</td></tr>
+<tr><td>cacoshf128</td><td>-</td><td>-</td><td>-</td><td>2 + i 2</td><td>2 + i 2</td></tr>
+<tr><td>cargf</td><td>-</td><td>1</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>carg</td><td>-</td><td>-</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>cargl</td><td>-</td><td>2</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>cargf128</td><td>-</td><td>-</td><td>-</td><td>2</td><td>2</td></tr>
+<tr><td>casinf</td><td>1 + i 2</td><td>1 + i 2</td><td>1 + i 2</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>casin</td><td>1 + i 1</td><td>1 + i 2</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>casinl</td><td>-</td><td>2 + i 2</td><td>-</td><td>1 + i 2</td><td>1 + i 2</td></tr>
+<tr><td>casinf128</td><td>-</td><td>-</td><td>-</td><td>2 + i 2</td><td>2 + i 2</td></tr>
+<tr><td>casinhf</td><td>2 + i 1</td><td>2 + i 1</td><td>2 + i 1</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>casinh</td><td>1 + i 1</td><td>2 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>casinhl</td><td>-</td><td>2 + i 2</td><td>-</td><td>2 + i 1</td><td>2 + i 1</td></tr>
+<tr><td>casinhf128</td><td>-</td><td>-</td><td>-</td><td>2 + i 2</td><td>2 + i 2</td></tr>
+<tr><td>catanf</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>0 + i 1</td><td>0 + i 1</td></tr>
+<tr><td>catan</td><td>0 + i 1</td><td>1 + i 1</td><td>0 + i 1</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>catanl</td><td>-</td><td>1 + i 1</td><td>-</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>catanf128</td><td>-</td><td>-</td><td>-</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>catanhf</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 0</td><td>1 + i 0</td></tr>
+<tr><td>catanh</td><td>1 + i 0</td><td>1 + i 1</td><td>1 + i 0</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>catanhl</td><td>-</td><td>1 + i 1</td><td>-</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>catanhf128</td><td>-</td><td>-</td><td>-</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>cbrtf</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>cbrt</td><td>1</td><td>3</td><td>3</td><td>1</td><td>1</td></tr>
+<tr><td>cbrtl</td><td>-</td><td>1</td><td>-</td><td>3</td><td>3</td></tr>
+<tr><td>cbrtf128</td><td>-</td><td>-</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>ccosf</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>ccos</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>ccosl</td><td>-</td><td>1 + i 1</td><td>-</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>ccosf128</td><td>-</td><td>-</td><td>-</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>ccoshf</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>ccosh</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>ccoshl</td><td>-</td><td>1 + i 1</td><td>-</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>ccoshf128</td><td>-</td><td>-</td><td>-</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>cexpf</td><td>1 + i 2</td><td>1 + i 2</td><td>1 + i 2</td><td>1 + i 2</td><td>1 + i 2</td></tr>
+<tr><td>cexp</td><td>2 + i 1</td><td>2 + i 1</td><td>2 + i 1</td><td>2 + i 1</td><td>2 + i 1</td></tr>
+<tr><td>cexpl</td><td>-</td><td>1 + i 1</td><td>-</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>cexpf128</td><td>-</td><td>-</td><td>-</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>clogf</td><td>1 + i 1</td><td>3 + i 1</td><td>3 + i 1</td><td>1 + i 0</td><td>1 + i 0</td></tr>
+<tr><td>clog</td><td>1 + i 0</td><td>3 + i 0</td><td>3 + i 0</td><td>2 + i 1</td><td>2 + i 1</td></tr>
+<tr><td>clogl</td><td>-</td><td>4 + i 1</td><td>-</td><td>3 + i 1</td><td>3 + i 1</td></tr>
+<tr><td>clogf128</td><td>-</td><td>-</td><td>-</td><td>2 + i 1</td><td>2 + i 1</td></tr>
+<tr><td>clog10f</td><td>2 + i 1</td><td>4 + i 2</td><td>4 + i 2</td><td>2 + i 0</td><td>2 + i 0</td></tr>
+<tr><td>clog10</td><td>2 + i 1</td><td>3 + i 2</td><td>3 + i 2</td><td>2 + i 1</td><td>2 + i 1</td></tr>
+<tr><td>clog10l</td><td>-</td><td>4 + i 2</td><td>-</td><td>4 + i 2</td><td>4 + i 2</td></tr>
+<tr><td>clog10f128</td><td>-</td><td>-</td><td>-</td><td>2 + i 2</td><td>2 + i 2</td></tr>
+<tr><td>cosf</td><td>1</td><td>1</td><td>1</td><td>-</td><td>1</td></tr>
+<tr><td>cos</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>cosl</td><td>-</td><td>1</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>cosf128</td><td>-</td><td>-</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>coshf</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>cosh</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>coshl</td><td>-</td><td>1</td><td>-</td><td>2</td><td>2</td></tr>
+<tr><td>coshf128</td><td>-</td><td>-</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>cpowf</td><td>4 + i 2</td><td>4 + i 2</td><td>4 + i 2</td><td>5 + i 2</td><td>5 + i 2</td></tr>
+<tr><td>cpow</td><td>2 + i 0</td><td>2 + i 0</td><td>2 + i 0</td><td>2 + i 1</td><td>2 + i 0</td></tr>
+<tr><td>cpowl</td><td>-</td><td>4 + i 1</td><td>-</td><td>3 + i 4</td><td>3 + i 4</td></tr>
+<tr><td>cpowf128</td><td>-</td><td>-</td><td>-</td><td>4 + i 1</td><td>4 + i 1</td></tr>
+<tr><td>csinf</td><td>1 + i 0</td><td>1 + i 0</td><td>1 + i 0</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>csin</td><td>1 + i 0</td><td>1 + i 0</td><td>1 + i 0</td><td>1 + i 1</td><td>1 + i 0</td></tr>
+<tr><td>csinl</td><td>-</td><td>1 + i 1</td><td>-</td><td>1 + i 0</td><td>1 + i 0</td></tr>
+<tr><td>csinf128</td><td>-</td><td>-</td><td>-</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>csinhf</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>0 + i 1</td></tr>
+<tr><td>csinh</td><td>0 + i 1</td><td>0 + i 1</td><td>0 + i 1</td><td>1 + i 1</td><td>0 + i 1</td></tr>
+<tr><td>csinhl</td><td>-</td><td>1 + i 1</td><td>-</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>csinhf128</td><td>-</td><td>-</td><td>-</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>csqrtf</td><td>1 + i 1</td><td>2 + i 2</td><td>2 + i 2</td><td>0 + i 1</td><td>0 + i 1</td></tr>
+<tr><td>csqrt</td><td>1 + i 1</td><td>2 + i 2</td><td>2 + i 2</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>csqrtl</td><td>-</td><td>2 + i 2</td><td>-</td><td>2 + i 2</td><td>2 + i 2</td></tr>
+<tr><td>csqrtf128</td><td>-</td><td>-</td><td>-</td><td>2 + i 2</td><td>2 + i 2</td></tr>
+<tr><td>ctanf</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>ctan</td><td>1 + i 2</td><td>1 + i 2</td><td>1 + i 2</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>ctanl</td><td>-</td><td>3 + i 3</td><td>-</td><td>2 + i 1</td><td>2 + i 1</td></tr>
+<tr><td>ctanf128</td><td>-</td><td>-</td><td>-</td><td>3 + i 3</td><td>3 + i 3</td></tr>
+<tr><td>ctanhf</td><td>1 + i 2</td><td>1 + i 2</td><td>1 + i 2</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>ctanh</td><td>2 + i 2</td><td>2 + i 2</td><td>2 + i 2</td><td>1 + i 1</td><td>1 + i 1</td></tr>
+<tr><td>ctanhl</td><td>-</td><td>3 + i 3</td><td>-</td><td>1 + i 2</td><td>1 + i 2</td></tr>
+<tr><td>ctanhf128</td><td>-</td><td>-</td><td>-</td><td>3 + i 3</td><td>3 + i 3</td></tr>
+<tr><td>erff</td><td>-</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>erf</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>erfl</td><td>-</td><td>1</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>erff128</td><td>-</td><td>-</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>erfcf</td><td>1</td><td>2</td><td>2</td><td>1</td><td>1</td></tr>
+<tr><td>erfc</td><td>1</td><td>3</td><td>3</td><td>1</td><td>1</td></tr>
+<tr><td>erfcl</td><td>-</td><td>2</td><td>-</td><td>3</td><td>3</td></tr>
+<tr><td>erfcf128</td><td>-</td><td>-</td><td>-</td><td>2</td><td>2</td></tr>
+<tr><td>expf</td><td>-</td><td>1</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>exp</td><td>-</td><td>-</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>expl</td><td>-</td><td>1</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>expf128</td><td>-</td><td>-</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>exp10f</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>exp10</td><td>1</td><td>2</td><td>2</td><td>1</td><td>1</td></tr>
+<tr><td>exp10l</td><td>-</td><td>2</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>exp10f128</td><td>-</td><td>-</td><td>-</td><td>2</td><td>2</td></tr>
+<tr><td>exp2f</td><td>-</td><td>1</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>exp2</td><td>-</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>exp2l</td><td>-</td><td>1</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>exp2f128</td><td>-</td><td>-</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>expm1f</td><td>1</td><td>1</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>expm1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>expm1l</td><td>-</td><td>1</td><td>-</td><td>2</td><td>2</td></tr>
+<tr><td>expm1f128</td><td>-</td><td>-</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>fmaf</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>fma</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>fmal</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>fmaf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>fmodf</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>fmod</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>fmodl</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>fmodf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>gammaf</td><td>1</td><td>4</td><td>4</td><td>3</td><td>2</td></tr>
+<tr><td>gamma</td><td>1</td><td>4</td><td>4</td><td>3</td><td>3</td></tr>
+<tr><td>gammal</td><td>-</td><td>5</td><td>-</td><td>4</td><td>4</td></tr>
+<tr><td>gammaf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>hypotf</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>hypot</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>hypotl</td><td>-</td><td>1</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>hypotf128</td><td>-</td><td>-</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>j0f</td><td>2</td><td>2</td><td>2</td><td>1</td><td>1</td></tr>
+<tr><td>j0</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td></tr>
+<tr><td>j0l</td><td>-</td><td>2</td><td>-</td><td>2</td><td>2</td></tr>
+<tr><td>j0f128</td><td>-</td><td>-</td><td>-</td><td>2</td><td>2</td></tr>
+<tr><td>j1f</td><td>2</td><td>2</td><td>2</td><td>1</td><td>1</td></tr>
+<tr><td>j1</td><td>1</td><td>1</td><td>1</td><td>2</td><td>2</td></tr>
+<tr><td>j1l</td><td>-</td><td>4</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>j1f128</td><td>-</td><td>-</td><td>-</td><td>4</td><td>4</td></tr>
+<tr><td>jnf</td><td>4</td><td>4</td><td>4</td><td>3</td><td>3</td></tr>
+<tr><td>jn</td><td>4</td><td>4</td><td>4</td><td>2</td><td>2</td></tr>
+<tr><td>jnl</td><td>-</td><td>7</td><td>-</td><td>4</td><td>4</td></tr>
+<tr><td>jnf128</td><td>-</td><td>-</td><td>-</td><td>7</td><td>7</td></tr>
+<tr><td>lgammaf</td><td>1</td><td>4</td><td>4</td><td>3</td><td>2</td></tr>
+<tr><td>lgamma</td><td>1</td><td>4</td><td>4</td><td>3</td><td>3</td></tr>
+<tr><td>lgammal</td><td>-</td><td>5</td><td>-</td><td>4</td><td>4</td></tr>
+<tr><td>lgammaf128</td><td>-</td><td>-</td><td>-</td><td>5</td><td>5</td></tr>
+<tr><td>logf</td><td>1</td><td>1</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>log</td><td>-</td><td>-</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>logl</td><td>-</td><td>1</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>logf128</td><td>-</td><td>-</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>log10f</td><td>2</td><td>2</td><td>2</td><td>-</td><td>-</td></tr>
+<tr><td>log10</td><td>1</td><td>2</td><td>2</td><td>1</td><td>1</td></tr>
+<tr><td>log10l</td><td>-</td><td>1</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>log10f128</td><td>-</td><td>-</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>log1pf</td><td>1</td><td>1</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>log1p</td><td>-</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>log1pl</td><td>-</td><td>2</td><td>-</td><td>2</td><td>2</td></tr>
+<tr><td>log1pf128</td><td>-</td><td>-</td><td>-</td><td>2</td><td>2</td></tr>
+<tr><td>log2f</td><td>-</td><td>1</td><td>1</td><td>-</td><td>-</td></tr>
+<tr><td>log2</td><td>-</td><td>2</td><td>2</td><td>1</td><td>1</td></tr>
+<tr><td>log2l</td><td>-</td><td>2</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>log2f128</td><td>-</td><td>-</td><td>-</td><td>2</td><td>2</td></tr>
+<tr><td>powf</td><td>1</td><td>3</td><td>3</td><td>-</td><td>-</td></tr>
+<tr><td>pow</td><td>-</td><td>-</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>powl</td><td>-</td><td>2</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>powf128</td><td>-</td><td>-</td><td>-</td><td>2</td><td>2</td></tr>
+<tr><td>pow10f</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>pow10</td><td>1</td><td>2</td><td>2</td><td>1</td><td>1</td></tr>
+<tr><td>pow10l</td><td>-</td><td>2</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>pow10f128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>sinf</td><td>1</td><td>1</td><td>1</td><td>-</td><td>1</td></tr>
+<tr><td>sin</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>sinl</td><td>-</td><td>1</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>sinf128</td><td>-</td><td>-</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>sincosf</td><td>1</td><td>1</td><td>1</td><td>-</td><td>1</td></tr>
+<tr><td>sincos</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>sincosl</td><td>-</td><td>1</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>sincosf128</td><td>-</td><td>-</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>sinhf</td><td>-</td><td>2</td><td>2</td><td>-</td><td>-</td></tr>
+<tr><td>sinh</td><td>-</td><td>2</td><td>2</td><td>1</td><td>1</td></tr>
+<tr><td>sinhl</td><td>-</td><td>2</td><td>-</td><td>2</td><td>2</td></tr>
+<tr><td>sinhf128</td><td>-</td><td>-</td><td>-</td><td>2</td><td>2</td></tr>
+<tr><td>sqrtf</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>sqrt</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>sqrtl</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>sqrtf128</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>tanf</td><td>-</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>tan</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>tanl</td><td>-</td><td>1</td><td>-</td><td>2</td><td>2</td></tr>
+<tr><td>tanf128</td><td>-</td><td>-</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>tanhf</td><td>-</td><td>2</td><td>2</td><td>-</td><td>-</td></tr>
+<tr><td>tanh</td><td>-</td><td>2</td><td>2</td><td>1</td><td>1</td></tr>
+<tr><td>tanhl</td><td>-</td><td>2</td><td>-</td><td>3</td><td>3</td></tr>
+<tr><td>tanhf128</td><td>-</td><td>-</td><td>-</td><td>2</td><td>2</td></tr>
+<tr><td>tgammaf</td><td>3</td><td>5</td><td>5</td><td>3</td><td>3</td></tr>
+<tr><td>tgamma</td><td>4</td><td>5</td><td>5</td><td>3</td><td>3</td></tr>
+<tr><td>tgammal</td><td>-</td><td>4</td><td>-</td><td>5</td><td>5</td></tr>
+<tr><td>tgammaf128</td><td>-</td><td>-</td><td>-</td><td>4</td><td>4</td></tr>
+<tr><td>y0f</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>y0</td><td>2</td><td>2</td><td>2</td><td>1</td><td>1</td></tr>
+<tr><td>y0l</td><td>-</td><td>3</td><td>-</td><td>1</td><td>1</td></tr>
+<tr><td>y0f128</td><td>-</td><td>-</td><td>-</td><td>3</td><td>3</td></tr>
+<tr><td>y1f</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td></tr>
+<tr><td>y1</td><td>3</td><td>3</td><td>3</td><td>2</td><td>2</td></tr>
+<tr><td>y1l</td><td>-</td><td>2</td><td>-</td><td>2</td><td>2</td></tr>
+<tr><td>y1f128</td><td>-</td><td>-</td><td>-</td><td>2</td><td>2</td></tr>
+<tr><td>ynf</td><td>2</td><td>2</td><td>2</td><td>3</td><td>3</td></tr>
+<tr><td>yn</td><td>3</td><td>3</td><td>3</td><td>2</td><td>2</td></tr>
+<tr><td>ynl</td><td>-</td><td>5</td><td>-</td><td>4</td><td>4</td></tr>
+<tr><td>ynf128</td><td>-</td><td>-</td><td>-</td><td>5</td><td>5</td></tr>
+</table>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Pseudo_002dRandom-Numbers.html#Pseudo_002dRandom-Numbers" accesskey="n" rel="next">Pseudo-Random Numbers</a>, Previous: <a href="Special-Functions.html#Special-Functions" accesskey="p" rel="prev">Special Functions</a>, Up: <a href="Mathematics.html#Mathematics" accesskey="u" rel="up">Mathematics</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

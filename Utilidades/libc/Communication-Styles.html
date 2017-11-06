@@ -1,0 +1,140 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Communication Styles</title>
+
+<meta name="description" content="The GNU C Library: Communication Styles">
+<meta name="keywords" content="The GNU C Library: Communication Styles">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Sockets.html#Sockets" rel="up" title="Sockets">
+<link href="Socket-Addresses.html#Socket-Addresses" rel="next" title="Socket Addresses">
+<link href="Socket-Concepts.html#Socket-Concepts" rel="prev" title="Socket Concepts">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Communication-Styles"></a>
+<div class="header">
+<p>
+Next: <a href="Socket-Addresses.html#Socket-Addresses" accesskey="n" rel="next">Socket Addresses</a>, Previous: <a href="Socket-Concepts.html#Socket-Concepts" accesskey="p" rel="prev">Socket Concepts</a>, Up: <a href="Sockets.html#Sockets" accesskey="u" rel="up">Sockets</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Communication-Styles-1"></a>
+<h3 class="section">16.2 Communication Styles</h3>
+
+<p>The GNU C Library includes support for several different kinds of sockets,
+each with different characteristics.  This section describes the
+supported socket types.  The symbolic constants listed here are
+defined in <samp>sys/socket.h</samp>.
+<a name="index-sys_002fsocket_002eh"></a>
+</p>
+<dl>
+<dt><a name="index-SOCK_005fSTREAM"></a>Macro: <em>int</em> <strong>SOCK_STREAM</strong></dt>
+<dd>
+<p>The <code>SOCK_STREAM</code> style is like a pipe (see <a href="Pipes-and-FIFOs.html#Pipes-and-FIFOs">Pipes and FIFOs</a>).
+It operates over a connection with a particular remote socket and
+transmits data reliably as a stream of bytes.
+</p>
+<p>Use of this style is covered in detail in <a href="Connections.html#Connections">Connections</a>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-SOCK_005fDGRAM"></a>Macro: <em>int</em> <strong>SOCK_DGRAM</strong></dt>
+<dd>
+<p>The <code>SOCK_DGRAM</code> style is used for sending
+individually-addressed packets unreliably.
+It is the diametrical opposite of <code>SOCK_STREAM</code>.
+</p>
+<p>Each time you write data to a socket of this kind, that data becomes
+one packet.  Since <code>SOCK_DGRAM</code> sockets do not have connections,
+you must specify the recipient address with each packet.
+</p>
+<p>The only guarantee that the system makes about your requests to
+transmit data is that it will try its best to deliver each packet you
+send.  It may succeed with the sixth packet after failing with the
+fourth and fifth packets; the seventh packet may arrive before the
+sixth, and may arrive a second time after the sixth.
+</p>
+<p>The typical use for <code>SOCK_DGRAM</code> is in situations where it is
+acceptable to simply re-send a packet if no response is seen in a
+reasonable amount of time.
+</p>
+<p>See <a href="Datagrams.html#Datagrams">Datagrams</a>, for detailed information about how to use datagram
+sockets.
+</p></dd></dl>
+
+
+
+<dl>
+<dt><a name="index-SOCK_005fRAW"></a>Macro: <em>int</em> <strong>SOCK_RAW</strong></dt>
+<dd>
+<p>This style provides access to low-level network protocols and
+interfaces.  Ordinary user programs usually have no need to use this
+style.
+</p></dd></dl>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Socket-Addresses.html#Socket-Addresses" accesskey="n" rel="next">Socket Addresses</a>, Previous: <a href="Socket-Concepts.html#Socket-Concepts" accesskey="p" rel="prev">Socket Concepts</a>, Up: <a href="Sockets.html#Sockets" accesskey="u" rel="up">Sockets</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

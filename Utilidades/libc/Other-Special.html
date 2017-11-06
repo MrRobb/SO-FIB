@@ -1,0 +1,143 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Other Special</title>
+
+<meta name="description" content="The GNU C Library: Other Special">
+<meta name="keywords" content="The GNU C Library: Other Special">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Special-Characters.html#Special-Characters" rel="up" title="Special Characters">
+<link href="Noncanonical-Input.html#Noncanonical-Input" rel="next" title="Noncanonical Input">
+<link href="Start_002fStop-Characters.html#Start_002fStop-Characters" rel="prev" title="Start/Stop Characters">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Other-Special"></a>
+<div class="header">
+<p>
+Previous: <a href="Start_002fStop-Characters.html#Start_002fStop-Characters" accesskey="p" rel="prev">Start/Stop Characters</a>, Up: <a href="Special-Characters.html#Special-Characters" accesskey="u" rel="up">Special Characters</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Other-Special-Characters"></a>
+<h4 class="subsubsection">17.4.9.4 Other Special Characters</h4>
+
+<dl>
+<dt><a name="index-VLNEXT"></a>Macro: <em>int</em> <strong>VLNEXT</strong></dt>
+<dd>
+<a name="index-LNEXT-character"></a>
+<p>This is the subscript for the LNEXT character in the special control
+character array.  <code><var>termios</var>.c_cc[VLNEXT]</code> holds the character
+itself.
+</p>
+<p>The LNEXT character is recognized only when <code>IEXTEN</code> is set, but in
+both canonical and noncanonical mode.  It disables any special
+significance of the next character the user types.  Even if the
+character would normally perform some editing function or generate a
+signal, it is read as a plain character.  This is the analogue of the
+<kbd>C-q</kbd> command in Emacs.  &ldquo;LNEXT&rdquo; stands for &ldquo;literal next.&rdquo;
+</p>
+<p>The LNEXT character is usually <kbd>C-v</kbd>.
+</p>
+<p>This character is available on BSD systems and GNU/Linux and GNU/Hurd systems.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-VDISCARD"></a>Macro: <em>int</em> <strong>VDISCARD</strong></dt>
+<dd>
+<a name="index-DISCARD-character"></a>
+<p>This is the subscript for the DISCARD character in the special control
+character array.  <code><var>termios</var>.c_cc[VDISCARD]</code> holds the character
+itself.
+</p>
+<p>The DISCARD character is recognized only when <code>IEXTEN</code> is set, but
+in both canonical and noncanonical mode.  Its effect is to toggle the
+discard-output flag.  When this flag is set, all program output is
+discarded.  Setting the flag also discards all output currently in the
+output buffer.  Typing any other character resets the flag.
+</p>
+<p>This character is available on BSD systems and GNU/Linux and GNU/Hurd systems.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-VSTATUS"></a>Macro: <em>int</em> <strong>VSTATUS</strong></dt>
+<dd>
+<a name="index-STATUS-character"></a>
+<p>This is the subscript for the STATUS character in the special control
+character array.  <code><var>termios</var>.c_cc[VSTATUS]</code> holds the character
+itself.
+</p>
+<p>The STATUS character&rsquo;s effect is to print out a status message about how
+the current process is running.
+</p>
+<p>The STATUS character is recognized only in canonical mode, and only if
+<code>NOKERNINFO</code> is not set.
+</p>
+<p>This character is available only on BSD systems and GNU/Hurd systems.
+</p></dd></dl>
+
+<hr>
+<div class="header">
+<p>
+Previous: <a href="Start_002fStop-Characters.html#Start_002fStop-Characters" accesskey="p" rel="prev">Start/Stop Characters</a>, Up: <a href="Special-Characters.html#Special-Characters" accesskey="u" rel="up">Special Characters</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,309 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Control Functions</title>
+
+<meta name="description" content="The GNU C Library: Control Functions">
+<meta name="keywords" content="The GNU C Library: Control Functions">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Arithmetic.html#Arithmetic" rel="up" title="Arithmetic">
+<link href="Arithmetic-Functions.html#Arithmetic-Functions" rel="next" title="Arithmetic Functions">
+<link href="Rounding.html#Rounding" rel="prev" title="Rounding">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Control-Functions"></a>
+<div class="header">
+<p>
+Next: <a href="Arithmetic-Functions.html#Arithmetic-Functions" accesskey="n" rel="next">Arithmetic Functions</a>, Previous: <a href="Rounding.html#Rounding" accesskey="p" rel="prev">Rounding</a>, Up: <a href="Arithmetic.html#Arithmetic" accesskey="u" rel="up">Arithmetic</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Floating_002dPoint-Control-Functions"></a>
+<h3 class="section">20.7 Floating-Point Control Functions</h3>
+
+<p>IEEE&nbsp;754<!-- /@w --> floating-point implementations allow the programmer to
+decide whether traps will occur for each of the exceptions, by setting
+bits in the <em>control word</em>.  In C, traps result in the program
+receiving the <code>SIGFPE</code> signal; see <a href="Signal-Handling.html#Signal-Handling">Signal Handling</a>.
+</p>
+<p><strong>NB:</strong> IEEE&nbsp;754<!-- /@w --> says that trap handlers are given details of
+the exceptional situation, and can set the result value.  C signals do
+not provide any mechanism to pass this information back and forth.
+Trapping exceptions in C is therefore not very useful.
+</p>
+<p>It is sometimes necessary to save the state of the floating-point unit
+while you perform some calculation.  The library provides functions
+which save and restore the exception flags, the set of exceptions that
+generate traps, and the rounding mode.  This information is known as the
+<em>floating-point environment</em>.
+</p>
+<p>The functions to save and restore the floating-point environment all use
+a variable of type <code>fenv_t</code> to store information.  This type is
+defined in <samp>fenv.h</samp>.  Its size and contents are
+implementation-defined.  You should not attempt to manipulate a variable
+of this type directly.
+</p>
+<p>To save the state of the FPU, use one of these functions:
+</p>
+<dl>
+<dt><a name="index-fegetenv"></a>Function: <em>int</em> <strong>fegetenv</strong> <em>(fenv_t *<var>envp</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>Store the floating-point environment in the variable pointed to by
+<var>envp</var>.
+</p>
+<p>The function returns zero in case the operation was successful, a
+non-zero value otherwise.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-feholdexcept"></a>Function: <em>int</em> <strong>feholdexcept</strong> <em>(fenv_t *<var>envp</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>Store the current floating-point environment in the object pointed to by
+<var>envp</var>.  Then clear all exception flags, and set the FPU to trap no
+exceptions.  Not all FPUs support trapping no exceptions; if
+<code>feholdexcept</code> cannot set this mode, it returns nonzero value.  If it
+succeeds, it returns zero.
+</p></dd></dl>
+
+<p>The functions which restore the floating-point environment can take these
+kinds of arguments:
+</p>
+<ul>
+<li> Pointers to <code>fenv_t</code> objects, which were initialized previously by a
+call to <code>fegetenv</code> or <code>feholdexcept</code>.
+</li><li> <a name="index-FE_005fDFL_005fENV"></a>
+The special macro <code>FE_DFL_ENV</code> which represents the floating-point
+environment as it was available at program start.
+</li><li> Implementation defined macros with names starting with <code>FE_</code> and
+having type <code>fenv_t *</code>.
+
+<a name="index-FE_005fNOMASK_005fENV"></a>
+<p>If possible, the GNU C Library defines a macro <code>FE_NOMASK_ENV</code>
+which represents an environment where every exception raised causes a
+trap to occur.  You can test for this macro using <code>#ifdef</code>.  It is
+only defined if <code>_GNU_SOURCE</code> is defined.
+</p>
+<p>Some platforms might define other predefined environments.
+</p></li></ul>
+
+<p>To set the floating-point environment, you can use either of these
+functions:
+</p>
+<dl>
+<dt><a name="index-fesetenv"></a>Function: <em>int</em> <strong>fesetenv</strong> <em>(const fenv_t *<var>envp</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>Set the floating-point environment to that described by <var>envp</var>.
+</p>
+<p>The function returns zero in case the operation was successful, a
+non-zero value otherwise.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-feupdateenv"></a>Function: <em>int</em> <strong>feupdateenv</strong> <em>(const fenv_t *<var>envp</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>Like <code>fesetenv</code>, this function sets the floating-point environment
+to that described by <var>envp</var>.  However, if any exceptions were
+flagged in the status word before <code>feupdateenv</code> was called, they
+remain flagged after the call.  In other words, after <code>feupdateenv</code>
+is called, the status word is the bitwise OR of the previous status word
+and the one saved in <var>envp</var>.
+</p>
+<p>The function returns zero in case the operation was successful, a
+non-zero value otherwise.
+</p></dd></dl>
+
+<p>TS 18661-1:2014 defines additional functions to save and restore
+floating-point control modes (such as the rounding mode and whether
+traps are enabled) while leaving other status (such as raised flags)
+unchanged.
+</p>
+<a name="index-FE_005fDFL_005fMODE"></a>
+<p>The special macro <code>FE_DFL_MODE</code> may be passed to
+<code>fesetmode</code>.  It represents the floating-point control modes at
+program start.
+</p>
+<dl>
+<dt><a name="index-fegetmode"></a>Function: <em>int</em> <strong>fegetmode</strong> <em>(femode_t *<var>modep</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>Store the floating-point control modes in the variable pointed to by
+<var>modep</var>.
+</p>
+<p>The function returns zero in case the operation was successful, a
+non-zero value otherwise.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-fesetmode"></a>Function: <em>int</em> <strong>fesetmode</strong> <em>(const femode_t *<var>modep</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>Set the floating-point control modes to those described by
+<var>modep</var>.
+</p>
+<p>The function returns zero in case the operation was successful, a
+non-zero value otherwise.
+</p></dd></dl>
+
+<p>To control for individual exceptions if raising them causes a trap to
+occur, you can use the following two functions.
+</p>
+<p><strong>Portability Note:</strong> These functions are all GNU extensions.
+</p>
+<dl>
+<dt><a name="index-feenableexcept"></a>Function: <em>int</em> <strong>feenableexcept</strong> <em>(int <var>excepts</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function enables traps for each of the exceptions as indicated by
+the parameter <var>excepts</var>.  The individual exceptions are described in
+<a href="Status-bit-operations.html#Status-bit-operations">Status bit operations</a>.  Only the specified exceptions are
+enabled, the status of the other exceptions is not changed.
+</p>
+<p>The function returns the previous enabled exceptions in case the
+operation was successful, <code>-1</code> otherwise.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-fedisableexcept"></a>Function: <em>int</em> <strong>fedisableexcept</strong> <em>(int <var>excepts</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function disables traps for each of the exceptions as indicated by
+the parameter <var>excepts</var>.  The individual exceptions are described in
+<a href="Status-bit-operations.html#Status-bit-operations">Status bit operations</a>.  Only the specified exceptions are
+disabled, the status of the other exceptions is not changed.
+</p>
+<p>The function returns the previous enabled exceptions in case the
+operation was successful, <code>-1</code> otherwise.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-fegetexcept"></a>Function: <em>int</em> <strong>fegetexcept</strong> <em>(void)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The function returns a bitmask of all currently enabled exceptions.  It
+returns <code>-1</code> in case of failure.
+</p></dd></dl>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Arithmetic-Functions.html#Arithmetic-Functions" accesskey="n" rel="next">Arithmetic Functions</a>, Previous: <a href="Rounding.html#Rounding" accesskey="p" rel="prev">Rounding</a>, Up: <a href="Arithmetic.html#Arithmetic" accesskey="u" rel="up">Arithmetic</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

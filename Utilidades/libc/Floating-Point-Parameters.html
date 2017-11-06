@@ -1,0 +1,384 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Floating Point Parameters</title>
+
+<meta name="description" content="The GNU C Library: Floating Point Parameters">
+<meta name="keywords" content="The GNU C Library: Floating Point Parameters">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Floating-Type-Macros.html#Floating-Type-Macros" rel="up" title="Floating Type Macros">
+<link href="IEEE-Floating-Point.html#IEEE-Floating-Point" rel="next" title="IEEE Floating Point">
+<link href="Floating-Point-Concepts.html#Floating-Point-Concepts" rel="prev" title="Floating Point Concepts">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Floating-Point-Parameters"></a>
+<div class="header">
+<p>
+Next: <a href="IEEE-Floating-Point.html#IEEE-Floating-Point" accesskey="n" rel="next">IEEE Floating Point</a>, Previous: <a href="Floating-Point-Concepts.html#Floating-Point-Concepts" accesskey="p" rel="prev">Floating Point Concepts</a>, Up: <a href="Floating-Type-Macros.html#Floating-Type-Macros" accesskey="u" rel="up">Floating Type Macros</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Floating-Point-Parameters-1"></a>
+<h4 class="subsubsection">A.5.3.2 Floating Point Parameters</h4>
+
+<a name="index-float_002eh"></a>
+<p>These macro definitions can be accessed by including the header file
+<samp>float.h</samp> in your program.
+</p>
+<p>Macro names starting with &lsquo;<samp>FLT_</samp>&rsquo; refer to the <code>float</code> type,
+while names beginning with &lsquo;<samp>DBL_</samp>&rsquo; refer to the <code>double</code> type
+and names beginning with &lsquo;<samp>LDBL_</samp>&rsquo; refer to the <code>long double</code>
+type.  (If GCC does not support <code>long double</code> as a distinct data
+type on a target machine then the values for the &lsquo;<samp>LDBL_</samp>&rsquo; constants
+are equal to the corresponding constants for the <code>double</code> type.)
+</p>
+<p>Of these macros, only <code>FLT_RADIX</code> is guaranteed to be a constant
+expression.  The other macros listed here cannot be reliably used in
+places that require constant expressions, such as &lsquo;<samp>#if</samp>&rsquo;
+preprocessing directives or in the dimensions of static arrays.
+</p>
+<p>Although the ISO&nbsp;C<!-- /@w --> standard specifies minimum and maximum values for
+most of these parameters, the GNU C implementation uses whatever values
+describe the floating point representation of the target machine.  So in
+principle GNU C actually satisfies the ISO&nbsp;C<!-- /@w --> requirements only if the
+target machine is suitable.  In practice, all the machines currently
+supported are suitable.
+</p>
+<dl compact="compact">
+<dt><code>FLT_ROUNDS</code>
+<a name="index-FLT_005fROUNDS"></a>
+</dt>
+<dd>
+<p>This value characterizes the rounding mode for floating point addition.
+The following values indicate standard rounding modes:
+</p>
+
+<dl compact="compact">
+<dt><code>-1</code></dt>
+<dd><p>The mode is indeterminable.
+</p></dd>
+<dt><code>0</code></dt>
+<dd><p>Rounding is towards zero.
+</p></dd>
+<dt><code>1</code></dt>
+<dd><p>Rounding is to the nearest number.
+</p></dd>
+<dt><code>2</code></dt>
+<dd><p>Rounding is towards positive infinity.
+</p></dd>
+<dt><code>3</code></dt>
+<dd><p>Rounding is towards negative infinity.
+</p></dd>
+</dl>
+
+<p>Any other value represents a machine-dependent nonstandard rounding
+mode.
+</p>
+<p>On most machines, the value is <code>1</code>, in accordance with the IEEE
+standard for floating point.
+</p>
+<p>Here is a table showing how certain values round for each possible value
+of <code>FLT_ROUNDS</code>, if the other aspects of the representation match
+the IEEE single-precision standard.
+</p>
+<div class="smallexample">
+<pre class="smallexample">                0      1             2             3
+ 1.00000003    1.0    1.0           1.00000012    1.0
+ 1.00000007    1.0    1.00000012    1.00000012    1.0
+-1.00000003   -1.0   -1.0          -1.0          -1.00000012
+-1.00000007   -1.0   -1.00000012   -1.0          -1.00000012
+</pre></div>
+
+</dd>
+<dt><code>FLT_RADIX</code>
+<a name="index-FLT_005fRADIX"></a>
+</dt>
+<dd>
+<p>This is the value of the base, or radix, of the exponent representation.
+This is guaranteed to be a constant expression, unlike the other macros
+described in this section.  The value is 2 on all machines we know of
+except the IBM 360 and derivatives.
+</p>
+</dd>
+<dt><code>FLT_MANT_DIG</code>
+<a name="index-FLT_005fMANT_005fDIG"></a>
+</dt>
+<dd>
+<p>This is the number of base-<code>FLT_RADIX</code> digits in the floating point
+mantissa for the <code>float</code> data type.  The following expression
+yields <code>1.0</code> (even though mathematically it should not) due to the
+limited number of mantissa digits:
+</p>
+<div class="smallexample">
+<pre class="smallexample">float radix = FLT_RADIX;
+
+1.0f + 1.0f / radix / radix / &hellip; / radix
+</pre></div>
+
+<p>where <code>radix</code> appears <code>FLT_MANT_DIG</code> times.
+</p>
+</dd>
+<dt><code>DBL_MANT_DIG</code>
+<a name="index-DBL_005fMANT_005fDIG"></a>
+</dt>
+<dt><code>LDBL_MANT_DIG</code>
+<a name="index-LDBL_005fMANT_005fDIG"></a>
+</dt>
+<dd>
+<p>This is the number of base-<code>FLT_RADIX</code> digits in the floating point
+mantissa for the data types <code>double</code> and <code>long double</code>,
+respectively.
+</p>
+</dd>
+<dt><code>FLT_DIG</code>
+<a name="index-FLT_005fDIG"></a>
+</dt>
+<dd>
+
+<p>This is the number of decimal digits of precision for the <code>float</code>
+data type.  Technically, if <var>p</var> and <var>b</var> are the precision and
+base (respectively) for the representation, then the decimal precision
+<var>q</var> is the maximum number of decimal digits such that any floating
+point number with <var>q</var> base 10 digits can be rounded to a floating
+point number with <var>p</var> base <var>b</var> digits and back again, without
+change to the <var>q</var> decimal digits.
+</p>
+<p>The value of this macro is supposed to be at least <code>6</code>, to satisfy
+ISO&nbsp;C<!-- /@w -->.
+</p>
+</dd>
+<dt><code>DBL_DIG</code>
+<a name="index-DBL_005fDIG"></a>
+</dt>
+<dt><code>LDBL_DIG</code>
+<a name="index-LDBL_005fDIG"></a>
+</dt>
+<dd>
+
+<p>These are similar to <code>FLT_DIG</code>, but for the data types
+<code>double</code> and <code>long double</code>, respectively.  The values of these
+macros are supposed to be at least <code>10</code>.
+</p>
+</dd>
+<dt><code>FLT_MIN_EXP</code>
+<a name="index-FLT_005fMIN_005fEXP"></a>
+</dt>
+<dd>
+<p>This is the smallest possible exponent value for type <code>float</code>.
+More precisely, it is the minimum negative integer such that the value
+<code>FLT_RADIX</code> raised to this power minus 1 can be represented as a
+normalized floating point number of type <code>float</code>.
+</p>
+</dd>
+<dt><code>DBL_MIN_EXP</code>
+<a name="index-DBL_005fMIN_005fEXP"></a>
+</dt>
+<dt><code>LDBL_MIN_EXP</code>
+<a name="index-LDBL_005fMIN_005fEXP"></a>
+</dt>
+<dd>
+
+<p>These are similar to <code>FLT_MIN_EXP</code>, but for the data types
+<code>double</code> and <code>long double</code>, respectively.
+</p>
+</dd>
+<dt><code>FLT_MIN_10_EXP</code>
+<a name="index-FLT_005fMIN_005f10_005fEXP"></a>
+</dt>
+<dd>
+<p>This is the minimum negative integer such that <code>10</code> raised to this
+power minus 1 can be represented as a normalized floating point number
+of type <code>float</code>.  This is supposed to be <code>-37</code> or even less.
+</p>
+</dd>
+<dt><code>DBL_MIN_10_EXP</code>
+<a name="index-DBL_005fMIN_005f10_005fEXP"></a>
+</dt>
+<dt><code>LDBL_MIN_10_EXP</code>
+<a name="index-LDBL_005fMIN_005f10_005fEXP"></a>
+</dt>
+<dd>
+<p>These are similar to <code>FLT_MIN_10_EXP</code>, but for the data types
+<code>double</code> and <code>long double</code>, respectively.
+</p>
+</dd>
+<dt><code>FLT_MAX_EXP</code>
+<a name="index-FLT_005fMAX_005fEXP"></a>
+</dt>
+<dd>
+<p>This is the largest possible exponent value for type <code>float</code>.  More
+precisely, this is the maximum positive integer such that value
+<code>FLT_RADIX</code> raised to this power minus 1 can be represented as a
+floating point number of type <code>float</code>.
+</p>
+</dd>
+<dt><code>DBL_MAX_EXP</code>
+<a name="index-DBL_005fMAX_005fEXP"></a>
+</dt>
+<dt><code>LDBL_MAX_EXP</code>
+<a name="index-LDBL_005fMAX_005fEXP"></a>
+</dt>
+<dd>
+<p>These are similar to <code>FLT_MAX_EXP</code>, but for the data types
+<code>double</code> and <code>long double</code>, respectively.
+</p>
+</dd>
+<dt><code>FLT_MAX_10_EXP</code>
+<a name="index-FLT_005fMAX_005f10_005fEXP"></a>
+</dt>
+<dd>
+<p>This is the maximum positive integer such that <code>10</code> raised to this
+power minus 1 can be represented as a normalized floating point number
+of type <code>float</code>.  This is supposed to be at least <code>37</code>.
+</p>
+</dd>
+<dt><code>DBL_MAX_10_EXP</code>
+<a name="index-DBL_005fMAX_005f10_005fEXP"></a>
+</dt>
+<dt><code>LDBL_MAX_10_EXP</code>
+<a name="index-LDBL_005fMAX_005f10_005fEXP"></a>
+</dt>
+<dd>
+<p>These are similar to <code>FLT_MAX_10_EXP</code>, but for the data types
+<code>double</code> and <code>long double</code>, respectively.
+</p>
+</dd>
+<dt><code>FLT_MAX</code>
+<a name="index-FLT_005fMAX"></a>
+</dt>
+<dd>
+
+<p>The value of this macro is the maximum number representable in type
+<code>float</code>.  It is supposed to be at least <code>1E+37</code>.  The value
+has type <code>float</code>.
+</p>
+<p>The smallest representable number is <code>- FLT_MAX</code>.
+</p>
+</dd>
+<dt><code>DBL_MAX</code>
+<a name="index-DBL_005fMAX"></a>
+</dt>
+<dt><code>LDBL_MAX</code>
+<a name="index-LDBL_005fMAX"></a>
+</dt>
+<dd>
+
+<p>These are similar to <code>FLT_MAX</code>, but for the data types
+<code>double</code> and <code>long double</code>, respectively.  The type of the
+macro&rsquo;s value is the same as the type it describes.
+</p>
+</dd>
+<dt><code>FLT_MIN</code>
+<a name="index-FLT_005fMIN"></a>
+</dt>
+<dd>
+
+<p>The value of this macro is the minimum normalized positive floating
+point number that is representable in type <code>float</code>.  It is supposed
+to be no more than <code>1E-37</code>.
+</p>
+</dd>
+<dt><code>DBL_MIN</code>
+<a name="index-DBL_005fMIN"></a>
+</dt>
+<dt><code>LDBL_MIN</code>
+<a name="index-LDBL_005fMIN"></a>
+</dt>
+<dd>
+
+<p>These are similar to <code>FLT_MIN</code>, but for the data types
+<code>double</code> and <code>long double</code>, respectively.  The type of the
+macro&rsquo;s value is the same as the type it describes.
+</p>
+</dd>
+<dt><code>FLT_EPSILON</code>
+<a name="index-FLT_005fEPSILON"></a>
+</dt>
+<dd>
+
+<p>This is the difference between 1 and the smallest floating point
+number of type <code>float</code> that is greater than 1.  It&rsquo;s supposed to
+be no greater than <code>1E-5</code>.
+</p>
+</dd>
+<dt><code>DBL_EPSILON</code>
+<a name="index-DBL_005fEPSILON"></a>
+</dt>
+<dt><code>LDBL_EPSILON</code>
+<a name="index-LDBL_005fEPSILON"></a>
+</dt>
+<dd>
+
+<p>These are similar to <code>FLT_EPSILON</code>, but for the data types
+<code>double</code> and <code>long double</code>, respectively.  The type of the
+macro&rsquo;s value is the same as the type it describes.  The values are not
+supposed to be greater than <code>1E-9</code>.
+</p></dd>
+</dl>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="IEEE-Floating-Point.html#IEEE-Floating-Point" accesskey="n" rel="next">IEEE Floating Point</a>, Previous: <a href="Floating-Point-Concepts.html#Floating-Point-Concepts" accesskey="p" rel="prev">Floating Point Concepts</a>, Up: <a href="Floating-Type-Macros.html#Floating-Type-Macros" accesskey="u" rel="up">Floating Type Macros</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

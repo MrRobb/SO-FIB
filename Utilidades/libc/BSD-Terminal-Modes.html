@@ -1,0 +1,152 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: BSD Terminal Modes</title>
+
+<meta name="description" content="The GNU C Library: BSD Terminal Modes">
+<meta name="keywords" content="The GNU C Library: BSD Terminal Modes">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Low_002dLevel-Terminal-Interface.html#Low_002dLevel-Terminal-Interface" rel="up" title="Low-Level Terminal Interface">
+<link href="Line-Control.html#Line-Control" rel="next" title="Line Control">
+<link href="Noncanonical-Input.html#Noncanonical-Input" rel="prev" title="Noncanonical Input">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="BSD-Terminal-Modes"></a>
+<div class="header">
+<p>
+Next: <a href="Line-Control.html#Line-Control" accesskey="n" rel="next">Line Control</a>, Previous: <a href="Terminal-Modes.html#Terminal-Modes" accesskey="p" rel="prev">Terminal Modes</a>, Up: <a href="Low_002dLevel-Terminal-Interface.html#Low_002dLevel-Terminal-Interface" accesskey="u" rel="up">Low-Level Terminal Interface</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="BSD-Terminal-Modes-1"></a>
+<h3 class="section">17.5 BSD Terminal Modes</h3>
+<a name="index-terminal-modes_002c-BSD"></a>
+
+<p>The usual way to get and set terminal modes is with the functions described
+in <a href="Terminal-Modes.html#Terminal-Modes">Terminal Modes</a>.  However, on some systems you can use the
+BSD-derived functions in this section to do some of the same things.  On
+many systems, these functions do not exist.  Even with the GNU C Library,
+the functions simply fail with <code>errno</code> = <code>ENOSYS</code> with many
+kernels, including Linux.
+</p>
+<p>The symbols used in this section are declared in <samp>sgtty.h</samp>.
+</p>
+<dl>
+<dt><a name="index-struct-sgttyb"></a>Data Type: <strong>struct sgttyb</strong></dt>
+<dd>
+<p>This structure is an input or output parameter list for <code>gtty</code> and
+<code>stty</code>.
+</p>
+<dl compact="compact">
+<dt><code>char sg_ispeed</code></dt>
+<dd><p>Line speed for input
+</p></dd>
+<dt><code>char sg_ospeed</code></dt>
+<dd><p>Line speed for output
+</p></dd>
+<dt><code>char sg_erase</code></dt>
+<dd><p>Erase character
+</p></dd>
+<dt><code>char sg_kill</code></dt>
+<dd><p>Kill character
+</p></dd>
+<dt><code>int sg_flags</code></dt>
+<dd><p>Various flags
+</p></dd>
+</dl>
+</dd></dl>
+
+<dl>
+<dt><a name="index-gtty"></a>Function: <em>int</em> <strong>gtty</strong> <em>(int <var>filedes</var>, struct sgttyb *<var>attributes</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function gets the attributes of a terminal.
+</p>
+<p><code>gtty</code> sets *<var>attributes</var> to describe the terminal attributes
+of the terminal which is open with file descriptor <var>filedes</var>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-stty"></a>Function: <em>int</em> <strong>stty</strong> <em>(int <var>filedes</var>, const struct sgttyb *<var>attributes</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+
+<p>This function sets the attributes of a terminal.
+</p>
+<p><code>stty</code> sets the terminal attributes of the terminal which is open with
+file descriptor <var>filedes</var> to those described by *<var>attributes</var>.
+</p></dd></dl>
+
+
+
+
+</body>
+</html>

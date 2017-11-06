@@ -1,0 +1,194 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Renaming Files</title>
+
+<meta name="description" content="The GNU C Library: Renaming Files">
+<meta name="keywords" content="The GNU C Library: Renaming Files">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="File-System-Interface.html#File-System-Interface" rel="up" title="File System Interface">
+<link href="Creating-Directories.html#Creating-Directories" rel="next" title="Creating Directories">
+<link href="Deleting-Files.html#Deleting-Files" rel="prev" title="Deleting Files">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Renaming-Files"></a>
+<div class="header">
+<p>
+Next: <a href="Creating-Directories.html#Creating-Directories" accesskey="n" rel="next">Creating Directories</a>, Previous: <a href="Deleting-Files.html#Deleting-Files" accesskey="p" rel="prev">Deleting Files</a>, Up: <a href="File-System-Interface.html#File-System-Interface" accesskey="u" rel="up">File System Interface</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Renaming-Files-1"></a>
+<h3 class="section">14.7 Renaming Files</h3>
+
+<p>The <code>rename</code> function is used to change a file&rsquo;s name.
+</p>
+<a name="index-renaming-a-file"></a>
+<dl>
+<dt><a name="index-rename"></a>Function: <em>int</em> <strong>rename</strong> <em>(const char *<var>oldname</var>, const char *<var>newname</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>rename</code> function renames the file <var>oldname</var> to
+<var>newname</var>.  The file formerly accessible under the name
+<var>oldname</var> is afterwards accessible as <var>newname</var> instead.  (If
+the file had any other names aside from <var>oldname</var>, it continues to
+have those names.)
+</p>
+<p>The directory containing the name <var>newname</var> must be on the same file
+system as the directory containing the name <var>oldname</var>.
+</p>
+<p>One special case for <code>rename</code> is when <var>oldname</var> and
+<var>newname</var> are two names for the same file.  The consistent way to
+handle this case is to delete <var>oldname</var>.  However, in this case
+POSIX requires that <code>rename</code> do nothing and report success&mdash;which
+is inconsistent.  We don&rsquo;t know what your operating system will do.
+</p>
+<p>If <var>oldname</var> is not a directory, then any existing file named
+<var>newname</var> is removed during the renaming operation.  However, if
+<var>newname</var> is the name of a directory, <code>rename</code> fails in this
+case.
+</p>
+<p>If <var>oldname</var> is a directory, then either <var>newname</var> must not
+exist or it must name a directory that is empty.  In the latter case,
+the existing directory named <var>newname</var> is deleted first.  The name
+<var>newname</var> must not specify a subdirectory of the directory
+<code>oldname</code> which is being renamed.
+</p>
+<p>One useful feature of <code>rename</code> is that the meaning of <var>newname</var>
+changes &ldquo;atomically&rdquo; from any previously existing file by that name to
+its new meaning (i.e., the file that was called <var>oldname</var>).  There is
+no instant at which <var>newname</var> is non-existent &ldquo;in between&rdquo; the old
+meaning and the new meaning.  If there is a system crash during the
+operation, it is possible for both names to still exist; but
+<var>newname</var> will always be intact if it exists at all.
+</p>
+<p>If <code>rename</code> fails, it returns <code>-1</code>.  In addition to the usual
+file name errors (see <a href="File-Name-Errors.html#File-Name-Errors">File Name Errors</a>), the following
+<code>errno</code> error conditions are defined for this function:
+</p>
+<dl compact="compact">
+<dt><code>EACCES</code></dt>
+<dd><p>One of the directories containing <var>newname</var> or <var>oldname</var>
+refuses write permission; or <var>newname</var> and <var>oldname</var> are
+directories and write permission is refused for one of them.
+</p>
+</dd>
+<dt><code>EBUSY</code></dt>
+<dd><p>A directory named by <var>oldname</var> or <var>newname</var> is being used by
+the system in a way that prevents the renaming from working.  This includes
+directories that are mount points for filesystems, and directories
+that are the current working directories of processes.
+</p>
+</dd>
+<dt><code>ENOTEMPTY</code></dt>
+<dt><code>EEXIST</code></dt>
+<dd><p>The directory <var>newname</var> isn&rsquo;t empty.  GNU/Linux and GNU/Hurd systems always return
+<code>ENOTEMPTY</code> for this, but some other systems return <code>EEXIST</code>.
+</p>
+</dd>
+<dt><code>EINVAL</code></dt>
+<dd><p><var>oldname</var> is a directory that contains <var>newname</var>.
+</p>
+</dd>
+<dt><code>EISDIR</code></dt>
+<dd><p><var>newname</var> is a directory but the <var>oldname</var> isn&rsquo;t.
+</p>
+</dd>
+<dt><code>EMLINK</code></dt>
+<dd><p>The parent directory of <var>newname</var> would have too many links
+(entries).
+</p>
+</dd>
+<dt><code>ENOENT</code></dt>
+<dd><p>The file <var>oldname</var> doesn&rsquo;t exist.
+</p>
+</dd>
+<dt><code>ENOSPC</code></dt>
+<dd><p>The directory that would contain <var>newname</var> has no room for another
+entry, and there is no space left in the file system to expand it.
+</p>
+</dd>
+<dt><code>EROFS</code></dt>
+<dd><p>The operation would involve writing to a directory on a read-only file
+system.
+</p>
+</dd>
+<dt><code>EXDEV</code></dt>
+<dd><p>The two file names <var>newname</var> and <var>oldname</var> are on different
+file systems.
+</p></dd>
+</dl>
+</dd></dl>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Creating-Directories.html#Creating-Directories" accesskey="n" rel="next">Creating Directories</a>, Previous: <a href="Deleting-Files.html#Deleting-Files" accesskey="p" rel="prev">Deleting Files</a>, Up: <a href="File-System-Interface.html#File-System-Interface" accesskey="u" rel="up">File System Interface</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

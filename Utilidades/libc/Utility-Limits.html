@@ -1,0 +1,157 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Utility Limits</title>
+
+<meta name="description" content="The GNU C Library: Utility Limits">
+<meta name="keywords" content="The GNU C Library: Utility Limits">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="System-Configuration.html#System-Configuration" rel="up" title="System Configuration">
+<link href="Utility-Minimums.html#Utility-Minimums" rel="next" title="Utility Minimums">
+<link href="Pathconf.html#Pathconf" rel="prev" title="Pathconf">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Utility-Limits"></a>
+<div class="header">
+<p>
+Next: <a href="Utility-Minimums.html#Utility-Minimums" accesskey="n" rel="next">Utility Minimums</a>, Previous: <a href="Pathconf.html#Pathconf" accesskey="p" rel="prev">Pathconf</a>, Up: <a href="System-Configuration.html#System-Configuration" accesskey="u" rel="up">System Configuration</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Utility-Program-Capacity-Limits"></a>
+<h3 class="section">32.10 Utility Program Capacity Limits</h3>
+
+<p>The POSIX.2 standard specifies certain system limits that you can access
+through <code>sysconf</code> that apply to utility behavior rather than the
+behavior of the library or the operating system.
+</p>
+<p>The GNU C Library defines macros for these limits, and <code>sysconf</code>
+returns values for them if you ask; but these values convey no
+meaningful information.  They are simply the smallest values that
+POSIX.2 permits.
+</p>
+<dl>
+<dt><a name="index-BC_005fBASE_005fMAX"></a>Macro: <em>int</em> <strong>BC_BASE_MAX</strong></dt>
+<dd>
+<p>The largest value of <code>obase</code> that the <code>bc</code> utility is
+guaranteed to support.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-BC_005fDIM_005fMAX"></a>Macro: <em>int</em> <strong>BC_DIM_MAX</strong></dt>
+<dd>
+<p>The largest number of elements in one array that the <code>bc</code> utility
+is guaranteed to support.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-BC_005fSCALE_005fMAX"></a>Macro: <em>int</em> <strong>BC_SCALE_MAX</strong></dt>
+<dd>
+<p>The largest value of <code>scale</code> that the <code>bc</code> utility is
+guaranteed to support.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-BC_005fSTRING_005fMAX"></a>Macro: <em>int</em> <strong>BC_STRING_MAX</strong></dt>
+<dd>
+<p>The largest number of characters in one string constant that the
+<code>bc</code> utility is guaranteed to support.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-COLL_005fWEIGHTS_005fMAX"></a>Macro: <em>int</em> <strong>COLL_WEIGHTS_MAX</strong></dt>
+<dd>
+<p>The largest number of weights that can necessarily be used in defining
+the collating sequence for a locale.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-EXPR_005fNEST_005fMAX"></a>Macro: <em>int</em> <strong>EXPR_NEST_MAX</strong></dt>
+<dd>
+<p>The maximum number of expressions that can be nested within parentheses
+by the <code>expr</code> utility.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-LINE_005fMAX"></a>Macro: <em>int</em> <strong>LINE_MAX</strong></dt>
+<dd>
+<p>The largest text line that the text-oriented POSIX.2 utilities can
+support.  (If you are using the GNU versions of these utilities, then
+there is no actual limit except that imposed by the available virtual
+memory, but there is no way that the library can tell you this.)
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-EQUIV_005fCLASS_005fMAX"></a>Macro: <em>int</em> <strong>EQUIV_CLASS_MAX</strong></dt>
+<dd>
+<p>The maximum number of weights that can be assigned to an entry of the
+<code>LC_COLLATE</code> category &lsquo;<samp>order</samp>&rsquo; keyword in a locale definition.
+The GNU C Library does not presently support locale definitions.
+</p></dd></dl>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Utility-Minimums.html#Utility-Minimums" accesskey="n" rel="next">Utility Minimums</a>, Previous: <a href="Pathconf.html#Pathconf" accesskey="p" rel="prev">Pathconf</a>, Up: <a href="System-Configuration.html#System-Configuration" accesskey="u" rel="up">System Configuration</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

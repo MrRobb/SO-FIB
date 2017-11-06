@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: strfry</title>
+
+<meta name="description" content="The GNU C Library: strfry">
+<meta name="keywords" content="The GNU C Library: strfry">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="String-and-Array-Utilities.html#String-and-Array-Utilities" rel="up" title="String and Array Utilities">
+<link href="Trivial-Encryption.html#Trivial-Encryption" rel="next" title="Trivial Encryption">
+<link href="Erasing-Sensitive-Data.html#Erasing-Sensitive-Data" rel="prev" title="Erasing Sensitive Data">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="strfry"></a>
+<div class="header">
+<p>
+Next: <a href="Trivial-Encryption.html#Trivial-Encryption" accesskey="n" rel="next">Trivial Encryption</a>, Previous: <a href="Erasing-Sensitive-Data.html#Erasing-Sensitive-Data" accesskey="p" rel="prev">Erasing Sensitive Data</a>, Up: <a href="String-and-Array-Utilities.html#String-and-Array-Utilities" accesskey="u" rel="up">String and Array Utilities</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="strfry-1"></a>
+<h3 class="section">5.12 strfry</h3>
+
+<p>The function below addresses the perennial programming quandary: &ldquo;How do
+I take good data in string form and painlessly turn it into garbage?&rdquo;
+This is actually a fairly simple task for C programmers who do not use
+the GNU C Library string functions, but for programs based on the GNU C Library,
+the <code>strfry</code> function is the preferred method for
+destroying string data.
+</p>
+<p>The prototype for this function is in <samp>string.h</samp>.
+</p>
+<dl>
+<dt><a name="index-strfry"></a>Function: <em>char *</em> <strong>strfry</strong> <em>(char *<var>string</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+
+<p><code>strfry</code> creates a pseudorandom anagram of a string, replacing the
+input with the anagram in place.  For each position in the string,
+<code>strfry</code> swaps it with a position in the string selected at random
+(from a uniform distribution).  The two positions may be the same.
+</p>
+<p>The return value of <code>strfry</code> is always <var>string</var>.
+</p>
+<p><strong>Portability Note:</strong>  This function is unique to the GNU C Library.
+</p>
+</dd></dl>
+
+
+
+
+
+</body>
+</html>

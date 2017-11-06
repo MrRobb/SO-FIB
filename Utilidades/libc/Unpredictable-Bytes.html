@@ -1,0 +1,216 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Unpredictable Bytes</title>
+
+<meta name="description" content="The GNU C Library: Unpredictable Bytes">
+<meta name="keywords" content="The GNU C Library: Unpredictable Bytes">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Cryptographic-Functions.html#Cryptographic-Functions" rel="up" title="Cryptographic Functions">
+<link href="Debugging-Support.html#Debugging-Support" rel="next" title="Debugging Support">
+<link href="DES-Encryption.html#DES-Encryption" rel="prev" title="DES Encryption">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Unpredictable-Bytes"></a>
+<div class="header">
+<p>
+Previous: <a href="DES-Encryption.html#DES-Encryption" accesskey="p" rel="prev">DES Encryption</a>, Up: <a href="Cryptographic-Functions.html#Cryptographic-Functions" accesskey="u" rel="up">Cryptographic Functions</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Generating-Unpredictable-Bytes"></a>
+<h3 class="section">33.5 Generating Unpredictable Bytes</h3>
+
+<p>Some cryptographic applications (such as session key generation) need
+unpredictable bytes.
+</p>
+<p>In general, application code should use a deterministic random bit
+generator, which could call the <code>getentropy</code> function described
+below internally to obtain randomness to seed the generator.  The
+<code>getrandom</code> function is intended for low-level applications which
+need additional control over the blocking behavior.
+</p>
+<dl>
+<dt><a name="index-getentropy"></a>Function: <em>int</em> <strong>getentropy</strong> <em>(void *<var>buffer</var>, size_t <var>length</var>)</em></dt>
+<dd>
+<p>| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+
+<p>This function writes <var>length</var> bytes of random data to the array
+starting at <var>buffer</var>, which must be at most 256 bytes long.  The
+function returns zero on success.  On failure, it returns <code>-1</code> and
+<code>errno</code> is updated accordingly.
+</p>
+<p>The <code>getentropy</code> function is declared in the header file
+<samp>sys/random.h</samp>.  It is derived from OpenBSD.
+</p>
+<p>The <code>getentropy</code> function is not a cancellation point.  A call to
+<code>getentropy</code> can block if the system has just booted and the kernel
+entropy pool has not yet been initialized.  In this case, the function
+will keep blocking even if a signal arrives, and return only after the
+entropy pool has been initialized.
+</p>
+<p>The <code>getentropy</code> function can fail with several errors, some of
+which are listed below.
+</p>
+<dl compact="compact">
+<dt><code>ENOSYS</code></dt>
+<dd><p>The kernel does not implement the required system call.
+</p>
+</dd>
+<dt><code>EFAULT</code></dt>
+<dd><p>The combination of <var>buffer</var> and <var>length</var> arguments specifies
+an invalid memory range.
+</p>
+</dd>
+<dt><code>EIO</code></dt>
+<dd><p>More than 256 bytes of randomness have been requested, or the buffer
+could not be overwritten with random data for an unspecified reason.
+</p>
+</dd>
+</dl>
+
+</dd></dl>
+
+<dl>
+<dt><a name="index-getrandom"></a>Function: <em>ssize_t</em> <strong>getrandom</strong> <em>(void *<var>buffer</var>, size_t <var>length</var>, unsigned int <var>flags</var>)</em></dt>
+<dd>
+<p>| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+
+<p>This function writes <var>length</var> bytes of random data to the array
+starting at <var>buffer</var>.  On success, this function returns the number
+of bytes which have been written to the buffer (which can be less than
+<var>length</var>).  On error, <code>-1</code> is returned, and <code>errno</code> is
+updated accordingly.
+</p>
+<p>The <code>getrandom</code> function is declared in the header file
+<samp>sys/random.h</samp>.  It is a GNU extension.
+</p>
+<p>The following flags are defined for the <var>flags</var> argument:
+</p>
+<dl compact="compact">
+<dt><code>GRND_RANDOM</code></dt>
+<dd><p>Use the <samp>/dev/random</samp> (blocking) pool instead of the
+<samp>/dev/urandom</samp> (non-blocking) pool to obtain randomness.  If the
+<code>GRND_RANDOM</code> flag is specified, the <code>getrandom</code> function can
+block even after the randomness source has been initialized.
+</p>
+</dd>
+<dt><code>GRND_NONBLOCK</code></dt>
+<dd><p>Instead of blocking, return to the caller immediately if no data is
+available.
+</p></dd>
+</dl>
+
+<p>The <code>getrandom</code> function is a cancellation point.
+</p>
+<p>Obtaining randomness from the <samp>/dev/urandom</samp> pool (i.e., a call
+without the <code>GRND_RANDOM</code> flag) can block if the system has just
+booted and the pool has not yet been initialized.
+</p>
+<p>The <code>getrandom</code> function can fail with several errors, some of
+which are listed below.  In addition, the function may not fill the
+buffer completely and return a value less than <var>length</var>.
+</p>
+<dl compact="compact">
+<dt><code>ENOSYS</code></dt>
+<dd><p>The kernel does not implement the <code>getrandom</code> system call.
+</p>
+</dd>
+<dt><code>EAGAIN</code></dt>
+<dd><p>No random data was available and <code>GRND_NONBLOCK</code> was specified in
+<var>flags</var>.
+</p>
+</dd>
+<dt><code>EFAULT</code></dt>
+<dd><p>The combination of <var>buffer</var> and <var>length</var> arguments specifies
+an invalid memory range.
+</p>
+</dd>
+<dt><code>EINTR</code></dt>
+<dd><p>The system call was interrupted.  During the system boot process, before
+the kernel randomness pool is initialized, this can happen even if
+<var>flags</var> is zero.
+</p>
+</dd>
+<dt><code>EINVAL</code></dt>
+<dd><p>The <var>flags</var> argument contains an invalid combination of flags.
+</p></dd>
+</dl>
+
+</dd></dl>
+<hr>
+<div class="header">
+<p>
+Previous: <a href="DES-Encryption.html#DES-Encryption" accesskey="p" rel="prev">DES Encryption</a>, Up: <a href="Cryptographic-Functions.html#Cryptographic-Functions" accesskey="u" rel="up">Cryptographic Functions</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

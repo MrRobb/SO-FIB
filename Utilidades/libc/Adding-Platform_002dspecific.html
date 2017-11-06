@@ -1,0 +1,153 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Adding Platform-specific</title>
+
+<meta name="description" content="The GNU C Library: Adding Platform-specific">
+<meta name="keywords" content="The GNU C Library: Adding Platform-specific">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Source-Layout.html#Source-Layout" rel="up" title="Source Layout">
+<link href="Porting.html#Porting" rel="next" title="Porting">
+<link href="Source-Layout.html#Source-Layout" rel="prev" title="Source Layout">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Adding-Platform_002dspecific"></a>
+<div class="header">
+<p>
+Up: <a href="Source-Layout.html#Source-Layout" accesskey="u" rel="up">Source Layout</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Platform_002dspecific-types_002c-macros-and-functions"></a>
+<h4 class="appendixsubsec">D.1.1 Platform-specific types, macros and functions</h4>
+
+<p>It&rsquo;s sometimes necessary to provide nonstandard, platform-specific
+features to developers.  The C library is traditionally the
+lowest library layer, so it makes sense for it to provide these
+low-level features.  However, including these features in the C
+library may be a disadvantage if another package provides them
+as well as there will be two conflicting versions of them.  Also,
+the features won&rsquo;t be available to projects that do not use
+the GNU C Library but use other GNU tools, like GCC.
+</p>
+<p>The current guidelines are:
+</p><ul>
+<li> If the header file provides features that only make sense on a particular
+machine architecture and have nothing to do with an operating system, then
+the features should ultimately be provided as GCC built-in functions.  Until
+then, the GNU C Library may provide them in the header file.  When the GCC built-in
+functions become available, those provided in the header file should be made
+conditionally available prior to the GCC version in which the built-in
+function was made available.
+
+</li><li> If the header file provides features that are specific to an operating system,
+both GCC and the GNU C Library could provide it, but the GNU C Library is preferred
+as it already has a lot of information about the operating system.
+
+</li><li> If the header file provides features that are specific to an operating system
+but used by the GNU C Library, then the GNU C Library should provide them.
+</li></ul>
+
+<p>The general solution for providing low-level features is to export them as
+follows:
+</p>
+<ul>
+<li> A nonstandard, low-level header file that defines macros and inline
+functions should be called <samp>sys/platform/<var>name</var>.h</samp>.
+
+</li><li> Each header file&rsquo;s name should include the platform name, to avoid
+users thinking there is anything in common between the different
+header files for different platforms.  For example, a
+<samp>sys/platform/<var>arch</var>.h</samp> name such as
+<samp>sys/platform/ppc.h</samp> is better than <samp>sys/platform.h</samp>.
+
+</li><li> A platform-specific header file provided by the GNU C Library should coordinate
+with GCC such that compiler built-in versions of the functions and macros are
+preferred if available.  This means that user programs will only ever need to
+include <samp>sys/platform/<var>arch</var>.h</samp>, keeping the same names of types,
+macros, and functions for convenience and portability.
+
+</li><li> Each included symbol must have the prefix <code>__<var>arch</var>_</code>, such as
+<code>__ppc_get_timebase</code>.
+</li></ul>
+
+
+<p>The easiest way to provide a header file is to add it to the
+<code>sysdep_headers</code> variable.  For example, the combination of
+Linux-specific header files on PowerPC could be provided like this:
+</p>
+<div class="smallexample">
+<pre class="smallexample">sysdep_headers += sys/platform/ppc.h
+</pre></div>
+
+<p>Then ensure that you have added a <samp>sys/platform/ppc.h</samp>
+header file in the machine-specific directory, e.g.,
+<samp>sysdeps/powerpc/sys/platform/ppc.h</samp>.
+</p>
+
+<hr>
+<div class="header">
+<p>
+Up: <a href="Source-Layout.html#Source-Layout" accesskey="u" rel="up">Source Layout</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

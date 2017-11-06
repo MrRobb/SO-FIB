@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Locked Memory Details</title>
+
+<meta name="description" content="The GNU C Library: Locked Memory Details">
+<meta name="keywords" content="The GNU C Library: Locked Memory Details">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Locking-Pages.html#Locking-Pages" rel="up" title="Locking Pages">
+<link href="Page-Lock-Functions.html#Page-Lock-Functions" rel="next" title="Page Lock Functions">
+<link href="Why-Lock-Pages.html#Why-Lock-Pages" rel="prev" title="Why Lock Pages">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Locked-Memory-Details"></a>
+<div class="header">
+<p>
+Next: <a href="Page-Lock-Functions.html#Page-Lock-Functions" accesskey="n" rel="next">Page Lock Functions</a>, Previous: <a href="Why-Lock-Pages.html#Why-Lock-Pages" accesskey="p" rel="prev">Why Lock Pages</a>, Up: <a href="Locking-Pages.html#Locking-Pages" accesskey="u" rel="up">Locking Pages</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Locked-Memory-Details-1"></a>
+<h4 class="subsection">3.4.2 Locked Memory Details</h4>
+
+<p>A memory lock is associated with a virtual page, not a real frame.  The
+paging rule is: If a frame backs at least one locked page, don&rsquo;t page it
+out.
+</p>
+<p>Memory locks do not stack.  I.e., you can&rsquo;t lock a particular page twice
+so that it has to be unlocked twice before it is truly unlocked.  It is
+either locked or it isn&rsquo;t.
+</p>
+<p>A memory lock persists until the process that owns the memory explicitly
+unlocks it.  (But process termination and exec cause the virtual memory
+to cease to exist, which you might say means it isn&rsquo;t locked any more).
+</p>
+<p>Memory locks are not inherited by child processes.  (But note that on a
+modern Unix system, immediately after a fork, the parent&rsquo;s and the
+child&rsquo;s virtual address space are backed by the same real page frames,
+so the child enjoys the parent&rsquo;s locks).  See <a href="Creating-a-Process.html#Creating-a-Process">Creating a Process</a>.
+</p>
+<p>Because of its ability to impact other processes, only the superuser can
+lock a page.  Any process can unlock its own page.
+</p>
+<p>The system sets limits on the amount of memory a process can have locked
+and the amount of real memory it can have dedicated to it.  See <a href="Limits-on-Resources.html#Limits-on-Resources">Limits on Resources</a>.
+</p>
+<p>In Linux, locked pages aren&rsquo;t as locked as you might think.
+Two virtual pages that are not shared memory can nonetheless be backed
+by the same real frame.  The kernel does this in the name of efficiency
+when it knows both virtual pages contain identical data, and does it
+even if one or both of the virtual pages are locked.
+</p>
+<p>But when a process modifies one of those pages, the kernel must get it a
+separate frame and fill it with the page&rsquo;s data.  This is known as a
+<em>copy-on-write page fault</em>.  It takes a small amount of time and in
+a pathological case, getting that frame may require I/O.
+<a name="index-copy_002don_002dwrite-page-fault"></a>
+<a name="index-page-fault_002c-copy_002don_002dwrite"></a>
+</p>
+<p>To make sure this doesn&rsquo;t happen to your program, don&rsquo;t just lock the
+pages.  Write to them as well, unless you know you won&rsquo;t write to them
+ever.  And to make sure you have pre-allocated frames for your stack,
+enter a scope that declares a C automatic variable larger than the
+maximum stack size you will need, set it to something, then return from
+its scope.
+</p>
+<hr>
+<div class="header">
+<p>
+Next: <a href="Page-Lock-Functions.html#Page-Lock-Functions" accesskey="n" rel="next">Page Lock Functions</a>, Previous: <a href="Why-Lock-Pages.html#Why-Lock-Pages" accesskey="p" rel="prev">Why Lock Pages</a>, Up: <a href="Locking-Pages.html#Locking-Pages" accesskey="u" rel="up">Locking Pages</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

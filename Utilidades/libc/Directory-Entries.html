@@ -1,0 +1,226 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Directory Entries</title>
+
+<meta name="description" content="The GNU C Library: Directory Entries">
+<meta name="keywords" content="The GNU C Library: Directory Entries">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Accessing-Directories.html#Accessing-Directories" rel="up" title="Accessing Directories">
+<link href="Opening-a-Directory.html#Opening-a-Directory" rel="next" title="Opening a Directory">
+<link href="Accessing-Directories.html#Accessing-Directories" rel="prev" title="Accessing Directories">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Directory-Entries"></a>
+<div class="header">
+<p>
+Next: <a href="Opening-a-Directory.html#Opening-a-Directory" accesskey="n" rel="next">Opening a Directory</a>, Up: <a href="Accessing-Directories.html#Accessing-Directories" accesskey="u" rel="up">Accessing Directories</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Format-of-a-Directory-Entry"></a>
+<h4 class="subsection">14.2.1 Format of a Directory Entry</h4>
+
+<a name="index-dirent_002eh-1"></a>
+<p>This section describes what you find in a single directory entry, as you
+might obtain it from a directory stream.  All the symbols are declared
+in the header file <samp>dirent.h</samp>.
+</p>
+<dl>
+<dt><a name="index-struct-dirent"></a>Data Type: <strong>struct dirent</strong></dt>
+<dd>
+<p>This is a structure type used to return information about directory
+entries.  It contains the following fields:
+</p>
+<dl compact="compact">
+<dt><code>char d_name[]</code></dt>
+<dd><p>This is the null-terminated file name component.  This is the only
+field you can count on in all POSIX systems.
+</p>
+</dd>
+<dt><code>ino_t d_fileno</code></dt>
+<dd><p>This is the file serial number.  For BSD compatibility, you can also
+refer to this member as <code>d_ino</code>.  On GNU/Linux and GNU/Hurd systems and most POSIX
+systems, for most files this the same as the <code>st_ino</code> member that
+<code>stat</code> will return for the file.  See <a href="File-Attributes.html#File-Attributes">File Attributes</a>.
+</p>
+</dd>
+<dt><code>unsigned char d_namlen</code></dt>
+<dd><p>This is the length of the file name, not including the terminating
+null character.  Its type is <code>unsigned char</code> because that is the
+integer type of the appropriate size.  This member is a BSD extension.
+The symbol <code>_DIRENT_HAVE_D_NAMLEN</code> is defined if this member is
+available.
+</p>
+</dd>
+<dt><code>unsigned char d_type</code></dt>
+<dd><p>This is the type of the file, possibly unknown.  The following constants
+are defined for its value:
+</p>
+<dl compact="compact">
+<dt><code>DT_UNKNOWN</code>
+<a name="index-DT_005fUNKNOWN"></a>
+</dt>
+<dd><p>The type is unknown.  Only some filesystems have full support to
+return the type of the file, others might always return this value.
+</p>
+</dd>
+<dt><code>DT_REG</code>
+<a name="index-DT_005fREG"></a>
+</dt>
+<dd><p>A regular file.
+</p>
+</dd>
+<dt><code>DT_DIR</code>
+<a name="index-DT_005fDIR"></a>
+</dt>
+<dd><p>A directory.
+</p>
+</dd>
+<dt><code>DT_FIFO</code>
+<a name="index-DT_005fFIFO"></a>
+</dt>
+<dd><p>A named pipe, or FIFO.  See <a href="FIFO-Special-Files.html#FIFO-Special-Files">FIFO Special Files</a>.
+</p>
+</dd>
+<dt><code>DT_SOCK</code>
+<a name="index-DT_005fSOCK"></a>
+</dt>
+<dd><p>A local-domain socket.  </p>
+</dd>
+<dt><code>DT_CHR</code>
+<a name="index-DT_005fCHR"></a>
+</dt>
+<dd><p>A character device.
+</p>
+</dd>
+<dt><code>DT_BLK</code>
+<a name="index-DT_005fBLK"></a>
+</dt>
+<dd><p>A block device.
+</p>
+</dd>
+<dt><code>DT_LNK</code>
+<a name="index-DT_005fLNK"></a>
+</dt>
+<dd><p>A symbolic link.
+</p></dd>
+</dl>
+
+<p>This member is a BSD extension.  The symbol <code>_DIRENT_HAVE_D_TYPE</code>
+is defined if this member is available.  On systems where it is used, it
+corresponds to the file type bits in the <code>st_mode</code> member of
+<code>struct stat</code>.  If the value cannot be determined the member
+value is DT_UNKNOWN.  These two macros convert between <code>d_type</code>
+values and <code>st_mode</code> values:
+</p>
+<dl>
+<dt><a name="index-IFTODT"></a>Function: <em>int</em> <strong>IFTODT</strong> <em>(mode_t <var>mode</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This returns the <code>d_type</code> value corresponding to <var>mode</var>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-DTTOIF"></a>Function: <em>mode_t</em> <strong>DTTOIF</strong> <em>(int <var>dtype</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This returns the <code>st_mode</code> value corresponding to <var>dtype</var>.
+</p></dd></dl>
+</dd>
+</dl>
+
+<p>This structure may contain additional members in the future.  Their
+availability is always announced in the compilation environment by a
+macro named <code>_DIRENT_HAVE_D_<var>xxx</var></code> where <var>xxx</var> is replaced
+by the name of the new member.  For instance, the member <code>d_reclen</code>
+available on some systems is announced through the macro
+<code>_DIRENT_HAVE_D_RECLEN</code>.
+</p>
+<p>When a file has multiple names, each name has its own directory entry.
+The only way you can tell that the directory entries belong to a
+single file is that they have the same value for the <code>d_fileno</code>
+field.
+</p>
+<p>File attributes such as size, modification times etc., are part of the
+file itself, not of any particular directory entry.  See <a href="File-Attributes.html#File-Attributes">File Attributes</a>.
+</p></dd></dl>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Opening-a-Directory.html#Opening-a-Directory" accesskey="n" rel="next">Opening a Directory</a>, Up: <a href="Accessing-Directories.html#Accessing-Directories" accesskey="u" rel="up">Accessing Directories</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

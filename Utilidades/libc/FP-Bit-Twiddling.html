@@ -1,0 +1,378 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: FP Bit Twiddling</title>
+
+<meta name="description" content="The GNU C Library: FP Bit Twiddling">
+<meta name="keywords" content="The GNU C Library: FP Bit Twiddling">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Arithmetic-Functions.html#Arithmetic-Functions" rel="up" title="Arithmetic Functions">
+<link href="FP-Comparison-Functions.html#FP-Comparison-Functions" rel="next" title="FP Comparison Functions">
+<link href="Remainder-Functions.html#Remainder-Functions" rel="prev" title="Remainder Functions">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="FP-Bit-Twiddling"></a>
+<div class="header">
+<p>
+Next: <a href="FP-Comparison-Functions.html#FP-Comparison-Functions" accesskey="n" rel="next">FP Comparison Functions</a>, Previous: <a href="Remainder-Functions.html#Remainder-Functions" accesskey="p" rel="prev">Remainder Functions</a>, Up: <a href="Arithmetic-Functions.html#Arithmetic-Functions" accesskey="u" rel="up">Arithmetic Functions</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Setting-and-modifying-single-bits-of-FP-values"></a>
+<h4 class="subsection">20.8.5 Setting and modifying single bits of FP values</h4>
+<a name="index-FP-arithmetic"></a>
+
+<p>There are some operations that are too complicated or expensive to
+perform by hand on floating-point numbers.  ISO&nbsp;C99<!-- /@w --> defines
+functions to do these operations, which mostly involve changing single
+bits.
+</p>
+<dl>
+<dt><a name="index-copysign"></a>Function: <em>double</em> <strong>copysign</strong> <em>(double <var>x</var>, double <var>y</var>)</em></dt>
+<dt><a name="index-copysignf"></a>Function: <em>float</em> <strong>copysignf</strong> <em>(float <var>x</var>, float <var>y</var>)</em></dt>
+<dt><a name="index-copysignl"></a>Function: <em>long double</em> <strong>copysignl</strong> <em>(long double <var>x</var>, long double <var>y</var>)</em></dt>
+<dt><a name="index-copysignfN"></a>Function: <em>_FloatN</em> <strong>copysignfN</strong> <em>(_Float<var>N</var> <var>x</var>, _Float<var>N</var> <var>y</var>)</em></dt>
+<dt><a name="index-copysignfNx"></a>Function: <em>_FloatNx</em> <strong>copysignfNx</strong> <em>(_Float<var>N</var>x <var>x</var>, _Float<var>N</var>x <var>y</var>)</em></dt>
+<dd>
+
+
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>These functions return <var>x</var> but with the sign of <var>y</var>.  They work
+even if <var>x</var> or <var>y</var> are NaN or zero.  Both of these can carry a
+sign (although not all implementations support it) and this is one of
+the few operations that can tell the difference.
+</p>
+<p><code>copysign</code> never raises an exception.
+</p>
+<p>This function is defined in IEC&nbsp;559<!-- /@w --> (and the appendix with
+recommended functions in IEEE&nbsp;754<!-- /@w -->/IEEE&nbsp;854<!-- /@w -->).
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-signbit"></a>Function: <em>int</em> <strong>signbit</strong> <em>(<em>float-type</em> <var>x</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p><code>signbit</code> is a generic macro which can work on all floating-point
+types.  It returns a nonzero value if the value of <var>x</var> has its sign
+bit set.
+</p>
+<p>This is not the same as <code>x &lt; 0.0</code>, because IEEE&nbsp;754<!-- /@w --> floating
+point allows zero to be signed.  The comparison <code>-0.0 &lt; 0.0</code> is
+false, but <code>signbit (-0.0)</code> will return a nonzero value.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-nextafter"></a>Function: <em>double</em> <strong>nextafter</strong> <em>(double <var>x</var>, double <var>y</var>)</em></dt>
+<dt><a name="index-nextafterf"></a>Function: <em>float</em> <strong>nextafterf</strong> <em>(float <var>x</var>, float <var>y</var>)</em></dt>
+<dt><a name="index-nextafterl"></a>Function: <em>long double</em> <strong>nextafterl</strong> <em>(long double <var>x</var>, long double <var>y</var>)</em></dt>
+<dt><a name="index-nextafterfN"></a>Function: <em>_FloatN</em> <strong>nextafterfN</strong> <em>(_Float<var>N</var> <var>x</var>, _Float<var>N</var> <var>y</var>)</em></dt>
+<dt><a name="index-nextafterfNx"></a>Function: <em>_FloatNx</em> <strong>nextafterfNx</strong> <em>(_Float<var>N</var>x <var>x</var>, _Float<var>N</var>x <var>y</var>)</em></dt>
+<dd>
+
+
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>nextafter</code> function returns the next representable neighbor of
+<var>x</var> in the direction towards <var>y</var>.  The size of the step between
+<var>x</var> and the result depends on the type of the result.  If
+<em><var>x</var> = <var>y</var></em> the function simply returns <var>y</var>.  If either
+value is <code>NaN</code>, <code>NaN</code> is returned.  Otherwise
+a value corresponding to the value of the least significant bit in the
+mantissa is added or subtracted, depending on the direction.
+<code>nextafter</code> will signal overflow or underflow if the result goes
+outside of the range of normalized numbers.
+</p>
+<p>This function is defined in IEC&nbsp;559<!-- /@w --> (and the appendix with
+recommended functions in IEEE&nbsp;754<!-- /@w -->/IEEE&nbsp;854<!-- /@w -->).
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-nexttoward"></a>Function: <em>double</em> <strong>nexttoward</strong> <em>(double <var>x</var>, long double <var>y</var>)</em></dt>
+<dt><a name="index-nexttowardf"></a>Function: <em>float</em> <strong>nexttowardf</strong> <em>(float <var>x</var>, long double <var>y</var>)</em></dt>
+<dt><a name="index-nexttowardl"></a>Function: <em>long double</em> <strong>nexttowardl</strong> <em>(long double <var>x</var>, long double <var>y</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>These functions are identical to the corresponding versions of
+<code>nextafter</code> except that their second argument is a <code>long
+double</code>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-nextup"></a>Function: <em>double</em> <strong>nextup</strong> <em>(double <var>x</var>)</em></dt>
+<dt><a name="index-nextupf"></a>Function: <em>float</em> <strong>nextupf</strong> <em>(float <var>x</var>)</em></dt>
+<dt><a name="index-nextupl"></a>Function: <em>long double</em> <strong>nextupl</strong> <em>(long double <var>x</var>)</em></dt>
+<dt><a name="index-nextupfN"></a>Function: <em>_FloatN</em> <strong>nextupfN</strong> <em>(_Float<var>N</var> <var>x</var>)</em></dt>
+<dt><a name="index-nextupfNx"></a>Function: <em>_FloatNx</em> <strong>nextupfNx</strong> <em>(_Float<var>N</var>x <var>x</var>)</em></dt>
+<dd>
+
+
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>nextup</code> function returns the next representable neighbor of <var>x</var>
+in the direction of positive infinity.  If <var>x</var> is the smallest negative
+subnormal number in the type of <var>x</var> the function returns <code>-0</code>.  If
+<em><var>x</var> = <code>0</code></em> the function returns the smallest positive subnormal
+number in the type of <var>x</var>.  If <var>x</var> is NaN, NaN is returned.
+If <var>x</var> is <em>+&amp;infin;</em>, <em>+&amp;infin;</em> is returned.
+<code>nextup</code> is from TS 18661-1:2014 and TS 18661-3:2015.
+<code>nextup</code> never raises an exception except for signaling NaNs.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-nextdown"></a>Function: <em>double</em> <strong>nextdown</strong> <em>(double <var>x</var>)</em></dt>
+<dt><a name="index-nextdownf"></a>Function: <em>float</em> <strong>nextdownf</strong> <em>(float <var>x</var>)</em></dt>
+<dt><a name="index-nextdownl"></a>Function: <em>long double</em> <strong>nextdownl</strong> <em>(long double <var>x</var>)</em></dt>
+<dt><a name="index-nextdownfN"></a>Function: <em>_FloatN</em> <strong>nextdownfN</strong> <em>(_Float<var>N</var> <var>x</var>)</em></dt>
+<dt><a name="index-nextdownfNx"></a>Function: <em>_FloatNx</em> <strong>nextdownfNx</strong> <em>(_Float<var>N</var>x <var>x</var>)</em></dt>
+<dd>
+
+
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>nextdown</code> function returns the next representable neighbor of <var>x</var>
+in the direction of negative infinity.  If <var>x</var> is the smallest positive
+subnormal number in the type of <var>x</var> the function returns <code>+0</code>.  If
+<em><var>x</var> = <code>0</code></em> the function returns the smallest negative subnormal
+number in the type of <var>x</var>.  If <var>x</var> is NaN, NaN is returned.
+If <var>x</var> is <em>-&amp;infin;</em>, <em>-&amp;infin;</em> is returned.
+<code>nextdown</code> is from TS 18661-1:2014 and TS 18661-3:2015.
+<code>nextdown</code> never raises an exception except for signaling NaNs.
+</p></dd></dl>
+
+<a name="index-NaN-1"></a>
+<dl>
+<dt><a name="index-nan"></a>Function: <em>double</em> <strong>nan</strong> <em>(const char *<var>tagp</var>)</em></dt>
+<dt><a name="index-nanf"></a>Function: <em>float</em> <strong>nanf</strong> <em>(const char *<var>tagp</var>)</em></dt>
+<dt><a name="index-nanl"></a>Function: <em>long double</em> <strong>nanl</strong> <em>(const char *<var>tagp</var>)</em></dt>
+<dt><a name="index-nanfN"></a>Function: <em>_FloatN</em> <strong>nanfN</strong> <em>(const char *<var>tagp</var>)</em></dt>
+<dt><a name="index-nanfNx"></a>Function: <em>_FloatNx</em> <strong>nanfNx</strong> <em>(const char *<var>tagp</var>)</em></dt>
+<dd>
+
+
+<p>Preliminary:
+| MT-Safe locale
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>nan</code> function returns a representation of NaN, provided that
+NaN is supported by the target platform.
+<code>nan (&quot;<var>n-char-sequence</var>&quot;)</code> is equivalent to
+<code>strtod (&quot;NAN(<var>n-char-sequence</var>)&quot;)</code>.
+</p>
+<p>The argument <var>tagp</var> is used in an unspecified manner.  On IEEE&nbsp;754<!-- /@w --> systems, there are many representations of NaN, and <var>tagp</var>
+selects one.  On other systems it may do nothing.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-canonicalize"></a>Function: <em>int</em> <strong>canonicalize</strong> <em>(double *<var>cx</var>, const double *<var>x</var>)</em></dt>
+<dt><a name="index-canonicalizef"></a>Function: <em>int</em> <strong>canonicalizef</strong> <em>(float *<var>cx</var>, const float *<var>x</var>)</em></dt>
+<dt><a name="index-canonicalizel"></a>Function: <em>int</em> <strong>canonicalizel</strong> <em>(long double *<var>cx</var>, const long double *<var>x</var>)</em></dt>
+<dt><a name="index-canonicalizefN"></a>Function: <em>int</em> <strong>canonicalizefN</strong> <em>(_Float<var>N</var> *<var>cx</var>, const _Float<var>N</var> *<var>x</var>)</em></dt>
+<dt><a name="index-canonicalizefNx"></a>Function: <em>int</em> <strong>canonicalizefNx</strong> <em>(_Float<var>N</var>x *<var>cx</var>, const _Float<var>N</var>x *<var>x</var>)</em></dt>
+<dd>
+
+
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>In some floating-point formats, some values have canonical (preferred)
+and noncanonical encodings (for IEEE interchange binary formats, all
+encodings are canonical).  These functions, defined by TS
+18661-1:2014 and TS 18661-3:2015, attempt to produce a canonical version
+of the floating-point value pointed to by <var>x</var>; if that value is a
+signaling NaN, they raise the invalid exception and produce a quiet
+NaN.  If a canonical value is produced, it is stored in the object
+pointed to by <var>cx</var>, and these functions return zero.  Otherwise
+(if a canonical value could not be produced because the object pointed
+to by <var>x</var> is not a valid representation of any floating-point
+value), the object pointed to by <var>cx</var> is unchanged and a nonzero
+value is returned.
+</p>
+<p>Note that some formats have multiple encodings of a value which are
+all equally canonical; when such an encoding is used as an input to
+this function, any such encoding of the same value (or of the
+corresponding quiet NaN, if that value is a signaling NaN) may be
+produced as output.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-getpayload"></a>Function: <em>double</em> <strong>getpayload</strong> <em>(const double *<var>x</var>)</em></dt>
+<dt><a name="index-getpayloadf"></a>Function: <em>float</em> <strong>getpayloadf</strong> <em>(const float *<var>x</var>)</em></dt>
+<dt><a name="index-getpayloadl"></a>Function: <em>long double</em> <strong>getpayloadl</strong> <em>(const long double *<var>x</var>)</em></dt>
+<dt><a name="index-getpayloadfN"></a>Function: <em>_FloatN</em> <strong>getpayloadfN</strong> <em>(const _Float<var>N</var> *<var>x</var>)</em></dt>
+<dt><a name="index-getpayloadfNx"></a>Function: <em>_FloatNx</em> <strong>getpayloadfNx</strong> <em>(const _Float<var>N</var>x *<var>x</var>)</em></dt>
+<dd>
+
+
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>IEEE 754 defines the <em>payload</em> of a NaN to be an integer value
+encoded in the representation of the NaN.  Payloads are typically
+propagated from NaN inputs to the result of a floating-point
+operation.  These functions, defined by TS 18661-1:2014 and TS
+18661-3:2015, return the payload of the NaN pointed to by <var>x</var>
+(returned as a positive integer, or positive zero, represented as a
+floating-point number); if <var>x</var> is not a NaN, they return an
+unspecified value.  They raise no floating-point exceptions even for
+signaling NaNs.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-setpayload"></a>Function: <em>int</em> <strong>setpayload</strong> <em>(double *<var>x</var>, double <var>payload</var>)</em></dt>
+<dt><a name="index-setpayloadf"></a>Function: <em>int</em> <strong>setpayloadf</strong> <em>(float *<var>x</var>, float <var>payload</var>)</em></dt>
+<dt><a name="index-setpayloadl"></a>Function: <em>int</em> <strong>setpayloadl</strong> <em>(long double *<var>x</var>, long double <var>payload</var>)</em></dt>
+<dt><a name="index-setpayloadfN"></a>Function: <em>int</em> <strong>setpayloadfN</strong> <em>(_Float<var>N</var> *<var>x</var>, _Float<var>N</var> <var>payload</var>)</em></dt>
+<dt><a name="index-setpayloadfNx"></a>Function: <em>int</em> <strong>setpayloadfNx</strong> <em>(_Float<var>N</var>x *<var>x</var>, _Float<var>N</var>x <var>payload</var>)</em></dt>
+<dd>
+
+
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>These functions, defined by TS 18661-1:2014 and TS 18661-3:2015, set the
+object pointed to by <var>x</var> to a quiet NaN with payload <var>payload</var>
+and a zero sign bit and return zero.  If <var>payload</var> is not a
+positive-signed integer that is a valid payload for a quiet NaN of the
+given type, the object pointed to by <var>x</var> is set to positive zero and
+a nonzero value is returned.  They raise no floating-point exceptions.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-setpayloadsig"></a>Function: <em>int</em> <strong>setpayloadsig</strong> <em>(double *<var>x</var>, double <var>payload</var>)</em></dt>
+<dt><a name="index-setpayloadsigf"></a>Function: <em>int</em> <strong>setpayloadsigf</strong> <em>(float *<var>x</var>, float <var>payload</var>)</em></dt>
+<dt><a name="index-setpayloadsigl"></a>Function: <em>int</em> <strong>setpayloadsigl</strong> <em>(long double *<var>x</var>, long double <var>payload</var>)</em></dt>
+<dt><a name="index-setpayloadsigfN"></a>Function: <em>int</em> <strong>setpayloadsigfN</strong> <em>(_Float<var>N</var> *<var>x</var>, _Float<var>N</var> <var>payload</var>)</em></dt>
+<dt><a name="index-setpayloadsigfNx"></a>Function: <em>int</em> <strong>setpayloadsigfNx</strong> <em>(_Float<var>N</var>x *<var>x</var>, _Float<var>N</var>x <var>payload</var>)</em></dt>
+<dd>
+
+
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>These functions, defined by TS 18661-1:2014 and TS 18661-3:2015, set the
+object pointed to by <var>x</var> to a signaling NaN with payload
+<var>payload</var> and a zero sign bit and return zero.  If <var>payload</var> is
+not a positive-signed integer that is a valid payload for a signaling
+NaN of the given type, the object pointed to by <var>x</var> is set to
+positive zero and a nonzero value is returned.  They raise no
+floating-point exceptions.
+</p></dd></dl>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="FP-Comparison-Functions.html#FP-Comparison-Functions" accesskey="n" rel="next">FP Comparison Functions</a>, Previous: <a href="Remainder-Functions.html#Remainder-Functions" accesskey="p" rel="prev">Remainder Functions</a>, Up: <a href="Arithmetic-Functions.html#Arithmetic-Functions" accesskey="u" rel="up">Arithmetic Functions</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Array Sort Function</title>
+
+<meta name="description" content="The GNU C Library: Array Sort Function">
+<meta name="keywords" content="The GNU C Library: Array Sort Function">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Searching-and-Sorting.html#Searching-and-Sorting" rel="up" title="Searching and Sorting">
+<link href="Search_002fSort-Example.html#Search_002fSort-Example" rel="next" title="Search/Sort Example">
+<link href="Array-Search-Function.html#Array-Search-Function" rel="prev" title="Array Search Function">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Array-Sort-Function"></a>
+<div class="header">
+<p>
+Next: <a href="Search_002fSort-Example.html#Search_002fSort-Example" accesskey="n" rel="next">Search/Sort Example</a>, Previous: <a href="Array-Search-Function.html#Array-Search-Function" accesskey="p" rel="prev">Array Search Function</a>, Up: <a href="Searching-and-Sorting.html#Searching-and-Sorting" accesskey="u" rel="up">Searching and Sorting</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Array-Sort-Function-1"></a>
+<h3 class="section">9.3 Array Sort Function</h3>
+<a name="index-sort-function-_0028for-arrays_0029"></a>
+<a name="index-quick-sort-function-_0028for-arrays_0029"></a>
+<a name="index-array-sort-function"></a>
+
+<p>To sort an array using an arbitrary comparison function, use the
+<code>qsort</code> function.  The prototype for this function is in
+<samp>stdlib.h</samp>.
+<a name="index-stdlib_002eh-9"></a>
+</p>
+<dl>
+<dt><a name="index-qsort"></a>Function: <em>void</em> <strong>qsort</strong> <em>(void *<var>array</var>, size_t <var>count</var>, size_t <var>size</var>, comparison_fn_t <var>compare</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Unsafe corrupt
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>qsort</code> function sorts the array <var>array</var>.  The array
+contains <var>count</var> elements, each of which is of size <var>size</var>.
+</p>
+<p>The <var>compare</var> function is used to perform the comparison on the
+array elements.  This function is called with two pointer arguments and
+should return an integer less than, equal to, or greater than zero
+corresponding to whether its first argument is considered less than,
+equal to, or greater than its second argument.
+</p>
+<a name="index-stable-sorting"></a>
+<p><strong>Warning:</strong> If two objects compare as equal, their order after
+sorting is unpredictable.  That is to say, the sorting is not stable.
+This can make a difference when the comparison considers only part of
+the elements.  Two elements with the same sort key may differ in other
+respects.
+</p>
+<p>Although the object addresses passed to the comparison function lie
+within the array, they need not correspond with the original locations
+of those objects because the sorting algorithm may swap around objects
+in the array before making some comparisons.  The only way to perform
+a stable sort with <code>qsort</code> is to first augment the objects with a
+monotonic counter of some kind.
+</p>
+<p>Here is a simple example of sorting an array of doubles in numerical
+order, using the comparison function defined above (see <a href="Comparison-Functions.html#Comparison-Functions">Comparison Functions</a>):
+</p>
+<div class="smallexample">
+<pre class="smallexample">{
+  double *array;
+  int size;
+  &hellip;
+  qsort (array, size, sizeof (double), compare_doubles);
+}
+</pre></div>
+
+<p>The <code>qsort</code> function derives its name from the fact that it was
+originally implemented using the &ldquo;quick sort&rdquo; algorithm.
+</p>
+<p>The implementation of <code>qsort</code> in this library might not be an
+in-place sort and might thereby use an extra amount of memory to store
+the array.
+</p></dd></dl>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Search_002fSort-Example.html#Search_002fSort-Example" accesskey="n" rel="next">Search/Sort Example</a>, Previous: <a href="Array-Search-Function.html#Array-Search-Function" accesskey="p" rel="prev">Array Search Function</a>, Up: <a href="Searching-and-Sorting.html#Searching-and-Sorting" accesskey="u" rel="up">Searching and Sorting</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

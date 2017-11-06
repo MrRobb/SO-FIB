@@ -1,0 +1,216 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Signal Sets</title>
+
+<meta name="description" content="The GNU C Library: Signal Sets">
+<meta name="keywords" content="The GNU C Library: Signal Sets">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Blocking-Signals.html#Blocking-Signals" rel="up" title="Blocking Signals">
+<link href="Process-Signal-Mask.html#Process-Signal-Mask" rel="next" title="Process Signal Mask">
+<link href="Why-Block.html#Why-Block" rel="prev" title="Why Block">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Signal-Sets"></a>
+<div class="header">
+<p>
+Next: <a href="Process-Signal-Mask.html#Process-Signal-Mask" accesskey="n" rel="next">Process Signal Mask</a>, Previous: <a href="Why-Block.html#Why-Block" accesskey="p" rel="prev">Why Block</a>, Up: <a href="Blocking-Signals.html#Blocking-Signals" accesskey="u" rel="up">Blocking Signals</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Signal-Sets-1"></a>
+<h4 class="subsection">24.7.2 Signal Sets</h4>
+
+<p>All of the signal blocking functions use a data structure called a
+<em>signal set</em> to specify what signals are affected.  Thus, every
+activity involves two stages: creating the signal set, and then passing
+it as an argument to a library function.
+<a name="index-signal-set"></a>
+</p>
+<p>These facilities are declared in the header file <samp>signal.h</samp>.
+<a name="index-signal_002eh-7"></a>
+</p>
+<dl>
+<dt><a name="index-sigset_005ft"></a>Data Type: <strong>sigset_t</strong></dt>
+<dd>
+<p>The <code>sigset_t</code> data type is used to represent a signal set.
+Internally, it may be implemented as either an integer or structure
+type.
+</p>
+<p>For portability, use only the functions described in this section to
+initialize, change, and retrieve information from <code>sigset_t</code>
+objects&mdash;don&rsquo;t try to manipulate them directly.
+</p></dd></dl>
+
+<p>There are two ways to initialize a signal set.  You can initially
+specify it to be empty with <code>sigemptyset</code> and then add specified
+signals individually.  Or you can specify it to be full with
+<code>sigfillset</code> and then delete specified signals individually.
+</p>
+<p>You must always initialize the signal set with one of these two
+functions before using it in any other way.  Don&rsquo;t try to set all the
+signals explicitly because the <code>sigset_t</code> object might include some
+other information (like a version field) that needs to be initialized as
+well.  (In addition, it&rsquo;s not wise to put into your program an
+assumption that the system has no signals aside from the ones you know
+about.)
+</p>
+<dl>
+<dt><a name="index-sigemptyset"></a>Function: <em>int</em> <strong>sigemptyset</strong> <em>(sigset_t *<var>set</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function initializes the signal set <var>set</var> to exclude all of the
+defined signals.  It always returns <code>0</code>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-sigfillset"></a>Function: <em>int</em> <strong>sigfillset</strong> <em>(sigset_t *<var>set</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function initializes the signal set <var>set</var> to include
+all of the defined signals.  Again, the return value is <code>0</code>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-sigaddset"></a>Function: <em>int</em> <strong>sigaddset</strong> <em>(sigset_t *<var>set</var>, int <var>signum</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function adds the signal <var>signum</var> to the signal set <var>set</var>.
+All <code>sigaddset</code> does is modify <var>set</var>; it does not block or
+unblock any signals.
+</p>
+<p>The return value is <code>0</code> on success and <code>-1</code> on failure.
+The following <code>errno</code> error condition is defined for this function:
+</p>
+<dl compact="compact">
+<dt><code>EINVAL</code></dt>
+<dd><p>The <var>signum</var> argument doesn&rsquo;t specify a valid signal.
+</p></dd>
+</dl>
+</dd></dl>
+
+<dl>
+<dt><a name="index-sigdelset"></a>Function: <em>int</em> <strong>sigdelset</strong> <em>(sigset_t *<var>set</var>, int <var>signum</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function removes the signal <var>signum</var> from the signal set
+<var>set</var>.  All <code>sigdelset</code> does is modify <var>set</var>; it does not
+block or unblock any signals.  The return value and error conditions are
+the same as for <code>sigaddset</code>.
+</p></dd></dl>
+
+<p>Finally, there is a function to test what signals are in a signal set:
+</p>
+<dl>
+<dt><a name="index-sigismember"></a>Function: <em>int</em> <strong>sigismember</strong> <em>(const sigset_t *<var>set</var>, int <var>signum</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>sigismember</code> function tests whether the signal <var>signum</var> is
+a member of the signal set <var>set</var>.  It returns <code>1</code> if the signal
+is in the set, <code>0</code> if not, and <code>-1</code> if there is an error.
+</p>
+<p>The following <code>errno</code> error condition is defined for this function:
+</p>
+<dl compact="compact">
+<dt><code>EINVAL</code></dt>
+<dd><p>The <var>signum</var> argument doesn&rsquo;t specify a valid signal.
+</p></dd>
+</dl>
+</dd></dl>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Process-Signal-Mask.html#Process-Signal-Mask" accesskey="n" rel="next">Process Signal Mask</a>, Previous: <a href="Why-Block.html#Why-Block" accesskey="p" rel="prev">Why Block</a>, Up: <a href="Blocking-Signals.html#Blocking-Signals" accesskey="u" rel="up">Blocking Signals</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,275 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Local Modes</title>
+
+<meta name="description" content="The GNU C Library: Local Modes">
+<meta name="keywords" content="The GNU C Library: Local Modes">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Terminal-Modes.html#Terminal-Modes" rel="up" title="Terminal Modes">
+<link href="Line-Speed.html#Line-Speed" rel="next" title="Line Speed">
+<link href="Control-Modes.html#Control-Modes" rel="prev" title="Control Modes">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Local-Modes"></a>
+<div class="header">
+<p>
+Next: <a href="Line-Speed.html#Line-Speed" accesskey="n" rel="next">Line Speed</a>, Previous: <a href="Control-Modes.html#Control-Modes" accesskey="p" rel="prev">Control Modes</a>, Up: <a href="Terminal-Modes.html#Terminal-Modes" accesskey="u" rel="up">Terminal Modes</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Local-Modes-1"></a>
+<h4 class="subsection">17.4.7 Local Modes</h4>
+
+<p>This section describes the flags for the <code>c_lflag</code> member of the
+<code>struct termios</code> structure.  These flags generally control
+higher-level aspects of input processing than the input modes flags
+described in <a href="Input-Modes.html#Input-Modes">Input Modes</a>, such as echoing, signals, and the choice
+of canonical or noncanonical input.
+</p>
+<p>The <code>c_lflag</code> member itself is an integer, and you change the flags
+and fields using the operators <code>&amp;</code>, <code>|</code>, and <code>^</code>.  Don&rsquo;t
+try to specify the entire value for <code>c_lflag</code>&mdash;instead, change
+only specific flags and leave the rest untouched (see <a href="Setting-Modes.html#Setting-Modes">Setting Modes</a>).
+</p>
+<dl>
+<dt><a name="index-ICANON"></a>Macro: <em>tcflag_t</em> <strong>ICANON</strong></dt>
+<dd>
+<p>This bit, if set, enables canonical input processing mode.  Otherwise,
+input is processed in noncanonical mode.  See <a href="Canonical-or-Not.html#Canonical-or-Not">Canonical or Not</a>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-ECHO"></a>Macro: <em>tcflag_t</em> <strong>ECHO</strong></dt>
+<dd>
+<p>If this bit is set, echoing of input characters back to the terminal
+is enabled.
+<a name="index-echo-of-terminal-input"></a>
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-ECHOE"></a>Macro: <em>tcflag_t</em> <strong>ECHOE</strong></dt>
+<dd>
+<p>If this bit is set, echoing indicates erasure of input with the ERASE
+character by erasing the last character in the current line from the
+screen.  Otherwise, the character erased is re-echoed to show what has
+happened (suitable for a printing terminal).
+</p>
+<p>This bit only controls the display behavior; the <code>ICANON</code> bit by
+itself controls actual recognition of the ERASE character and erasure of
+input, without which <code>ECHOE</code> is simply irrelevant.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-ECHOPRT"></a>Macro: <em>tcflag_t</em> <strong>ECHOPRT</strong></dt>
+<dd>
+<p>This bit, like <code>ECHOE</code>, enables display of the ERASE character in
+a way that is geared to a hardcopy terminal.  When you type the ERASE
+character, a &lsquo;<samp>\</samp>&rsquo; character is printed followed by the first
+character erased.  Typing the ERASE character again just prints the next
+character erased.  Then, the next time you type a normal character, a
+&lsquo;<samp>/</samp>&rsquo; character is printed before the character echoes.
+</p>
+<p>This is a BSD extension, and exists only in BSD systems and
+GNU/Linux and GNU/Hurd systems.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-ECHOK"></a>Macro: <em>tcflag_t</em> <strong>ECHOK</strong></dt>
+<dd>
+<p>This bit enables special display of the KILL character by moving to a
+new line after echoing the KILL character normally.  The behavior of
+<code>ECHOKE</code> (below) is nicer to look at.
+</p>
+<p>If this bit is not set, the KILL character echoes just as it would if it
+were not the KILL character.  Then it is up to the user to remember that
+the KILL character has erased the preceding input; there is no
+indication of this on the screen.
+</p>
+<p>This bit only controls the display behavior; the <code>ICANON</code> bit by
+itself controls actual recognition of the KILL character and erasure of
+input, without which <code>ECHOK</code> is simply irrelevant.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-ECHOKE"></a>Macro: <em>tcflag_t</em> <strong>ECHOKE</strong></dt>
+<dd>
+<p>This bit is similar to <code>ECHOK</code>.  It enables special display of the
+KILL character by erasing on the screen the entire line that has been
+killed.  This is a BSD extension, and exists only in BSD systems and
+GNU/Linux and GNU/Hurd systems.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-ECHONL"></a>Macro: <em>tcflag_t</em> <strong>ECHONL</strong></dt>
+<dd>
+<p>If this bit is set and the <code>ICANON</code> bit is also set, then the
+newline (<code>'\n'</code>) character is echoed even if the <code>ECHO</code> bit
+is not set.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-ECHOCTL"></a>Macro: <em>tcflag_t</em> <strong>ECHOCTL</strong></dt>
+<dd>
+<p>If this bit is set and the <code>ECHO</code> bit is also set, echo control
+characters with &lsquo;<samp>^</samp>&rsquo; followed by the corresponding text character.
+Thus, control-A echoes as &lsquo;<samp>^A</samp>&rsquo;.  This is usually the preferred mode
+for interactive input, because echoing a control character back to the
+terminal could have some undesired effect on the terminal.
+</p>
+<p>This is a BSD extension, and exists only in BSD systems and
+GNU/Linux and GNU/Hurd systems.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-ISIG"></a>Macro: <em>tcflag_t</em> <strong>ISIG</strong></dt>
+<dd>
+<p>This bit controls whether the INTR, QUIT, and SUSP characters are
+recognized.  The functions associated with these characters are performed
+if and only if this bit is set.  Being in canonical or noncanonical
+input mode has no effect on the interpretation of these characters.
+</p>
+<p>You should use caution when disabling recognition of these characters.
+Programs that cannot be interrupted interactively are very
+user-unfriendly.  If you clear this bit, your program should provide
+some alternate interface that allows the user to interactively send the
+signals associated with these characters, or to escape from the program.
+<a name="index-interactive-signals_002c-from-terminal"></a>
+</p>
+<p>See <a href="Signal-Characters.html#Signal-Characters">Signal Characters</a>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-IEXTEN"></a>Macro: <em>tcflag_t</em> <strong>IEXTEN</strong></dt>
+<dd>
+<p>POSIX.1 gives <code>IEXTEN</code> implementation-defined meaning,
+so you cannot rely on this interpretation on all systems.
+</p>
+<p>On BSD systems and GNU/Linux and GNU/Hurd systems, it enables the LNEXT and
+DISCARD characters.
+See <a href="Other-Special.html#Other-Special">Other Special</a>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-NOFLSH"></a>Macro: <em>tcflag_t</em> <strong>NOFLSH</strong></dt>
+<dd>
+<p>Normally, the INTR, QUIT, and SUSP characters cause input and output
+queues for the terminal to be cleared.  If this bit is set, the queues
+are not cleared.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-TOSTOP"></a>Macro: <em>tcflag_t</em> <strong>TOSTOP</strong></dt>
+<dd>
+<p>If this bit is set and the system supports job control, then
+<code>SIGTTOU</code> signals are generated by background processes that
+attempt to write to the terminal.  See <a href="Access-to-the-Terminal.html#Access-to-the-Terminal">Access to the Terminal</a>.
+</p></dd></dl>
+
+<p>The following bits are BSD extensions; they exist only on BSD systems
+and GNU/Hurd systems.
+</p>
+<dl>
+<dt><a name="index-ALTWERASE"></a>Macro: <em>tcflag_t</em> <strong>ALTWERASE</strong></dt>
+<dd>
+<p>This bit determines how far the WERASE character should erase.  The
+WERASE character erases back to the beginning of a word; the question
+is, where do words begin?
+</p>
+<p>If this bit is clear, then the beginning of a word is a nonwhitespace
+character following a whitespace character.  If the bit is set, then the
+beginning of a word is an alphanumeric character or underscore following
+a character which is none of those.
+</p>
+<p>See <a href="Editing-Characters.html#Editing-Characters">Editing Characters</a>, for more information about the WERASE character.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-FLUSHO"></a>Macro: <em>tcflag_t</em> <strong>FLUSHO</strong></dt>
+<dd>
+<p>This is the bit that toggles when the user types the DISCARD character.
+While this bit is set, all output is discarded.  See <a href="Other-Special.html#Other-Special">Other Special</a>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-NOKERNINFO"></a>Macro: <em>tcflag_t</em> <strong>NOKERNINFO</strong></dt>
+<dd>
+<p>Setting this bit disables handling of the STATUS character.
+See <a href="Other-Special.html#Other-Special">Other Special</a>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-PENDIN"></a>Macro: <em>tcflag_t</em> <strong>PENDIN</strong></dt>
+<dd>
+<p>If this bit is set, it indicates that there is a line of input that
+needs to be reprinted.  Typing the REPRINT character sets this bit; the
+bit remains set until reprinting is finished.  See <a href="Editing-Characters.html#Editing-Characters">Editing Characters</a>.
+</p></dd></dl>
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Line-Speed.html#Line-Speed" accesskey="n" rel="next">Line Speed</a>, Previous: <a href="Control-Modes.html#Control-Modes" accesskey="p" rel="prev">Control Modes</a>, Up: <a href="Terminal-Modes.html#Terminal-Modes" accesskey="u" rel="up">Terminal Modes</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

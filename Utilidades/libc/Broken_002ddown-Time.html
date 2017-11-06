@@ -1,0 +1,357 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Broken-down Time</title>
+
+<meta name="description" content="The GNU C Library: Broken-down Time">
+<meta name="keywords" content="The GNU C Library: Broken-down Time">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Calendar-Time.html#Calendar-Time" rel="up" title="Calendar Time">
+<link href="High-Accuracy-Clock.html#High-Accuracy-Clock" rel="next" title="High Accuracy Clock">
+<link href="High_002dResolution-Calendar.html#High_002dResolution-Calendar" rel="prev" title="High-Resolution Calendar">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Broken_002ddown-Time"></a>
+<div class="header">
+<p>
+Next: <a href="High-Accuracy-Clock.html#High-Accuracy-Clock" accesskey="n" rel="next">High Accuracy Clock</a>, Previous: <a href="High_002dResolution-Calendar.html#High_002dResolution-Calendar" accesskey="p" rel="prev">High-Resolution Calendar</a>, Up: <a href="Calendar-Time.html#Calendar-Time" accesskey="u" rel="up">Calendar Time</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Broken_002ddown-Time-1"></a>
+<h4 class="subsection">21.4.3 Broken-down Time</h4>
+<a name="index-broken_002ddown-time-1"></a>
+<a name="index-calendar-time-and-broken_002ddown-time"></a>
+
+<p>Calendar time is represented by the usual GNU C Library functions as an
+elapsed time since a fixed base calendar time.  This is convenient for
+computation, but has no relation to the way people normally think of
+calendar time.  By contrast, <em>broken-down time</em> is a binary
+representation of calendar time separated into year, month, day, and so
+on.  Broken-down time values are not useful for calculations, but they
+are useful for printing human readable time information.
+</p>
+<p>A broken-down time value is always relative to a choice of time
+zone, and it also indicates which time zone that is.
+</p>
+<p>The symbols in this section are declared in the header file <samp>time.h</samp>.
+</p>
+<dl>
+<dt><a name="index-struct-tm"></a>Data Type: <strong>struct tm</strong></dt>
+<dd>
+<p>This is the data type used to represent a broken-down time.  The structure
+contains at least the following members, which can appear in any order.
+</p>
+<dl compact="compact">
+<dt><code>int tm_sec</code></dt>
+<dd><p>This is the number of full seconds since the top of the minute (normally
+in the range <code>0</code> through <code>59</code>, but the actual upper limit is
+<code>60</code>, to allow for leap seconds if leap second support is
+available).
+<a name="index-leap-second"></a>
+</p>
+</dd>
+<dt><code>int tm_min</code></dt>
+<dd><p>This is the number of full minutes since the top of the hour (in the
+range <code>0</code> through <code>59</code>).
+</p>
+</dd>
+<dt><code>int tm_hour</code></dt>
+<dd><p>This is the number of full hours past midnight (in the range <code>0</code> through
+<code>23</code>).
+</p>
+</dd>
+<dt><code>int tm_mday</code></dt>
+<dd><p>This is the ordinal day of the month (in the range <code>1</code> through <code>31</code>).
+Watch out for this one!  As the only ordinal number in the structure, it is
+inconsistent with the rest of the structure.
+</p>
+</dd>
+<dt><code>int tm_mon</code></dt>
+<dd><p>This is the number of full calendar months since the beginning of the
+year (in the range <code>0</code> through <code>11</code>).  Watch out for this one!
+People usually use ordinal numbers for month-of-year (where January = 1).
+</p>
+</dd>
+<dt><code>int tm_year</code></dt>
+<dd><p>This is the number of full calendar years since 1900.
+</p>
+</dd>
+<dt><code>int tm_wday</code></dt>
+<dd><p>This is the number of full days since Sunday (in the range <code>0</code> through
+<code>6</code>).
+</p>
+</dd>
+<dt><code>int tm_yday</code></dt>
+<dd><p>This is the number of full days since the beginning of the year (in the
+range <code>0</code> through <code>365</code>).
+</p>
+</dd>
+<dt><code>int tm_isdst</code></dt>
+<dd><a name="index-Daylight-Saving-Time"></a>
+<a name="index-summer-time"></a>
+<p>This is a flag that indicates whether Daylight Saving Time is (or was, or
+will be) in effect at the time described.  The value is positive if
+Daylight Saving Time is in effect, zero if it is not, and negative if the
+information is not available.
+</p>
+</dd>
+<dt><code>long int tm_gmtoff</code></dt>
+<dd><p>This field describes the time zone that was used to compute this
+broken-down time value, including any adjustment for daylight saving; it
+is the number of seconds that you must add to UTC to get local time.
+You can also think of this as the number of seconds east of UTC.  For
+example, for U.S. Eastern Standard Time, the value is <code>-5*60*60</code>.
+The <code>tm_gmtoff</code> field is derived from BSD and is a GNU library
+extension; it is not visible in a strict ISO&nbsp;C<!-- /@w --> environment.
+</p>
+</dd>
+<dt><code>const char *tm_zone</code></dt>
+<dd><p>This field is the name for the time zone that was used to compute this
+broken-down time value.  Like <code>tm_gmtoff</code>, this field is a BSD and
+GNU extension, and is not visible in a strict ISO&nbsp;C<!-- /@w --> environment.
+</p></dd>
+</dl>
+</dd></dl>
+
+
+<dl>
+<dt><a name="index-localtime"></a>Function: <em>struct tm *</em> <strong>localtime</strong> <em>(const time_t *<var>time</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Unsafe race:tmbuf env locale
+| AS-Unsafe heap lock
+| AC-Unsafe lock mem fd
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>localtime</code> function converts the simple time pointed to by
+<var>time</var> to broken-down time representation, expressed relative to the
+user&rsquo;s specified time zone.
+</p>
+<p>The return value is a pointer to a static broken-down time structure, which
+might be overwritten by subsequent calls to <code>ctime</code>, <code>gmtime</code>,
+or <code>localtime</code>.  (But no other library function overwrites the contents
+of this object.)
+</p>
+<p>The return value is the null pointer if <var>time</var> cannot be represented
+as a broken-down time; typically this is because the year cannot fit into
+an <code>int</code>.
+</p>
+<p>Calling <code>localtime</code> also sets the current time zone as if
+<code>tzset</code> were called.  See <a href="Time-Zone-Functions.html#Time-Zone-Functions">Time Zone Functions</a>.
+</p></dd></dl>
+
+<p>Using the <code>localtime</code> function is a big problem in multi-threaded
+programs.  The result is returned in a static buffer and this is used in
+all threads.  POSIX.1c introduced a variant of this function.
+</p>
+<dl>
+<dt><a name="index-localtime_005fr"></a>Function: <em>struct tm *</em> <strong>localtime_r</strong> <em>(const time_t *<var>time</var>, struct tm *<var>resultp</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe env locale
+| AS-Unsafe heap lock
+| AC-Unsafe lock mem fd
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+
+<p>The <code>localtime_r</code> function works just like the <code>localtime</code>
+function.  It takes a pointer to a variable containing a simple time
+and converts it to the broken-down time format.
+</p>
+<p>But the result is not placed in a static buffer.  Instead it is placed
+in the object of type <code>struct tm</code> to which the parameter
+<var>resultp</var> points.
+</p>
+<p>If the conversion is successful the function returns a pointer to the
+object the result was written into, i.e., it returns <var>resultp</var>.
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-gmtime"></a>Function: <em>struct tm *</em> <strong>gmtime</strong> <em>(const time_t *<var>time</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Unsafe race:tmbuf env locale
+| AS-Unsafe heap lock
+| AC-Unsafe lock mem fd
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function is similar to <code>localtime</code>, except that the broken-down
+time is expressed as Coordinated Universal Time (UTC) (formerly called
+Greenwich Mean Time (GMT)) rather than relative to a local time zone.
+</p>
+</dd></dl>
+
+<p>As for the <code>localtime</code> function we have the problem that the result
+is placed in a static variable.  POSIX.1c also provides a replacement for
+<code>gmtime</code>.
+</p>
+<dl>
+<dt><a name="index-gmtime_005fr"></a>Function: <em>struct tm *</em> <strong>gmtime_r</strong> <em>(const time_t *<var>time</var>, struct tm *<var>resultp</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe env locale
+| AS-Unsafe heap lock
+| AC-Unsafe lock mem fd
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function is similar to <code>localtime_r</code>, except that it converts
+just like <code>gmtime</code> the given time as Coordinated Universal Time.
+</p>
+<p>If the conversion is successful the function returns a pointer to the
+object the result was written into, i.e., it returns <var>resultp</var>.
+</p></dd></dl>
+
+
+<dl>
+<dt><a name="index-mktime"></a>Function: <em>time_t</em> <strong>mktime</strong> <em>(struct tm *<var>brokentime</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe env locale
+| AS-Unsafe heap lock
+| AC-Unsafe lock mem fd
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>The <code>mktime</code> function converts a broken-down time structure to a
+simple time representation.  It also normalizes the contents of the
+broken-down time structure, and fills in some components based on the
+values of the others.
+</p>
+<p>The <code>mktime</code> function ignores the specified contents of the
+<code>tm_wday</code>, <code>tm_yday</code>, <code>tm_gmtoff</code>, and <code>tm_zone</code>
+members of the broken-down time
+structure.  It uses the values of the other components to determine the
+calendar time; it&rsquo;s permissible for these components to have
+unnormalized values outside their normal ranges.  The last thing that
+<code>mktime</code> does is adjust the components of the <var>brokentime</var>
+structure, including the members that were initially ignored.
+</p>
+<p>If the specified broken-down time cannot be represented as a simple time,
+<code>mktime</code> returns a value of <code>(time_t)(-1)</code> and does not modify
+the contents of <var>brokentime</var>.
+</p>
+<p>Calling <code>mktime</code> also sets the current time zone as if
+<code>tzset</code> were called; <code>mktime</code> uses this information instead
+of <var>brokentime</var>&rsquo;s initial <code>tm_gmtoff</code> and <code>tm_zone</code>
+members.  See <a href="Time-Zone-Functions.html#Time-Zone-Functions">Time Zone Functions</a>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-timelocal"></a>Function: <em>time_t</em> <strong>timelocal</strong> <em>(struct tm *<var>brokentime</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe env locale
+| AS-Unsafe heap lock
+| AC-Unsafe lock mem fd
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+
+<p><code>timelocal</code> is functionally identical to <code>mktime</code>, but more
+mnemonically named.  Note that it is the inverse of the <code>localtime</code>
+function.
+</p>
+<p><strong>Portability note:</strong>  <code>mktime</code> is essentially universally
+available.  <code>timelocal</code> is rather rare.
+</p>
+</dd></dl>
+
+<dl>
+<dt><a name="index-timegm"></a>Function: <em>time_t</em> <strong>timegm</strong> <em>(struct tm *<var>brokentime</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe env locale
+| AS-Unsafe heap lock
+| AC-Unsafe lock mem fd
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+
+<p><code>timegm</code> is functionally identical to <code>mktime</code> except it
+always takes the input values to be Coordinated Universal Time (UTC)
+regardless of any local time zone setting.
+</p>
+<p>Note that <code>timegm</code> is the inverse of <code>gmtime</code>.
+</p>
+<p><strong>Portability note:</strong>  <code>mktime</code> is essentially universally
+available.  <code>timegm</code> is rather rare.  For the most portable
+conversion from a UTC broken-down time to a simple time, set
+the <code>TZ</code> environment variable to UTC, call <code>mktime</code>, then set
+<code>TZ</code> back.
+</p>
+</dd></dl>
+
+
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="High-Accuracy-Clock.html#High-Accuracy-Clock" accesskey="n" rel="next">High Accuracy Clock</a>, Previous: <a href="High_002dResolution-Calendar.html#High_002dResolution-Calendar" accesskey="p" rel="prev">High-Resolution Calendar</a>, Up: <a href="Calendar-Time.html#Calendar-Time" accesskey="u" rel="up">Calendar Time</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

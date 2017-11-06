@@ -1,0 +1,234 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Duplicating Descriptors</title>
+
+<meta name="description" content="The GNU C Library: Duplicating Descriptors">
+<meta name="keywords" content="The GNU C Library: Duplicating Descriptors">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Low_002dLevel-I_002fO.html#Low_002dLevel-I_002fO" rel="up" title="Low-Level I/O">
+<link href="Descriptor-Flags.html#Descriptor-Flags" rel="next" title="Descriptor Flags">
+<link href="Control-Operations.html#Control-Operations" rel="prev" title="Control Operations">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Duplicating-Descriptors"></a>
+<div class="header">
+<p>
+Next: <a href="Descriptor-Flags.html#Descriptor-Flags" accesskey="n" rel="next">Descriptor Flags</a>, Previous: <a href="Control-Operations.html#Control-Operations" accesskey="p" rel="prev">Control Operations</a>, Up: <a href="Low_002dLevel-I_002fO.html#Low_002dLevel-I_002fO" accesskey="u" rel="up">Low-Level I/O</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Duplicating-Descriptors-1"></a>
+<h3 class="section">13.12 Duplicating Descriptors</h3>
+
+<a name="index-duplicating-file-descriptors"></a>
+<a name="index-redirecting-input-and-output"></a>
+
+<p>You can <em>duplicate</em> a file descriptor, or allocate another file
+descriptor that refers to the same open file as the original.  Duplicate
+descriptors share one file position and one set of file status flags
+(see <a href="File-Status-Flags.html#File-Status-Flags">File Status Flags</a>), but each has its own set of file descriptor
+flags (see <a href="Descriptor-Flags.html#Descriptor-Flags">Descriptor Flags</a>).
+</p>
+<p>The major use of duplicating a file descriptor is to implement
+<em>redirection</em> of input or output:  that is, to change the
+file or pipe that a particular file descriptor corresponds to.
+</p>
+<p>You can perform this operation using the <code>fcntl</code> function with the
+<code>F_DUPFD</code> command, but there are also convenient functions
+<code>dup</code> and <code>dup2</code> for duplicating descriptors.
+</p>
+<a name="index-unistd_002eh-3"></a>
+<a name="index-fcntl_002eh-3"></a>
+<p>The <code>fcntl</code> function and flags are declared in <samp>fcntl.h</samp>,
+while prototypes for <code>dup</code> and <code>dup2</code> are in the header file
+<samp>unistd.h</samp>.
+</p>
+<dl>
+<dt><a name="index-dup"></a>Function: <em>int</em> <strong>dup</strong> <em>(int <var>old</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function copies descriptor <var>old</var> to the first available
+descriptor number (the first number not currently open).  It is
+equivalent to <code>fcntl (<var>old</var>, F_DUPFD, 0)</code>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-dup2"></a>Function: <em>int</em> <strong>dup2</strong> <em>(int <var>old</var>, int <var>new</var>)</em></dt>
+<dd>
+<p>Preliminary:
+| MT-Safe 
+| AS-Safe 
+| AC-Safe 
+| See <a href="POSIX-Safety-Concepts.html#POSIX-Safety-Concepts">POSIX Safety Concepts</a>.
+</p>
+
+<p>This function copies the descriptor <var>old</var> to descriptor number
+<var>new</var>.
+</p>
+<p>If <var>old</var> is an invalid descriptor, then <code>dup2</code> does nothing; it
+does not close <var>new</var>.  Otherwise, the new duplicate of <var>old</var>
+replaces any previous meaning of descriptor <var>new</var>, as if <var>new</var>
+were closed first.
+</p>
+<p>If <var>old</var> and <var>new</var> are different numbers, and <var>old</var> is a
+valid descriptor number, then <code>dup2</code> is equivalent to:
+</p>
+<div class="smallexample">
+<pre class="smallexample">close (<var>new</var>);
+fcntl (<var>old</var>, F_DUPFD, <var>new</var>)
+</pre></div>
+
+<p>However, <code>dup2</code> does this atomically; there is no instant in the
+middle of calling <code>dup2</code> at which <var>new</var> is closed and not yet a
+duplicate of <var>old</var>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-F_005fDUPFD-1"></a>Macro: <em>int</em> <strong>F_DUPFD</strong></dt>
+<dd>
+<p>This macro is used as the <var>command</var> argument to <code>fcntl</code>, to
+copy the file descriptor given as the first argument.
+</p>
+<p>The form of the call in this case is:
+</p>
+<div class="smallexample">
+<pre class="smallexample">fcntl (<var>old</var>, F_DUPFD, <var>next-filedes</var>)
+</pre></div>
+
+<p>The <var>next-filedes</var> argument is of type <code>int</code> and specifies that
+the file descriptor returned should be the next available one greater
+than or equal to this value.
+</p>
+<p>The return value from <code>fcntl</code> with this command is normally the value
+of the new file descriptor.  A return value of <em>-1</em> indicates an
+error.  The following <code>errno</code> error conditions are defined for
+this command:
+</p>
+<dl compact="compact">
+<dt><code>EBADF</code></dt>
+<dd><p>The <var>old</var> argument is invalid.
+</p>
+</dd>
+<dt><code>EINVAL</code></dt>
+<dd><p>The <var>next-filedes</var> argument is invalid.
+</p>
+</dd>
+<dt><code>EMFILE</code></dt>
+<dd><p>There are no more file descriptors available&mdash;your program is already
+using the maximum.  In BSD and GNU, the maximum is controlled by a
+resource limit that can be changed; see <a href="Limits-on-Resources.html#Limits-on-Resources">Limits on Resources</a>, for
+more information about the <code>RLIMIT_NOFILE</code> limit.
+</p></dd>
+</dl>
+
+<p><code>ENFILE</code> is not a possible error code for <code>dup2</code> because
+<code>dup2</code> does not create a new opening of a file; duplicate
+descriptors do not count toward the limit which <code>ENFILE</code>
+indicates.  <code>EMFILE</code> is possible because it refers to the limit on
+distinct descriptor numbers in use in one process.
+</p></dd></dl>
+
+<p>Here is an example showing how to use <code>dup2</code> to do redirection.
+Typically, redirection of the standard streams (like <code>stdin</code>) is
+done by a shell or shell-like program before calling one of the
+<code>exec</code> functions (see <a href="Executing-a-File.html#Executing-a-File">Executing a File</a>) to execute a new
+program in a child process.  When the new program is executed, it
+creates and initializes the standard streams to point to the
+corresponding file descriptors, before its <code>main</code> function is
+invoked.
+</p>
+<p>So, to redirect standard input to a file, the shell could do something
+like:
+</p>
+<div class="smallexample">
+<pre class="smallexample">pid = fork ();
+if (pid == 0)
+  {
+    char *filename;
+    char *program;
+    int file;
+    &hellip;
+    file = TEMP_FAILURE_RETRY (open (filename, O_RDONLY));
+    dup2 (file, STDIN_FILENO);
+    TEMP_FAILURE_RETRY (close (file));
+    execv (program, NULL);
+  }
+</pre></div>
+
+<p>There is also a more detailed example showing how to implement redirection
+in the context of a pipeline of processes in <a href="Launching-Jobs.html#Launching-Jobs">Launching Jobs</a>.
+</p>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Descriptor-Flags.html#Descriptor-Flags" accesskey="n" rel="next">Descriptor Flags</a>, Previous: <a href="Control-Operations.html#Control-Operations" accesskey="p" rel="prev">Control Operations</a>, Up: <a href="Low_002dLevel-I_002fO.html#Low_002dLevel-I_002fO" accesskey="u" rel="up">Low-Level I/O</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

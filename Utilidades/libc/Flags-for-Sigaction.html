@@ -1,0 +1,148 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Flags for Sigaction</title>
+
+<meta name="description" content="The GNU C Library: Flags for Sigaction">
+<meta name="keywords" content="The GNU C Library: Flags for Sigaction">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Signal-Actions.html#Signal-Actions" rel="up" title="Signal Actions">
+<link href="Initial-Signal-Actions.html#Initial-Signal-Actions" rel="next" title="Initial Signal Actions">
+<link href="Sigaction-Function-Example.html#Sigaction-Function-Example" rel="prev" title="Sigaction Function Example">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Flags-for-Sigaction"></a>
+<div class="header">
+<p>
+Next: <a href="Initial-Signal-Actions.html#Initial-Signal-Actions" accesskey="n" rel="next">Initial Signal Actions</a>, Previous: <a href="Sigaction-Function-Example.html#Sigaction-Function-Example" accesskey="p" rel="prev">Sigaction Function Example</a>, Up: <a href="Signal-Actions.html#Signal-Actions" accesskey="u" rel="up">Signal Actions</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Flags-for-sigaction"></a>
+<h4 class="subsection">24.3.5 Flags for <code>sigaction</code></h4>
+<a name="index-signal-flags"></a>
+<a name="index-flags-for-sigaction"></a>
+<a name="index-sigaction-flags"></a>
+
+<p>The <code>sa_flags</code> member of the <code>sigaction</code> structure is a
+catch-all for special features.  Most of the time, <code>SA_RESTART</code> is
+a good value to use for this field.
+</p>
+<p>The value of <code>sa_flags</code> is interpreted as a bit mask.  Thus, you
+should choose the flags you want to set, <small>OR</small> those flags together,
+and store the result in the <code>sa_flags</code> member of your
+<code>sigaction</code> structure.
+</p>
+<p>Each signal number has its own set of flags.  Each call to
+<code>sigaction</code> affects one particular signal number, and the flags
+that you specify apply only to that particular signal.
+</p>
+<p>In the GNU C Library, establishing a handler with <code>signal</code> sets all
+the flags to zero except for <code>SA_RESTART</code>, whose value depends on
+the settings you have made with <code>siginterrupt</code>.  See <a href="Interrupted-Primitives.html#Interrupted-Primitives">Interrupted Primitives</a>, to see what this is about.
+</p>
+<a name="index-signal_002eh-4"></a>
+<p>These macros are defined in the header file <samp>signal.h</samp>.
+</p>
+<dl>
+<dt><a name="index-SA_005fNOCLDSTOP"></a>Macro: <em>int</em> <strong>SA_NOCLDSTOP</strong></dt>
+<dd>
+<p>This flag is meaningful only for the <code>SIGCHLD</code> signal.  When the
+flag is set, the system delivers the signal for a terminated child
+process but not for one that is stopped.  By default, <code>SIGCHLD</code> is
+delivered for both terminated children and stopped children.
+</p>
+<p>Setting this flag for a signal other than <code>SIGCHLD</code> has no effect.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-SA_005fONSTACK"></a>Macro: <em>int</em> <strong>SA_ONSTACK</strong></dt>
+<dd>
+<p>If this flag is set for a particular signal number, the system uses the
+signal stack when delivering that kind of signal.  See <a href="Signal-Stack.html#Signal-Stack">Signal Stack</a>.
+If a signal with this flag arrives and you have not set a signal stack,
+the system terminates the program with <code>SIGILL</code>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-SA_005fRESTART"></a>Macro: <em>int</em> <strong>SA_RESTART</strong></dt>
+<dd>
+<p>This flag controls what happens when a signal is delivered during
+certain primitives (such as <code>open</code>, <code>read</code> or <code>write</code>),
+and the signal handler returns normally.  There are two alternatives:
+the library function can resume, or it can return failure with error
+code <code>EINTR</code>.
+</p>
+<p>The choice is controlled by the <code>SA_RESTART</code> flag for the
+particular kind of signal that was delivered.  If the flag is set,
+returning from a handler resumes the library function.  If the flag is
+clear, returning from a handler makes the function fail.
+See <a href="Interrupted-Primitives.html#Interrupted-Primitives">Interrupted Primitives</a>.
+</p></dd></dl>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Initial-Signal-Actions.html#Initial-Signal-Actions" accesskey="n" rel="next">Initial Signal Actions</a>, Previous: <a href="Sigaction-Function-Example.html#Sigaction-Function-Example" accesskey="p" rel="prev">Sigaction Function Example</a>, Up: <a href="Signal-Actions.html#Signal-Actions" accesskey="u" rel="up">Signal Actions</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

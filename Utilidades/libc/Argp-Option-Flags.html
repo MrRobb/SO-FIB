@@ -1,0 +1,155 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU C Library.
+
+This is
+The GNU C Library Reference Manual, for version
+2.26.
+
+Copyright (C) 1993-2017 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version
+1.3 or any later version published by the Free
+Software Foundation; with the Invariant Sections being "Free Software
+Needs Free Documentation" and "GNU Lesser General Public License",
+the Front-Cover texts being "A GNU Manual", and with the Back-Cover
+Texts as in (a) below.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
+
+(a) The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual.  Buying copies from the FSF
+supports it in developing GNU and promoting software freedom." -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>The GNU C Library: Argp Option Flags</title>
+
+<meta name="description" content="The GNU C Library: Argp Option Flags">
+<meta name="keywords" content="The GNU C Library: Argp Option Flags">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Concept-Index.html#Concept-Index" rel="index" title="Concept Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Argp-Option-Vectors.html#Argp-Option-Vectors" rel="up" title="Argp Option Vectors">
+<link href="Argp-Parser-Functions.html#Argp-Parser-Functions" rel="next" title="Argp Parser Functions">
+<link href="Argp-Option-Vectors.html#Argp-Option-Vectors" rel="prev" title="Argp Option Vectors">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Argp-Option-Flags"></a>
+<div class="header">
+<p>
+Up: <a href="Argp-Option-Vectors.html#Argp-Option-Vectors" accesskey="u" rel="up">Argp Option Vectors</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Flags-for-Argp-Options"></a>
+<h4 class="subsubsection">25.3.4.1 Flags for Argp Options</h4>
+
+<p>The following flags may be or&rsquo;d together in the <code>flags</code> field of a
+<code>struct argp_option</code>.  These flags control various aspects of how
+that option is parsed or displayed in help messages:
+</p>
+
+<dl compact="compact">
+<dt><code>OPTION_ARG_OPTIONAL</code>
+<a name="index-OPTION_005fARG_005fOPTIONAL"></a>
+</dt>
+<dd>
+<p>The argument associated with this option is optional.
+</p>
+</dd>
+<dt><code>OPTION_HIDDEN</code>
+<a name="index-OPTION_005fHIDDEN"></a>
+</dt>
+<dd>
+<p>This option isn&rsquo;t displayed in any help messages.
+</p>
+</dd>
+<dt><code>OPTION_ALIAS</code>
+<a name="index-OPTION_005fALIAS"></a>
+</dt>
+<dd>
+<p>This option is an alias for the closest previous non-alias option.  This
+means that it will be displayed in the same help entry, and will inherit
+fields other than <code>name</code> and <code>key</code> from the option being
+aliased.
+</p>
+
+</dd>
+<dt><code>OPTION_DOC</code>
+<a name="index-OPTION_005fDOC"></a>
+</dt>
+<dd>
+<p>This option isn&rsquo;t actually an option and should be ignored by the actual
+option parser.  It is an arbitrary section of documentation that should
+be displayed in much the same manner as the options.  This is known as a
+<em>documentation option</em>.
+</p>
+<p>If this flag is set, then the option <code>name</code> field is displayed
+unmodified (e.g., no &lsquo;<samp>--</samp>&rsquo; prefix is added) at the left-margin where
+a <em>short</em> option would normally be displayed, and this
+documentation string is left in its usual place.  For purposes of
+sorting, any leading whitespace and punctuation is ignored, unless the
+first non-whitespace character is &lsquo;<samp>-</samp>&rsquo;.  This entry is displayed
+after all options, after <code>OPTION_DOC</code> entries with a leading
+&lsquo;<samp>-</samp>&rsquo;, in the same group.
+</p>
+</dd>
+<dt><code>OPTION_NO_USAGE</code>
+<a name="index-OPTION_005fNO_005fUSAGE"></a>
+</dt>
+<dd>
+<p>This option shouldn&rsquo;t be included in &lsquo;long&rsquo; usage messages, but should
+still be included in other help messages.  This is intended for options
+that are completely documented in an argp&rsquo;s <code>args_doc</code>
+field.  See <a href="Argp-Parsers.html#Argp-Parsers">Argp Parsers</a>.  Including this option in the generic usage
+list would be redundant, and should be avoided.
+</p>
+<p>For instance, if <code>args_doc</code> is <code>&quot;FOO BAR\n-x BLAH&quot;</code>, and the
+&lsquo;<samp>-x</samp>&rsquo; option&rsquo;s purpose is to distinguish these two cases, &lsquo;<samp>-x</samp>&rsquo;
+should probably be marked <code>OPTION_NO_USAGE</code>.
+</p></dd>
+</dl>
+
+<hr>
+<div class="header">
+<p>
+Up: <a href="Argp-Option-Vectors.html#Argp-Option-Vectors" accesskey="u" rel="up">Argp Option Vectors</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Concept-Index.html#Concept-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>
