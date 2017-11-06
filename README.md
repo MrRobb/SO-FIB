@@ -2,7 +2,7 @@
 [![HitCount](http://hits.dwyl.io/mrrobb/SO-FIB.svg)]()
 [![Github Stars](http://githubbadges.com/star.svg?user=mrrobb&repo=SO-FIB&style=flat&color=fff&background=000)](https://github.com/MrRobb/SO-FIB)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
-
+[![GitHub repo size in bytes](https://img.shields.io/github/repo-size/mrrobb/SO-FIB.svg)](https://github.com/MrRobb/SO-FIB)
 
 ### Pull requests are always welcome
 
