@@ -1,0 +1,4 @@
+El fichero punteros.c contiene un ejemplo de manejo de punteros.
+El fichero listaParametros tiene que escribir por su salida la lista de parametros que recibe. El parametro (o argumento 0) es el nombre del ejecutable.
+
+IMPORTANTE: el ejemplo de punteros sirve como repaso de este apartado de programacion en C. Aunque no figure como actividad a realizar en el enunciado del laboratorio, es altamente recomendable practicar con el. 
