@@ -1,0 +1,99 @@
+PREGUNTA 1:
+mkdir S1
+mkdir S2
+mkdir S3
+mkdir S4
+mkdir S5
+
+PREGUNTA 2:
+ls
+opcion: -a
+
+PREGUNTA 3:
+opcion: -l
+campos: 
+1. permissions
+2. number of linked hard links
+3. owner
+4. group
+5. size
+6. modification / creation date
+7. file / directory name
+
+PREGUNTA 4:
+Name
+Size
+Type
+Modified
+Owner
+Group
+Permissions
+
+PREGUNTA 5:
+rm -rf S2
+ls -la
+mkdir S2
+
+PREGUNTA 6:
+Cat es un concatenador. Está diseñado para coger diferents inputs e imprimirlas todas en stdout de una sola vez. Es basicamente una pipe de input a output. Se ejecuta y sale automáticamente.
+
+Less es una aplicacion para visualizar texto. Está diseñada para coger una sola input, dividirla en páginas que quepan en tu pantalla y puedes moverte hacer adelante y atrás por ellas. Mantiene el contenido de la input en memoria hasta que tú sales del programa manualmente.
+
+PREGUNTA 7:
+La opción -i del comando cp significa "interactive" y hace un prompt en caso de que se vaya a sobreescribir un archivo.
+
+comando:
+alias cp="cp -i"
+
+PREGUNTA 8:
+
+Lo mismo que la pregunta 7 para la opción -i del comando mv y el comando rm.
+
+comando:
+alias rm="rm -i"
+
+PREGUNTA 9:
+chmod 222 test
+
+cat: test: Permission denied
+
+chmod 444 test
+
+SI, al borrarlo salta el prompt:
+rm: remove write-protected regular file 'test'? 
+haces:
+yes
+y se borra.
+
+PREGUNTA 10:
+PATH: Which directories to search for executables
+HOME: Home Directory
+PWD: Present Working Directory
+
+PREGUNTA 11:
+Los dos puntos, es decir, ':'.
+
+PREGUNTA 12:
+Para definir:
+export MY_NAME="Roberto"
+
+Para comprobar TODAS las variables de entorno he usado:
+env
+
+Para comprobar la variable MY_NAME he usado:
+echo $MY_NAME
+
+PREGUNTA 13:
+Se ha ejecutado el falso ls.
+
+./ls
+
+PREGUNTA 14:
+Sí, implica que buscará allí ejecutables. Por lo tanto encontrará primero el ls falso y lo ejecutará.
+
+PREGUNTA 15:
+En el caso ".:$PATH": Se ha ejecutado el falso ls.
+En el caso "$PATH:.": Se ha ejecutado el verdadero ls.
+
+PREGUNTA 16:
+'>' hace un append, es decir, añade la salida al final del archivo que le digas. En cambio, '>>' sobreescribe el archivo con la salida.
