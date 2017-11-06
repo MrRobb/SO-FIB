@@ -1,0 +1,129 @@
+Las direcciones asignadas son las que aparecen aquí a la izquierda, de todas las instrucciones del programa:
+       |
+       |
+       V
+                 U atoi@@GLIBC_2.2.5
+0000000000601058 B __bss_start
+0000000000601058 b completed.7585
+0000000000601048 D __data_start
+0000000000601048 W data_start
+0000000000400580 t deregister_tm_clones
+0000000000400600 t __do_global_dtors_aux
+0000000000600e18 t __do_global_dtors_aux_fini_array_entry
+0000000000601050 D __dso_handle
+0000000000600e28 d _DYNAMIC
+0000000000601058 D _edata
+0000000000601060 B _end
+                 U exit@@GLIBC_2.2.5
+00000000004007e4 T _fini
+0000000000400620 t frame_dummy
+0000000000600e10 t __frame_dummy_init_array_entry
+0000000000400970 r __FRAME_END__
+0000000000601000 d _GLOBAL_OFFSET_TABLE_
+                 w __gmon_start__
+0000000000400820 r __GNU_EH_FRAME_HDR
+00000000004004a8 T _init
+0000000000600e18 t __init_array_end
+0000000000600e10 t __init_array_start
+00000000004007f0 R _IO_stdin_used
+                 w _ITM_deregisterTMCloneTable
+                 w _ITM_registerTMCloneTable
+000000000060105c B j
+0000000000600e20 d __JCR_END__
+0000000000600e20 d __JCR_LIST__
+                 w _Jv_RegisterClasses
+00000000004007e0 T __libc_csu_fini
+0000000000400770 T __libc_csu_init
+                 U __libc_start_main@@GLIBC_2.2.5
+0000000000400665 T main
+00000000004005c0 t register_tm_clones
+                 U sprintf@@GLIBC_2.2.5
+0000000000400550 T _start
+                 U strlen@@GLIBC_2.2.5
+0000000000400646 T suma
+0000000000601058 D __TMC_END__
+                 U write@@GLIBC_2.2.5
+
+Los tipos de símbolos que nos muestra son:
+
+U -> The symbol is undefined.
+
+B / b -> The symbol is in the uninitialized data section (known as BSS).
+
+D / d -> The symbol is in the uninitialized data section (known as BSS).
+
+W / w -> The symbol is a weak symbol that has not been specifically tagged as a weak object symbol.  When a weak defined symbol is linked with a normal defined symbol, the normal defined symbol is used with no error.  When a weak undefined symbol is linked and the symbol is not defined, the value of the symbol is determined in a system-specific manner without error.  On some systems, uppercase indicates that a default value has been specified.
+
+T / t -> The symbol is in the text (code) section.
+
+R / r -> The symbol is in a read only data section.
+
+Es posible saber la dirección de la variable j ya que es una variable global, sin embargo, no es posible saber la dirección de memoria de i ya que es una variable local y se asignará cuando se ejecute el programa.
+
+La j está en el BSS y la i en un espacio de memoria reservado para la memoria dinámica.
+
+La dirección asignada de la función suma está en la sección de código.
+
+
+El comando usado es el siguiente:
+gcc -o mem1_previo_v2 mem1_previo_v2.c -static
+
+mem2_previo:
+    10:
+
+        00400000-004ca000 r-xp 00000000 08:05 468238   /home/alumne/Desktop/S5/previo/mem2_previo
+        006c9000-006cc000 rw-p 000c9000 08:05 468238   /home/alumne/Desktop/S5/previo/mem2_previo
+        006cc000-006f6000 rw-p 00000000 00:00 0 
+        01149000-0116c000 rw-p 00000000 00:00 0                       [heap]
+        7ffdb4c16000-7ffdb4c37000 rw-p 00000000 00:00 0               [stack]
+        7ffdb4ce4000-7ffdb4ce6000 r--p 00000000 00:00 0               [vvar]
+        7ffdb4ce6000-7ffdb4ce8000 r-xp 00000000 00:00 0               [vdso]
+        ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0       [vsyscall]
+
+        HEAP -> 0116c000 - 01149000 = 0x00023000
+        DATOS -> 
+
+    40.000:
+
+        00400000-004ca000 r-xp 00000000 08:05 468238    /home/alumne/Desktop/S5/previo/mem2_previo
+        006c9000-006cc000 rw-p 000c9000 08:05 468238    /home/alumne/Desktop/S5/previo/mem2_previo
+        006cc000-006f6000 rw-p 00000000 00:00 0 
+        01c25000-01c48000 rw-p 00000000 00:00 0                       [heap]
+        7fffe6160000-7fffe6181000 rw-p 00000000 00:00 0               [stack]
+        7fffe618e000-7fffe6190000 r--p 00000000 00:00 0               [vvar]
+        7fffe6190000-7fffe6192000 r-xp 00000000 00:00 0               [vdso]
+        ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0       [vsyscall]
+
+        HEAP -> 01c48000 - 01c25000 = 0x00023000
+        DATOS -> 
+
+mem2_previo_v2:
+    10:
+
+        00400000-004ca000 r-xp 00000000 08:05 468253    /home/alumne/Desktop/S5/previo/mem2_previo_v2
+        006c9000-006cc000 rw-p 000c9000 08:05 468253    /home/alumne/Desktop/S5/previo/mem2_previo_v2
+        006cc000-006ce000 rw-p 00000000 00:00 0 
+        01eb4000-01ed8000 rw-p 00000000 00:00 0                       [heap]
+        7ffc56ee9000-7ffc56f0a000 rw-p 00000000 00:00 0               [stack]
+        7ffc56fbb000-7ffc56fbd000 r--p 00000000 00:00 0               [vvar]
+        7ffc56fbd000-7ffc56fbf000 r-xp 00000000 00:00 0               [vdso]
+        ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0       [vsyscall]
+
+        HEAP -> 01ed8000 - 01eb4000 = 0x24000
+        DATOS ->
+
+    40.000:
+
+        00400000-004ca000 r-xp 00000000 08:05 468253    /home/alumne/Desktop/S5/previo/mem2_previo_v2
+        006c9000-006cc000 rw-p 000c9000 08:05 468253    /home/alumne/Desktop/S5/previo/mem2_previo_v2
+        006cc000-006ce000 rw-p 00000000 00:00 0 
+        00d45000-00d90000 rw-p 00000000 00:00 0                       [heap]
+        7ffe12da7000-7ffe12dc8000 rw-p 00000000 00:00 0               [stack]
+        7ffe12ded000-7ffe12def000 r--p 00000000 00:00 0               [vvar]
+        7ffe12def000-7ffe12df1000 r-xp 00000000 00:00 0               [vdso]
+        ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0       [vsyscall]
+
+        HEAP -> 00d90000 - 00d45000 = 0x4B000
+        DATOS -> 
+
+El programa con mem_previo_v2 como tiene reserva de memoria dinamica tiene unos valores diferentes en el heap mientras que el primero mantiene un valor constante debido a que la reserva de espacio es siempre la misma.

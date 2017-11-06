@@ -1,0 +1,13 @@
+PREGUNTA 28:
+El padre termina el proceso porque la acción por defecto del SIGALRM es terminar.
+
+PREGUNTA 29:
+Cuando hacemos un execlp se estable la tabla de tratamiento de signals por defecto.
+
+PREGUNTA 30:
+Es concurrente ya que se crean todos los hijos y luego, se hacen todos los waitpid a la vez.
+
+PREGUNTA 31:
+No, no puede, porque un proceso sólo puede enviar signals a procesos creados por el mismo usuario y grupo.
+bash: kill: (7453) - Operation not permitted
+

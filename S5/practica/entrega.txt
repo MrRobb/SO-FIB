@@ -1,0 +1,117 @@
+34.
+
+Aparecen las variables globales, es decir, el "globalArray".
+
+0000000000601080 B globalArray
+
+Está en la dirección de memoria 0000000000601080 y se encuentra dentro de la región de memoria de la BSS.
+
+
+35.
+
+El número de variables que salen cuando compilamos con librerías estáticas, comparado con las que salen cuando compilamos con librerías dinámicas es mucho mayor. Puesto que también almacena dichas librerías.
+
+La cantidad de código en assembler también es mucho mayor, por la misma razón.
+
+El tamaño de los archivos es muy diferente:
+	mem1_dynamic -> 8896 bytes
+	mem1_static -> 912888 bytes
+
+Como he dicho antes: las salidas (nm y objdump) del ejecutable compilado con librerías estáticas es mucho mayor. Debido a que almacena el código de dichas librerías en su interior.
+
+
+36.
+
+DINÁMICA
+INICIAL - FINAL 													ETIQUETA
+00400000-00401000 r-xp 00000000 08:05 450622      /home/alumne/Desktop/S5/practica/mem1_dynamic
+00600000-00601000 r--p 00000000 08:05 450622      /home/alumne/Desktop/S5/practica/mem1_dynamic
+00601000-00602000 rw-p 00001000 08:05 450622      /home/alumne/Desktop/S5/practica/mem1_dynamic
+00602000-00603000 rw-p 00000000 00:00 0 
+01c59000-01c7b000 rw-p 00000000 00:00 0                                  [heap]
+7f50d9758000-7f50d9918000 r-xp 00000000 08:05 78815                      /lib/x86_64-linux-gnu/libc-2.23.so
+7f50d9918000-7f50d9b18000 ---p 001c0000 08:05 78815                      /lib/x86_64-linux-gnu/libc-2.23.so
+7f50d9b18000-7f50d9b1c000 r--p 001c0000 08:05 78815                      /lib/x86_64-linux-gnu/libc-2.23.so
+7f50d9b1c000-7f50d9b1e000 rw-p 001c4000 08:05 78815                      /lib/x86_64-linux-gnu/libc-2.23.so
+7f50d9b1e000-7f50d9b22000 rw-p 00000000 00:00 0 
+7f50d9b22000-7f50d9b48000 r-xp 00000000 08:05 78793                      /lib/x86_64-linux-gnu/ld-2.23.so
+7f50d9d2a000-7f50d9d2d000 rw-p 00000000 00:00 0 
+7f50d9d45000-7f50d9d47000 rw-p 00000000 00:00 0 
+7f50d9d47000-7f50d9d48000 r--p 00025000 08:05 78793                      /lib/x86_64-linux-gnu/ld-2.23.so
+7f50d9d48000-7f50d9d49000 rw-p 00026000 08:05 78793                      /lib/x86_64-linux-gnu/ld-2.23.so
+7f50d9d49000-7f50d9d4a000 rw-p 00000000 00:00 0 
+7ffd8f66f000-7ffd8f690000 rw-p 00000000 00:00 0                          [stack]
+7ffd8f6a8000-7ffd8f6aa000 r--p 00000000 00:00 0                          [vvar]
+7ffd8f6aa000-7ffd8f6ac000 r-xp 00000000 00:00 0                          [vdso]
+ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0                  [vsyscall]
+
+ESTÁTICA
+INICIAL - FINAL 													ETIQUETA
+00400000-004ca000 r-xp 00000000 08:05 450635    /home/alumne/Desktop/S5/practica/mem1_static
+006c9000-006cc000 rw-p 000c9000 08:05 450635    /home/alumne/Desktop/S5/practica/mem1_static
+006cc000-006cf000 rw-p 00000000 00:00 0 
+00b6c000-00b8f000 rw-p 00000000 00:00 0                   [heap]
+7ffdf27fc000-7ffdf281d000 rw-p 00000000 00:00 0           [stack]
+7ffdf2965000-7ffdf2967000 r--p 00000000 00:00 0           [vvar]
+7ffdf2967000-7ffdf2969000 r-xp 00000000 00:00 0           [vdso]
+ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0   [vsyscall]
+
+
+La diferencia entre ambos maps es que el maps del compilado con librerías estáticas no tiene las direcciones de memoria que referencian a las librerías dinámicas dado que las contiene en su interior.
+
+
+37.
+
+El malloc guarda les dades en el heap, ja que fa una gestió avanzada del heap.
+00b6c000-00b8f000 HEAP
+
+38.
+
+	3:
+		n_mallocs: 3
+		inicial: 01f79000
+		final: 01f9b000
+		tamaño: 0x00022000
+
+	5:
+		n_mallocs: 5
+		inicial: 0244d000 
+		final: 0246f000
+		tamaño: 0x00022000
+
+	100:
+		n_mallocs: 100
+		inicial: 018c7000
+		final: 0194c000
+		tamaño: 0x00085000
+
+Cambia su tamaño de entrada entre 3 ó 5 y 100. Dado que como malloc reserva un valor predeterminado de memoria pues no hace ningún sbrk extra al incrementar de 3 a 5. Sin embargo 100 se sale de su previsión y se ve obligado a pedir más espacio de heap.
+
+
+39.
+
+El tamaño del HEAP es de:
+006b4000 - 00693000 = 0x00021000
+Es decir, tiene el mismo tamaño que el inicial dado que se cuando haces free, se marca el espacio de memoria del malloc como libre y se reutiliza en la siguiente iteracion del bucle.
+
+40.
+
+	3:
+		n_mallocs: 3
+		inicial: 0142f000
+		final: 01432000
+		tamaño: 0x00003000
+
+	5:
+		n_mallocs: 5
+		inicial: 006dd000
+		final: 006e2000
+		tamaño: 0x00005000
+
+	100:
+		n_mallocs: 100
+		inicial: 00ac8000
+		final: 00b2c000
+		tamaño: 0x00064000
+
+Cambia el tamaño dado que sbrk aumenta el heap siempre.

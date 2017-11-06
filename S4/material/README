@@ -1,0 +1,18 @@
+COMO COMPILAR
+-------------
+make -f Makefile.eventos
+
+EJEMPLOS CON ALARMAS
+--------------------
+
+ejemplo_alarm1.c: alarm/sigsuspend. El programa se autoprograma un evento tipo alarma al cabo de 5 segundos. La accion por defecto de Linux es acabar el proceso.
+ejemplo_alarm2.c:sigprocmask/sigaction/alarm/sigsuspend. Realizamos una accion cada X segundos. Solo es necesario reprogramar el SIGALRM una vez
+ejemplo_alarm3.c:sigprocmask/sigaction/alarm/sigsuspend. Herencia de tabla de eventos
+ejemplo_alarm4.c:sigprocmask/sigaction/alarm/sigsuspend. La tabla de eventos se hereda pero no los eventos pendientes
+
+EJEMPLO CON SIGCHLD
+-------------------
+ejemplo_waitpid.c: Programa que crea varios hijos y espera a que finalicen mediante un bucle de waitpid's.
+
+ejemplo_waitpid2.c: Programa que crea varios hijos, después ejecuta su propia tarea y después espera a que finalicen sus  hijos mediante un bucle de waitpid's.
+

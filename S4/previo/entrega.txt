@@ -1,0 +1,52 @@
+ALARM 1 -> PREGUNTA 1:
+A los 5 segundos no se imprime nada. En el código pone la línea:
+
+	alarm(10);
+
+cosa que creo que no está bien ya que al principio del programa se comenta que es un temporizador de 5 segundos. Por lo tanto, debería ser "alarm(5);". Sin embargo, a los 10 segundos salta un mensaje en pantalla que pone: Alarm clock.
+
+
+ALARM 1 -> PREGUNTA 2:
+No. No termina de ejecutarse el programa. Ya que se finaliza. No se recibe el mensaje de la alarma de reloj. Se recibe el siguiente mensaje en terminal: "[1]+ Killed ./alarm1"
+
+
+ALARM 1 -> PREGUNTA 3:
+El proceso padre, es decir, el proceso que muta al ejecutable que se indique. Puesto que en el pseudo código de la shell en ningún momento aparece nada que imprima.
+
+La shell recoge el estado de finalización del proceso que ejecuta alarm1 con la función waitpid(pid_h, &status, 0), con la cual quedará escrito en la variable status. Esta recogerá el valor del "exit(valor)".
+
+
+ALARM 1 -> PREGUNTA 4:
+Sí, es necesario, para indicarle a la shell un error. Se ejecuta en caso de que se salga del sigsuspend por cualquier error (debido a que alarm termina el proceso directamente y nunca saldría de sigsuspend, solo en caso de error).
+
+
+ALARM 2 -> PREGUNTA 1:
+No, el proceso escribe el mensaje de los 10 segundos aunque no han pasado 10 segundos. No ha funcionado.
+
+
+ALARM 2 -> PREGUNTA 2:
+No, se pueden modificar todos los tratamientos para cualquier signal menos SIGKILL y SIGSTOP.
+
+
+ALARM 2 -> PREGUNTA 3:
+Cambiando la linea de codigo que pone:
+
+	alarm(10);
+
+por:
+
+	if (alarm(10) > 0) error_y_exit("alarm", 1);
+
+
+ALARM 3 -> PREGUNTA 1:
+Los dos reciben su propio signal. Lo he comprabado lanzando un signal (kill -ALRM pid) a cada uno de ellos y con ambos sigue funcionando.
+
+
+ALARM 4 -> PREGUNTA 1:
+Solamente el proceso padre programa un SIGALRM. Pero ambos se quedan esperando uno. Pero solo el padre (quien lo ha programado) lo recibe y por lo tanto es el único que imprime la salida.
+
+Lo he comprobado mandando un SIGALRM al proceso hijo y entonces empieza a funcionar el contador. En caso contrario el hijo no deja de esperar en el sigsuspend.
+
+
+EJEMPLO_WAITPID -> PREGUNTA 1:
+Hecho.
