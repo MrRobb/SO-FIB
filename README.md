@@ -22,7 +22,6 @@
     - Puedes encontrar muchas funciones de C ya implementadas (entre ellas atoi, strcmp ...)
     - Tendrás que buscar en el repo (¯\\_(ツ)_/¯)
 
-## Para
 ### Pull requests are always welcome
 
 We are always thrilled to receive pull requests, and do our best to
