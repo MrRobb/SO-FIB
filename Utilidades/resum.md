@@ -43,7 +43,8 @@ Si quieres sincronizar el padre con la muerte del hijo haces que el padre espere
     int status = 0;
     waitpid(pid, &status, 0);
 
-        // Si quieres más info sobre waitpid mira el archivo comandos.txt que hay en la carpeta de Utilidades (SESIÓN 4)
+        // Si quieres más info sobre waitpid mira el archivo comandos.txt
+        // que hay en la carpeta de Utilidades (SESIÓN 4)
 ```
 
 Mientras el padre no haga waitpid no se libera el espacio que ocupa el PCB del hijo muerto (ESTADO ZOMBIE). Si el padre muere sin liberar los PCB's de sus hijos el sistema los libera (proceso init).
