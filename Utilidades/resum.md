@@ -716,7 +716,7 @@ Cuando la memoria está libre pero no se puede usar para un proceso, tenemos un 
     - Contiene info de traducción de las páginas más activas
     - Cuando cambia la MMU se tiene que invalidar / actualizar la TLB
 
-#### PROBLEMAS
+#### Problemas
 
 El problema de las tablas de páginas es su tamaño ya que están guardadas en memoria física.
 Tiene que ser una **potencia de 2**. Normalmente **4Kb**. A medida que crece el espacio lógico de direcciones, se añaden secciones a la tabla de páginas.
@@ -725,7 +725,7 @@ Tiene que ser una **potencia de 2**. Normalmente **4Kb**. A medida que crece el 
 
 ### Segmentacion
 
-![Espacio ocupado](https://github.com/MrRobb/SO-FIB/blob/master/Utilidades/img%20resum/img9.png?raw=true)
+![Segmentacion](https://github.com/MrRobb/SO-FIB/blob/master/Utilidades/img%20resum/img9.png?raw=true)
 
 #### Esquema
 
@@ -742,7 +742,34 @@ Para cada segmento:
     - ```worst fit``` (el que más espacio extra tenga)
 3. Selecciona la **cantidad de memoria necesaria** para el segmento y el **resto** continúa en la lista de **particiones libres**
 
-#### PROBLEMAS
+#### Problemas
 
 Puede haber fragmentación externa.
 No todos los trozos libres son igual de buenos.
+
+### Esquemas mixtos
+
+#### Segmentación paginada
+
+![Segmentacion paginada](https://github.com/MrRobb/SO-FIB/blob/master/Utilidades/img%20resum/img10.png?raw=true)
+
+Espacio lógico dividido en segmentos.
+Segmentos dividios en páginas.
+
+```c
+size_segmento = num * size_pagina
+```
+
+### Compartición de memoria
+
+- A nivel de página o segmento:
+    - **Librerías** compartidas (implícito)
+    - **Memoria compartida** como mecanismo de comunicación
+
+# OPTIMIZACIONES
+
+## COW
+
+## Memoria virtual
+
+## Prefetch
