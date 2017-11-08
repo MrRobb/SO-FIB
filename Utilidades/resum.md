@@ -549,7 +549,7 @@ La mayoría de sistemas POSIX usan ELF
 2. Copiar el binario
 3. Actualizar MMU
 
-## Optimizaciones
+### Optimizaciones
 
 - **Carga bajo demanda**
     - **Una rutina no se carga hasta que se llama.**
@@ -562,7 +562,7 @@ La mayoría de sistemas POSIX usan ELF
     - Facilita la actualización de librerías (sin recompilar)
     - **El binario contiene un stub** un tipo de rutina que hace puente a la que contiene el código realmente.
 
-## Liberar / Reservar memoria
+### Liberar / Reservar memoria
 
 memoria dinámica se almacena en el heap y puedes ajustar su medida a lo que necesites.
 
@@ -582,7 +582,7 @@ Para ello usamos:
 - **malloc**: hace lo mismo que el sbrk pero no siempre aumenta el heap porque no aumenta el tamaño que tu le digas, aumenta más tamaño por si luego necesitas más espacio.
 - **free**: no mezclar sbrk's con malloc / free
 
-## Errores comunes
+### Errores comunes
 
 ```c
 // ...
@@ -614,3 +614,55 @@ sprintf(buffer, "%d", *x);
 ```
 
 Aquí tienes dos punteros que apuntan al mismo sitio por lo tanto si liberas la memoria de uno, el otro apuntará a una posición de memoria no válida y producirá error.
+
+### Fragmentación
+
+Cuando la memoria está libre pero no se puede usar para un proceso, tenemos un caso de fragmentación.
+
+- **Fragmentación interna**: memoria reservada para un proceso pero no la usa.
+- **Fragmentación externa**: memoria libre pero no puede ser asignada porque no es contigua. Se puede evitar compactando la memoria sin dejar huecos (costoso en tiempo).
+
+## Asignación
+
+- **Contigua** -> todo el proceso ocupa una partición que **se selecciona en el momento de carga**.
+- **No Contigua** -> aumenta la flexibilidad, la granularidad de la gestión de memoria y la complejidad del SO y la MMU.
+- **Paginación**: particiones fijas
+- **Segmentación**: particiones variables
+
+### Paginación
+
+![Paginación](https://github.com/MrRobb/SO-FIB/blob/master/Utilidades/img%20resum/img5.png?raw=true)
+
+#### Esquema
+
+- Espacio de @ lógicas **dividido en particiones de tamaño fijo**.
+- **tamaño de las páginas -> marco**
+- **Asignar** cada página del proceso en su marco libre -> cuando acaba el proceso **devolver** los marcos asignados a la lista de libres.
+
+
+- Facilita la **carga bajo demanda**
+- Permite **protección a nivel de página**
+- **Compartición de memoria** entre procesos
+- Una página pertenece a una región de memoria ```(código / datos / heap / pila)```
+
+#### MMU
+
+- Contiene la **tabla de páginas de cada proceso**
+    - Validez, permisos de accesos, ...
+    - Una entrada por página
+- Suele guardarse en memoria
+- El SO sabe la @ base de la tabla siempre (PCB)
+- TLB: Caché de acceso más rápido
+    - Contiene info de traducción de las páginas más activas
+    - Cuando cambia la MMU se tiene que invalidar / actualizar la TLB
+
+#### PROBLEMAS
+
+El problema de las tablas de páginas es su tamaño ya que están guardadas en memoria física.
+Tiene que ser una **potencia de 2**. Normalmente **4Kb**. A medida que crece el espacio lógico de direcciones, se añaden secciones a la tabla de páginas.
+
+![Espacio ocupado](https://github.com/MrRobb/SO-FIB/blob/master/Utilidades/img%20resum/img7.png?raw=true)
+
+### Segmentacion
+
+- Se divide el espacio lógico teniendo en cuenta el tipo de contenido.
