@@ -57,10 +57,14 @@ Procesos
 
 Gestión de procesos
 ===================
-###Creación:
+### Creación:
+
 **fork( )**: crea un proceso hijo
+
 ![Árbol](https://i.stack.imgur.com/jfw5y.png)
+
 **execlp( )**: cambia espacio de direcciones de un proceso (no contexto)
+
 ![execlp](https://indradhanush.github.io/images/shell-part-2/execvp.jpg)
 
 Cuando un proceso crea a otro, todo se organiza en estructura de árbol.
