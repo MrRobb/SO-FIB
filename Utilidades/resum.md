@@ -106,7 +106,7 @@ pid_t pid = fork();
 int status = 0;
 waitpid(pid, &status, 0);
 
-// Si quieres más info sobre waitpid mira el archivo comandos.txt
+// Si quieres más info sobre waitpid mira el archivo [comandos.pdf](https://github.com/MrRobb/SO-FIB/blob/master/Utilidades/comandos.pdf)
 // que hay en la carpeta de Utilidades (SESIÓN 4)
 ```
 
@@ -116,7 +116,7 @@ Mientras el padre no haga waitpid no se libera el espacio que ocupa el PCB del h
 
 Si queremos mutar a otro programa, se usa el comando execlp.
 
-> Si quieres más info sobre execlp mira el archivo comandos.txt que hay en la carpeta de Utilidades
+> Si quieres más info sobre execlp mira el archivo [comandos.pdf](https://github.com/MrRobb/SO-FIB/blob/master/Utilidades/comandos.pdf) que hay en la carpeta de Utilidades
 
 Execlp cambia todo el contenido del espacio, pero se mantiene la identidad del proceso.
 
@@ -287,11 +287,13 @@ Cada proceso tiene un tratamiento asociado a cada signal, pero puedes modificar 
 
 ```man signal```
 
+> Si quieres más info sobre estas funciones mira el archivo [comandos.pdf](https://github.com/MrRobb/SO-FIB/blob/master/Utilidades/comandos.pdf) que hay en la carpeta de Utilidades
+
 #### sigaction
 
 ```c
 // Proceso A
-int pid = 5555;         // cualquier PID
+int pid = 5555;         // cualquier PID (pid del proceso B)
 int signal = SIGUSR1;   // cualquier SIGNAL
 kill(pid, signal);      // Le envia el Signal al proceso con pid PID
 ```
@@ -354,17 +356,44 @@ Para aplicar una máscara a mi proceso, usamos la función **sigprocmask**.
 - **SIG_UNBLOCK** -> desbloquea los signals de la máscara que le pases.
 - **SIG_SETMASK** -> intercambia las máscaras.
 
-> Para más información mira el archivo comandos.txt en la carpeta de Utilidades
+> Para más información mira el archivo [comandos.pdf](https://github.com/MrRobb/SO-FIB/blob/master/Utilidades/comandos.pdf) en la carpeta de Utilidades
 
 Para esperar a que llegue un signal puedes usar la función **sigsuspend**, que bloquea el proceso hasta que llega un signal que no es ignorado. Al salir del sigsuspend se restaura la máscara anterior.
 
-> Para más información mira el archivo comandos.txt en la carpeta de Utilidades
+> Para más información mira el archivo [comandos.pdf](https://github.com/MrRobb/SO-FIB/blob/master/Utilidades/comandos.pdf) en la carpeta de Utilidades
 
 Para sincronizar procesos se puede hacer de dos formas:
 - **Espera activa** -> si vas a tardar poco
     - while(!recibido)
 - **Bloqueo** -> si vas a tardar bastante
     - sigsuspend
+
+```c
+void f_alarma() {
+    alarma = 1;
+}
+
+int main() {
+    // Configuramos
+    configurar_esperar_alarma();
+
+    // Declaramos
+    struct sigaction trat;
+    sigset_t mask;
+
+    // Configuramos el sigaction
+    sigemptyset(&mask);
+    trat.sa_mask = mask;
+    trat.sa_handler = f_alarma;
+
+    // Reprogramamos el signal
+    sigaction(SIGALRM, &trat, NULL);
+
+    // Esperamos a la alarma (signal)
+    alarm(2);
+    esperar_alarma();
+}
+```
 
 #### Espera activa
 ```c
@@ -373,8 +402,7 @@ void configurar_esperar_alarma() {
 }
 
 void esperar_alarma() {
-    while (alarm != 1);
-    alarma = 0;
+    while (alarma != 1);
 }
 ```
 
@@ -770,6 +798,102 @@ size_segmento = num * size_pagina
 
 ## COW
 
+**Copy On Write**:
+- **Si no se accede** a una zona nueva -> **no necesitamos reservarla**
+- **Si no modificamos** una zona que es una copia (cualquier valor después de un fork) -> **no necesitamos duplicar**
+
+#### Fork
+
+Mientras en el fork no se produzca ningún cambio (no escribamos ninguna variable), se usa el mismo código, datos...
+
+**Se van reservando / copiando páginas de memoria a medida que se necesitan.**
+
+#### Cómo?
+
+El kernel asume que no hace falta reservar / copiar la memoria, pero cuando accedemos / modificamos sabe que debe reservar / copiar ya que:
+- En la **estructura de datos del kernel**: se guardan los **permisos reales**
+- En la **MMU**: se marcan las regiones con permiso de **solo lectura**
+- En la **MMU**: pone como **direcciones de lectura** las direcciones físicas asociadas (en el fork pondría que para **leer** acceda al código / datos... del padre, en el caso de reserva de memoria dinámica usa las **páginas comodín**)
+
+Cuando intentas modificar la MMU lanza una excepción y el SO compara sus estructuras con las de la MMU y hace la gestion de la reserva real y reinicia el acceso.
+
 ## Memoria virtual
 
+- Intenta reducir la cantidad de memoria física asignada a un proceso.
+- **Reserva memoria física para la instrucción actual y los datos que esa instrucción referencia**
+
+#### Ideas
+
+1. Sólo tener **en memoria el proceso activo**:
+    1. **Si el proceso necesita más memoria** -> hacer un **swap out** (sacar procesos de memoria)
+    2. Tener un dispositivo de **almacenaje secundario (backing storage)** donde se guarden los procesos (con más capacidad que la memoria física)
+    3. **Antes de ejecutar** un proceso hay que **cargarlo en memoria** -> Ralentiza la ejecución
+2. Evitar expulsar de memoria procesos enteros
+
+#### Reemplazos
+
+**Reemplazo de memoria** -> el SO necesita liberar marcos
+    1. **MMU**: elimina la traducción de la página víctima
+    2. **Guarda** el contenido de la página víctima en el **área de swap**.
+    3. **Asigna el espacio (página) que deja libre** la página víctima a la página que necesita estar en memoria
+
+Cuando se intenta acceder a una página que está en el área de swap -> se produce un **fallo de página** de la MMU.
+
+**Mover de SWAP -> Memoria Física**: SO necesita:
+    1. mira que el acceso sea **válido**
+    2. **Asigna un marco libre** para la página **(reemplaza si es necesario)**
+    3. **Localiza el área de swap** del contenido
+    4. La **escribe** en el marco
+    5. **Actualiza la MMU**
+
+![Acceso a memoria](https://github.com/MrRobb/SO-FIB/blob/master/Utilidades/img%20resum/img11.png?raw=true)
+
+#### Problemas
+
+- La suma de los espacios lógicos de los procesos puede ser más grande que la memoria física
+- Acceder a una página no residente es más lento que acceder a una página residente
+    - Porque tiene que hacer la excepción + cargar la página
+    - Es importante minimizar el número de fallos de página
+
+Para minimizar el número de fallos se intenta seleccionar "páginas víctima" que ya no se vayan a usar o que tarden más tiempo en necesitarse. (Ejemplo: Least Recently Used)
+
+Se intenta que siempre haya un marco libre.
+
+**THRASHING**
+- Invierte más tiempo haciendo el intercambio de memoria que avanzando en la ejecución
+- No consigue mantener en memoria la cantidad mínima de página para continuar la ejecución
+- **Detección**: controlar la tasa de fallos de página por proceso
+- **Tratamiento**: Swap out
+
 ## Prefetch
+
+Queremos **minimizar el número de fallos** de páginas -> **Anticipamos** laas páginas que va a necesitar el proceso y las **cargamos**.
+
+**Parámetros:**
+- Distancia: con qué antelación hay que cargar las páginas
+- Número de páginas a cargar
+
+**Algoritmos:**
+- Secuencial
+- Strided
+
+## Resumen (Linux sobre Pentium)
+
+- **exec** -> hace la carga de un nuevo programa
+- **fork** -> copia del padre con COW e inicializa la Tabla de Páginas del hijo
+- **Planificación** -> se actualiza la tabla de páginas en la MMU en el cambio de contexto y se invalida la TLB
+- **exit** -> elimina la tabla de páginas del proceso y libera los marcos.
+- **Segmentación Paginada**
+    - Tabla de páginas multinivel (2 niveles)
+        - Una por proceso, guardadas en memoria y la CPU contiene la @ base.
+    - Algoritmo de reemplazo:
+        - Aproximación de Least Recently Used
+        - Se ejecuta cada cierto tiempo y cuando el número de marcos libres es menor a un umbral
+- **COW** a nivel de página
+- **Carga bajo demanda**
+- **Soporte para librerías compartidas**
+- **Prefetch simple (secuencial)**
+
+## Jerarquía de almacenamiento
+
+![Jerarquia](https://github.com/MrRobb/SO-FIB/blob/master/Utilidades/img%20resum/img12.png?raw=true)
