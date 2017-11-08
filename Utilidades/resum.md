@@ -509,12 +509,12 @@ SO -> gestiona las excepciones de la MMU
 
 #### Protección
 
-- @lógicas inválidas
-- @lógicas válidas con acceso incorrecto (escribir en zona de lectura)
-- @lógicas válidas con acceso incorrecto porque el SO hace alguna optimización
+- **@lógicas inválidas**
+- @lógicas válidas con **acceso incorrecto** (escribir en zona de lectura)
+- @lógicas válidas con acceso incorrecto porque **el SO hace alguna optimización**
     - COW
 
-En cualquiera de estos casos, la MMU manda una excepción al SO
+En cualquiera de estos casos, la **MMU manda una excepción al SO**
 
 ## SERVICIOS DEL SO
 
@@ -523,10 +523,23 @@ En cualquiera de estos casos, la MMU manda una excepción al SO
 **Ejecutable DISCO -> Memoria Física**
 
 SO:
-1. **Lee** el ejecutable
+1. **Lee el ejecutable**
 2. **Prepara esquema** del proceso en memoria lógica
     1. Estructuras de datos
     2. Inicializa la MMU
 3. Lee secciones del programa
-4. Las escribe en memoria
-5. Carga el PC con el inicio del programa
+4. Las **escribe en memoria**
+5. **Carga el PC** con el inicio del programa
+
+### Formato ejecutable
+
+La mayoría de sistemas POSIX usan ELF
+
+![ELF](https://github.com/MrRobb/SO-FIB/blob/master/Utilidades/img%20resum/img2.png?raw=true)
+
+> Para verlo puedes usar ```objdump -h ejecutable```
+
+## Optimizaciones
+
+- **Carga bajo demanda**
+- **Librerías compartidas** y **enlace dinámico**
