@@ -29,10 +29,15 @@ Necesitan que entren parámetros y salgan unos valores. (write -> stdOut)
 
 Procesos
 ===================
+
 ### Conceptos básicos
+
 **Proceso:** representación del S.O. de un programa en ejecución. Este es nuevo cada vez que ejecutamos.
+
 **Programa ejecutándose:**  tiene código, pila y datos, inicializa los reg de la CPU, da acceso a dispositivos (para el Kernel).
+
 **PCB (process control bank): ** gestiona la información de cada proceso. La PCB contiene 3 partes:
+
 > **Espacio de direcciones:**
 > **1.** Código, pila y datos
 > **Contexto:**
