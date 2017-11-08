@@ -462,8 +462,8 @@ La planificación debe ser muy rápida ya que se ejecuta muchas veces por segund
 
 **Un proceso en RUN no puede continuar (necesita datos de E/S, el proceso termina, ...) -> La planificación escoge otro proceso -> Eventos no preemptivos** (preemptivo = puede quitar la CPU al proceso, sin que el proceso pueda evitarlo).
 
-Si le puedo quitar la CPU a un proceso -> EVENTOS PREEMPTIVOS
-Si es el proceso el que voluntariamente deja la CPU -> EVENTOS NO PREEMPTIVOS
+> - Si le puedo quitar la CPU a un proceso -> EVENTOS PREEMPTIVOS
+> - Si es el proceso el que voluntariamente deja la CPU -> EVENTOS NO PREEMPTIVOS
 
 ### Tipos de proceso
 
