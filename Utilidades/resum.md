@@ -25,7 +25,8 @@ UNIX --> padre e hijo se ejecutan concurrentemente (a la vez), se duplica el có
 ### Hereda
 
 - Código, datos, pila
-- Programación de signals
+- **Programación de signals**
+- **Máscara de signals**
 - Dispositivos virtuales (?)
 - userID y groupID
 - variables de entorno
@@ -34,7 +35,7 @@ UNIX --> padre e hijo se ejecutan concurrentemente (a la vez), se duplica el có
 
 - PID, PPID
 - Contadores internos
-- Alarmas y signals pendientes
+- **Alarmas y signals pendientes**
 
 ### Muerte
 
@@ -186,3 +187,274 @@ int main(int argc, char const *argv[]) {
     return 0;
 }
 ```
+
+# SIGNALS
+
+Por qué?
+- Compartir información
+- Acelerar la computación que realizan
+- Modularidad
+
+En linux se usan: signals, pipes y FIFOS.
+
+Los signals son notificaciones que informan a un proceso de que ha sucedido un evento.
+
+Evento -> Signal asociado
+
+Están predefinidos por el kernel menos el ```SIGUSR1``` y el ```SIGUSR2```.
+
+Cada proceso tiene un tratamiento asociado a cada signal, pero puedes modificar el tratamiento de cada signal, menos del SIGKILL y SIGSTOP.
+
+|  SIGNAL 	| TRATAMIENTO (por defecto) 	|                     DESCRIPCIÓN                    	|
+|:-------:	|:-------------------------:	|:--------------------------------------------------:	|
+| SIGCHLD 	|          Ignorar          	| El proceso hijo ha muerto o ha sido parado         	|
+| SIGCONT 	|             -             	| Continua si estaba parado                          	|
+| SIGSTOP 	|            Stop           	| Para el proceso                                    	|
+| SIGSEGV 	|            Core           	| Referencia inválida a memoria (Segmentation Fault) 	|
+| SIGINT  	|          Terminar         	| Ctrl + C                                           	|
+| SIGALRM 	|          Terminar         	| La alarma ha sonado                                	|
+| SIGKILL 	|          Terminar         	| Terminar el proceso                                	|
+| SIGUSR1 	|          Terminar         	| Definido por el proceso / usuario                  	|
+| SIGUSR2 	|          Terminar         	| Definido por el proceso / usuario                  	|
+
+### Funciones
+
+- **kill** -> enviar un signal
+- **sigaction** -> reprogramar un signal concreto
+- **sigprocmask** -> bloquear signals
+- **sigsuspend** -> esperar signals
+- **alarm** -> programar la alarma
+
+```man signal```
+
+#### sigaction
+
+```c
+// Proceso A
+int pid = 5555;         // cualquier PID
+int signal = SIGUSR1;   // cualquier SIGNAL
+kill(pid, signal);      // Le envia el Signal al proceso con pid PID
+```
+
+```c
+// Proceso B
+void func(int s) {
+    // ...
+}
+
+struct sigaction sa;
+/* Inicializar sa con:
+    - handler -> func
+    - mask -> una máscara que creemos
+    - flags -> SA_RESTART
+*/
+sigaction(SIGUSR1, &sa, NULL);
+```
+
+#### Inicializar un struct sigaction
+
+- **sa_handler**
+    - **SIG_IGN** -> ignorar el signal
+    - **SIG_DFL** -> tratamiento por defecto
+    - **my_func** -> función con cabecera: void my_func(int s)
+- **sa_mask**
+    - vacía -> sólo se añade el signal que se está capturando
+    - Al salir se restaura la anterior
+- **sa_flags**
+    - **0** -> configuración por defecto
+    - **SA_RESETHAND** -> después de tratar el signal se restaura el tratamiento por defecto
+    - **SA_RESTART** -> Si estás haciendo una llamada a sistema y recibes un signal, se reinicia la llamada a sistema.
+
+### Behind the Scenes
+
+1. El proceso A apunta un signal **en el PCB** del proceso B
+2. **El kernel** ejecuta el código (ya sea el por defecto  o el que ha especificado el proceso) para tratar el signal de B
+
+### Máscaras
+
+Una máscara es una estructura de datos que permite determinar qué signals puede recibir un proceso en un momento determinado de ejecución.
+
+```c
+sigset_t mask;
+
+sigemptyset(&mask);     // vacía
+
+sigfillset(&mask);      // llena
+
+sigaddset(&mask, SIGNUM)    // añade el signal a la máscara
+
+sigdelset(&mask, SIGNUM)    // elimina el signal de la máscara
+
+sigismember(&mask, SIGNUM)  // devuelve true si el signal está en la mascará, false si no.
+```
+
+Para aplicar una máscara a mi proceso, usamos la función **sigprocmask**.
+
+- **SIG_BLOCK** -> bloquea los signals de la máscara que le pases.
+- **SIG_UNBLOCK** -> desbloquea los signals de la máscara que le pases.
+- **SIG_SETMASK** -> intercambia las máscaras.
+
+> Para más información mira el archivo comandos.txt en la carpeta de Utilidades
+
+Para esperar a que llegue un signal puedes usar la función **sigsuspend**, que bloquea el proceso hasta que llega un signal que no es ignorado. Al salir del sigsuspend se restaura la máscara anterior.
+
+> Para más información mira el archivo comandos.txt en la carpeta de Utilidades
+
+Para sincronizar procesos se puede hacer de dos formas:
+- **Espera activa** -> si vas a tardar poco
+    - while(!recibido)
+- **Bloqueo** -> si vas a tardar bastante
+    - sigsuspend
+
+#### Espera activa
+```c
+void configurar_esperar_alarma() {
+    alarma = 0;
+}
+
+void esperar_alarma() {
+    while (alarm != 1);
+    alarma = 0;
+}
+```
+
+### Bloqueo
+```c
+void configurar_esperar_alarma() {
+    sigemptyset(&mask);
+    sigaddset(&mask, SIGALRM);
+    sigprocmask(SIG_BLOCK, &mask, NULL);
+}
+
+void esperar_alarma() {
+    sigfillset(&mask);
+    sigdelset(&mask, SIGALRM);
+    sigsuspend(&mask);
+}
+```
+
+# Gestión interna de procesos
+
+## Gestión
+
+- Estructuras de datos: PCB, threads (depende del SO)
+- Estructuras de gestión: organizan los PCB en funcion de su estado
+    - Normalment colas o listas
+    - Eficientes
+    - Escalables
+- Algoritmos de planificación
+- Mecanismos del planificador
+
+
+## PCB
+
+Contiene:
+- **PID**
+- **userID** y **groupID**
+- Estado: **RUN**, **READY**, ...
+- Espacio para salvar los registros de la CPU
+- **Gestión de signals**
+- Información sobre la planificación
+- Información sobre la gestión de memoria
+- Información sobre la gestión de E/S
+- **Accounting (recursos consumidos)**
+
+## Planificación
+
+### Estructura
+
+Normalmente se organizan en colas o listas.
+- Cola de procesos
+- Cola de procesos en **READY**
+- Cola de procesos esperando **E/S**
+
+El sistema mueve los procesos de una cola a otra.
+
+### Políticas
+
+La planificación debe ser muy rápida ya que se ejecuta muchas veces por segundo. Cada 10ms tiene una interrupción de reloj para que un solo proceso no pueda acaparar la CPU.
+
+**Un proceso en RUN no puede continuar (necesita datos de E/S, el proceso termina, ...) -> La planificación escoge otro proceso -> Eventos no preemptivos** (preemptivo = puede quitar la CPU al proceso, sin que el proceso pueda evitarlo).
+
+Si le puedo quitar la CPU a un proceso -> EVENTOS PREEMPTIVOS
+Si es el proceso el que voluntariamente deja la CPU -> EVENTOS NO PREEMPTIVOS
+
+### Tipos de proceso
+
+Los procesos tienen **ráfagas de computación** y **ráfagas de acceso a E/S** que lo bloquean.
+
+computación **>** E/S -> **procesos de cálculo**
+computación **<** E/S -> **procesos de E/S**
+
+### Mecanismos del planificador
+
+Cuando se cambia de un proceso a otro se hace un cambio de contexto que tiene los siguientes pasos:
+
+1. Ejecutando **proceso A**
+2. **Guardar Contexto** de A -> PCB de A
+3. **Planificador** decide ejecutar B
+4. PCB de B -> **Restaurar Contexto** de B
+5. Ejecutando **proceso B**
+6. Repetir.
+
+Ejecutar código es modo usuario, todo lo demás, es modo kernel.
+
+La planificación decide el **tiempo total de ejecución** de un proceso. Desde que llega al sistema hasta que termina (en todos sus estados) y el **tiempo de espera** del proceso (el tiempo que pasa en ready).
+
+### Round Robin
+
+Los procesos **se organizan según su estado**. Están encolados por **orden de llegada**. El proceso recibe la CPU durante **un quantum (10ms ó 100ms)**. El planificador hace una **interrupción de reloj** para que ningún proceso monopolice la CPU.
+
+El RR se activa cuando:
+- Un proceso **se bloquea**
+- Un proceso **termina**
+- Cuando **termina el quantum**
+
+Es un política preemptiva porque puede quitarle la CPU a un proceso.
+
+El proceso que está en RUN -> BLOCKED (cuando acabe irá a READY)
+El primer proceso en la cola de READY -> RUN
+
+Ningún proceso espera más de (N - 1) * Q milisegundos. Donde N es el número de procesos y Q el tiempo de quantum.
+
+- Q grande -> es como si fuesen **orden secuencial**
+- Q pequeño -> produce **overhead** si no es muy grande comparado con el cambio de contexto.
+
+# KERNEL
+
+## FORK
+
+1. Busca **PCB libre** y lo **reserva**
+2. **Inicializar** datos (PID...)
+3. Se aplica política de **Gestión de memoria**
+4. Se actualizan las estructuras de **Gestión de E/S**
+5. (RR) Se añade a la cola de **READY**
+
+## EXEC
+
+1. **Código / Datos / Pila** -> NUEVO
+2. Se inicializan las **tablas de signals**, contexto, ...
+3. Se actualizan las **variables de entorno, argv**, registros, ...
+
+## EXIT
+
+1. Se **liberan los recursos** del proceso
+2. Se guarda el **estado de finalización** en el PCB
+3. Se **elimina de la cola de READY**
+4. Se aplica la **política de planificación**
+
+## WAITPID
+
+1. Se **busca el proceso en la lista de PCB's** para conseguir su **estado de finalización**
+2. **Si está ZOMBIE** -> **el PCB se libera** y se **devuelve el estado de finalización** al padre
+3. **Si NO está ZOMBIE** -> el proceso **padre pasa de RUN -> BLOCKED**
+4. Se aplica la **política de planificación**
+
+# PROTECCIÓN
+
+## Niveles de seguridad
+
+1. **Físico** -> Poner las máquinas en habitaciones / edificios seguros.
+2. **Humanos** -> Controlar quien accede al sistema
+3. **SO** -> evitar que un proceso sature el sistema, asegurar que siempre funcione, asegurar que ciertos puertos de acceso no están operativos, controlar que los procesos no se salgan de su espacio de direcciones.
+4. **RED** -> Es el más atacado
