@@ -104,7 +104,7 @@ pid_t pid = fork();
 int status = 0;
 waitpid(pid, &status, 0);
 
-// Si quieres más info sobre waitpid mira el archivo [comandos.pdf](https://github.com/MrRobb/SO-FIB/blob/master/Utilidades/comandos.pdf)
+// Si quieres más info sobre waitpid mira el archivo comandos.pdf
 // que hay en la carpeta de Utilidades (SESIÓN 4)
 ```
 
