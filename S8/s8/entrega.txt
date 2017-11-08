@@ -1,0 +1,14 @@
+Sesión 8: Gestión de Entrada/Salida
+PREGUNTA 64. ¿Qué contiene el fichero al final de la ejecución? ¿Cómo se explica ese contenido?
+    Inicio
+    Fin
+
+    Debido a que el canal de salida pasa a ser el archivo.
+
+PREGUNTA 65. ¿Acaba el programa padre? ¿y el hijo? ¿Por qué?.
+    No acaba el programa padre y el hijo tampoco, ya que el canal nunca se cierra y el hijo se queda
+	bloqueado esperando que llegue mas cosa por la pipe asta que se cierre el cana.
+
+PREGUNTA 66. Si quisiéramos que el lector también pudiera enviar un mensaje al escritor ¿podríamos utilizar la misma pipe con nombre o deberíamos crear otra? Razona la respuesta.
+	Si, abriendo y cerrando canales cuando necesitemos.
+

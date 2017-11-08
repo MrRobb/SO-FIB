@@ -1,0 +1,1 @@
+cmd_/home/alex/Desktop/SO/soLab2/S7/deviceDrivers/myDriver2.ko := ld -r -m elf_i386 -T /usr/src/linux-headers-2.6.38-11-generic/scripts/module-common.lds --build-id  -o /home/alex/Desktop/SO/soLab2/S7/deviceDrivers/myDriver2.ko /home/alex/Desktop/SO/soLab2/S7/deviceDrivers/myDriver2.o /home/alex/Desktop/SO/soLab2/S7/deviceDrivers/myDriver2.mod.o

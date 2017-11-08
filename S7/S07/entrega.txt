@@ -1,0 +1,140 @@
+PREGUNTA 52. Apunta en el fichero “entrega.txt” los comandos que has utilizado en cada
+apartado. Además entrega el fichero “es1_v2.c” ¿Qué diferencias observas en las dos
+ejecuciones de strace? ¿Cuántas llamadas a sistema read ejecuta cada versión? ¿Qué
+influencia puede tener sobre el rendimiento de ambas versiones de código? ¿Por qué?
+
+1) ps
+2) ./es1 < /dev/pts/0
+3) ./es1 | ./es1
+
+La primera versión produce 760 llamadas a read, mientras que la segunda produce
+únicamente 5 llamadas. Esto se debe a que en la primera versión leemos el fichero
+caracter a caracter, en cambio, en el segundo leemos de 256 a 256 caracteres.
+
+Si tenemos en cuenta que realizamos un read por iteración, y también escribimos
+por pantalla, además de comprobar la condición. Supongamos:
+W = coste write
+R = coste read
+n = caracteres de entrada
+
+En la primera versión:
+T = 759n * (R + W)
+
+En la segunda versión:
+T = 4 * (n/256) * (R + W)
+
+Podemos ver como el tiempo T será mucho más grande en el primer caso que en el segundo
+en función de n.
+
+
+PREGUNTA 53. Explica las diferencias observadas en la salida del programa cuando el primer
+parámetro vale 0 o 1. ¿Para qué crees que sirve este parámetro?
+
+Cuando el primer parámetro vale 0 el programa transforma los enteros a strings antes de
+escribir los enteros obtenidos aleatoriamente, por lo que la salida es legible en un editor.
+En cambio, cuando el primer parámetro es 1, el programa escribe la representación interna
+de dichos enteros (para que después puedan ser leídos sin necesidad de transformaciones) y,
+por lo tanto, la salida es ilegible desde un editor de texto.
+
+
+PREGUNTA 54. Explica el motivo de los resultados observados dependiendo del formato
+fichero de entrada.
+
+Como el programa espera leer enteros, en el caso de pasarle el primer fichero generado anteriormente
+observamos que se muestran números que no tienen nada que ver con la entrada. Esto es así, debido a que
+la entrada esta siendo interpretada como representación interna de enteros.
+En el otro caso, en cambio, observamos exactamente los números generados aleatoriamente en el apartado anterior,
+ya que la salida que se generó fue la representación interna de cada uno de dichos números.
+
+
+PREGUNTA 55. Explica las diferencias observadas entre la salida del programa es3 y es4. ¿Por
+qué la salida es inteligible para uno de los ficheros de entrada y no para el otro?
+En este caso, el programa espera leer caracteres, por lo que en el primer caso observamos que se escribe
+por pantalla cada caracter que conforman los enteros de la salida generada.
+En el otro caso, sin embargo, cada caracter que se lea será parte de la representación interna de un entero y es
+probable que su valor no represente ningún caracter y, por lo tanto, obtenemos una salida generalmente ilegible.
+
+
+PREGUNTA 56. Escribe los valores que ha mostrado el script showCpuTime.sh para cada uno
+de los procesos y comenta las diferencias entre ellos en cuanto al cosumo de cpu. ¿A qué
+se deben? Identifica las líneas de código de marcan la diferencia entre ellos.
+
+CMD                         %CPU     TIME
+./es5                        101 00:00:27
+./es1                        0.0 00:00:00
+./es5                        101 00:00:29
+./es1                        0.0 00:00:00
+./es5                        101 00:00:31
+./es1                        0.0 00:00:00
+./es5                        101 00:00:33
+./es1                        0.0 00:00:00
+./es5                        101 00:00:35
+./es1                        0.0 00:00:00
+./es5                        100 00:00:37
+./es1                        0.0 00:00:00
+
+es5 implementa un bucle infinito, mientras que es1 espera recibir datos a partir de la entrada.
+Podemos observar que es1 no gasta tiempo, esto se debe a que al esperar datos de la entrada el proceso queda pausado
+hasta que recibe algun dato. es5, en cambio, está ejecutándose constantemente debido al bucle infinito, no se pausa.
+
+
+PREGUNTA 57. Anota en el fichero entrega.txt el resultado de ambas ejecuciones. Entrega el
+código programado en el fichero es6_v2.c
+
+Return:
+read correcto!
+
+^C:
+SIGINT recibido
+read interrumpido por signal
+
+
+PREGUNTA 58. ¿Qué pasaría si no añadiéramos siginterrupt al código? Repite las ejecuciones
+anteriores eliminando el siginterrupt y anota el resultado en el fichero entrega.txt.
+
+Return:
+read correcto!
+
+^C:
+SIGINT recibido
+(espera a leer de la entrada)
+
+
+PREGUNTA 59. ¿Estaban ya en uso el major especificado en el código? En caso afirmativo,
+¿qué driver lo estaba utilizando?
+
+No estaban en uso.
+
+
+PREGUNTA 60. Apunta la línea de la salida de lsmod correspondiente a myDriver1 y
+   myDriver2.
+
+Module                  Size  Used by
+myDriver2               1091  0 
+myDriver1               1091  0 
+
+PREGUNTA 61. Apunta la línea de comandos que has utilizado para crear el dispositivo.
+sudo mknod myDevice c 249 0
+
+
+PREGUNTA 62. Anota en el fichero “entrega.txt” el resultado de la ejecución y explica a qué
+se debe.
+
+Driver 1 read operation
+Sponsored by Laboratorios Gelocatas SL
+fin ejecución
+
+Se debe a que la llamada al sistema read detecta que estamos intentando leer del dispositivo y
+ejecuta la llamada asociada para la lectura de dicho dispositivo (la definida en myDriver1.c), la cual llena el buffer
+con esa salida.
+
+PREGUNTA 63. Anota el resultado de la ejecución. Explica el motivo de las diferencias
+observadas comparando la salida de este ejercicio con la de la apartado 4.
+
+DRIVER 2 READ OPERATION
+SPONSORED BY LABORATORIOS GELOCATAS SL
+fin ejecución
+
+Esta salida se debe a que, esta vez, al crear el dispositivo le hemos asociado el segundo driver y, por lo tanto,
+se ha ejecutado la operación de read relacionada con dicho driver, el cual copia al buffer del usuario esa salida.
+

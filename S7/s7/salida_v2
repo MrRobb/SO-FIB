@@ -1,0 +1,8 @@
+read(3, "\177ELF\1\1\1\0\0\0\0\0\0\0\0\0\3\0\3\0\1\0\0\0\220o\1\0004\0\0\0"..., 512) = 512
+read(0, "#include <string.h>\n#include <st"..., 256) = 256
+read(0, "2 {0|1]} number_of_integers\\n\");"..., 256) = 256
+read(0, "uffer));\n\t\texit(1);\n\t}\n\n\tformat="..., 256) = 256
+read(0, "write(2,buffer,strlen(buffer));\n"..., 256) = 256
+read(0, "(time(NULL));\n\tc='\\n';\n\tfor(i=0;"..., 256) = 256
+read(0, "ibimos el numero en ascii \n\t\t\t//"..., 256) = 138
+read(0, "", 256)                        = 0

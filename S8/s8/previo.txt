@@ -1,0 +1,31 @@
+1.Crea una pipe con nombre mediante el comando mknod. A continuación lanza un
+proceso que ejecute el programa ‘cat’ redireccionando su salida estándar hacia la pipe que acabas de crear. En una shell diferente lanza otro proceso que ejecute también el programa ‘cat’, pero ahora redireccionando su entrada estándar hacia la pipe que acabas de crear. Introduce datos por teclado, en la primera Shell, y pulsa ^D para indicar el fin. Anota en el fichero “previo.txt” los comandos que has ejecutado.
+
+	#mknod PIPE1 p
+	#cat > PIPE1
+	#cat < PIPE1
+
+2. Es posible comunicar los dos comandos ‘cat’ desde dos terminales diferentes a través de una pipe sin nombre? 
+	No, ya que una pipe sin nombre solo se puede ejecutar en un mismo proceso.
+¿y desde el mismo terminal?
+	Si, ya que una pipe sin nombre solo se puede ejecutar en un mismo proceso.
+
+3. Escribe el código que deberíamos añadir a un programa para redireccionar su entrada estándar al extremo de escritura de una pipe sin nombre utilizando las llamadas al sistema close y dup. Imagina que el descriptor de fichero asociado al extremo de escritura de la pipe es el 4.
+	*
+	dup2(4,0);	
+	close(4);
+
+4. Analiza en detalle el código de la función createSocket y serverConnection, y busca en el man el significado de las llamadas a sistema socket, bind, listen y accept. 
+	createSocket:
+		Crea una Addr para el socket, y copia en él el string socketId.
+		Guarda en "socket_fd" el descriptor de AF_UNIX(Dominio), el SOCK_STREAM(tipo) y como protocolo un 0. (socket_fd = socket (AF_UNIX, SOCK_STREAM, 0);
+		Comprueba si el descriptor es < 0 implica error.
+		Guarda en un entero el retorno de "bind", que, enlaza el socket con una dirección. Si va bien == 0, si no == -1.
+		Guarda en un entero el retorno de "listen", que, pone en modo pasivo al socket para que éste pueda acceptar una transmisión entrante, siempre que esta sea menor al "backlog". Si va bien == 0, si no == -1.
+	
+	serverConnection: 
+		Le pasamos por parametro el socket que hemos creado en createSocket.
+		*struct address*
+		Ejecuta "accept", que comprueba si el socket esta creado, si esta enlazado y si esta en modo escucha. 
+		*Y lo acepta* y si va bien retorna el descriptor, si no un -1
+

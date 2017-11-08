@@ -1,0 +1,65 @@
+Sesión 7: Gestión de Entrada/Salida
+
+PREGUNTA 52. Apunta en el fichero “entrega.txt” los comandos que has utilizado en cada apartado. Además entrega el fichero “es1_v2.c” ¿Qué diferencias observas en las dos ejecuciones de strace? ¿Cuántas llamadas a sistema read ejecuta cada versión? ¿Qué influencia puede tener sobre el rendimiento de ambas versiones de código? ¿Por qué?
+	#./es1 > /dev/pts/0
+	#./es1 | ./es1
+
+	#strace -o salida_v2 -e read ./es1_v2 < es2.c 
+	El número de READS es 5
+	#strace -o salida_v1 -e read ./es1 < es2.c
+	El número de READS es 759
+	En el que con la _v2 se hacen menos reads, menos llamadas a sistema, y mejor rendimiento.
+
+PREGUNTA 53. Explica las diferencias observadas en la salida del programa cuando el primer parámetro vale 0 o 1. ¿Para qué crees que sirve este parámetro?
+	#./es2 0 10 > es2_sal.txt
+	#./es2 1 10 > es2_sal1.txt
+
+	Con el parámetro argv[1] == 0 lo imprime como String.
+	Con el parámetro argv[1] == 1 lo imprime en ASCII
+
+PREGUNTA 54. Explica el motivo de los resultados observados dependiendo del formato fichero de entrada.
+	El programa escribe el char y el entero ASCII en codificación string.
+
+
+PREGUNTA 55. Explica las diferencias observadas entre la salida del programa es3 y es4. ¿Por qué la salida es inteligible para uno de los ficheros de entrada y no para el otro?
+
+	El programa hace el contrario al de la pregunta 54
+
+PREGUNTA 56. Escribe los valores que ha mostrado el script showCpuTime.sh para cada uno de los procesos y comenta las diferencias entre ellos en cuanto al cosumo de cpu. ¿A qué se deben? Identifica las líneas de código de marcan la diferencia entre ellos
+	./es5 entre un 94% y 98% y el ./es1 0%
+	La diferencia es que uno hace una espera activa (while) y el otro un read.
+
+PREGUNTA 57. Anota en el fichero entrega.txt el resultado de ambas ejecuciones. Entrega el código programado en el fichero es6_v2.c
+
+PREGUNTA 58. ¿Qué pasaría si no añadiéramos siginterrupt al código? Repite las ejecuciones anteriores eliminando el siginterrupt y anota el resultado en el fichero entrega.txt. 
+	Saldría como por Linux, y no se interrumpiria el programa.
+
+PREGUNTA 59. ¿Estaban ya en uso el major especificado en el código? En caso afirmativo, ¿qué driver lo estaba utilizando?
+No.
+
+PREGUNTA 60. Apunta la línea de la salida de lsmod correspondiente a myDriver1 y myDriver2. 
+	Module                  Size  Used by
+	myDriver2              12499  0 
+	myDriver1              12499  0
+
+PREGUNTA 61. Apunta la línea de  comandos que has utilizado para crear el dispositivo.
+    #sudo mknod myDevice c 249 0
+
+PREGUNTA 62. Anota en el fichero “entrega.txt” el resultado de la ejecución y explica a qué se debe.
+	#../es1 < myDevice
+	Driver 1 read operation
+	Sponsored by Laboratorios Gelocatas SL
+	fin ejecución
+
+	Lo que imprime es el contenido del fichero.
+
+PREGUNTA 63. Anota el resultado de la ejecución. Explica el motivo de las diferencias observadas comparando la salida de este ejercicio con la de la apartado 4.
+    #../es1 < myDevice
+    DRIVER 2 READ OPERATION
+    SPONSORED BY LABORATORIOS GELOCATAS SL
+    fin ejecución
+
+
+	DIFERENCIAS??!?!NO.
+
+

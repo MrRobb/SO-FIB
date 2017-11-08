@@ -1,0 +1,19 @@
+PREGUNTA 64. ¿Qué contiene el fichero al final de la ejecución? ¿Cómo se explica ese contenido?
+
+Inicio
+Fin
+
+Es lógico, puesto que ambos procesos (pade e hijo) escriben en el canal de salida estándar.
+
+
+PREGUNTA 65. ¿Acaba el programa padre? ¿y el hijo? ¿Por qué?
+
+Ni el padre ni el hijo, porque el hijo todavía tiene un canal de escritura abierto (el definido mediante dup).
+
+
+PREGUNTA 66. Si quisiéramos que el lector también pudiera enviar un mensaje al escritor ¿podríamos utilizar la misma pipe con nombre o deberíamos crear otra? Razona la respuesta.
+
+
+PREGUNTA 66. Si quisiéramos que el lector también pudiera enviar un mensaje al escritor ¿podríamos utilizar la misma pipe con nombre o deberíamos crear otra? Razona la respuesta.
+Deberíamos crear otra pipe, si escribieramos en la actual no habría forma de distinguir entre los mensajes del escritor y los nuestros, es decir, sería posible "robarle" los datos que enviamos al receptor. A no ser de que pusieramos de acuerdo ambos procesos al momento de saber cual es el que envia el mensaje y quien lo recibe, utilizando signals, por ejemplo.
+

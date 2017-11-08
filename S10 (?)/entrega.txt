@@ -1,0 +1,44 @@
+PREGUNTA 71. ¿Qué diferencia observas en el tiempo de ejecución de cada uno de los programas? ¿A qué se debe?
+	50000 processes created in 5.80422 sec.
+	50000 threads created in 1.87768 sec.
+
+	Se observa que en el caso de threads es más rápido. Esto se debe a que los procesos necesitan copiar su región de memoria al declarar la variable local i y asignarle un valor, mientras que los threads comparten memoria.
+
+PREGUNTA 72. En el programa fork_compartMem.c, ¿qué valor ve el proceso hijo
+   principio de su ejecución en las variables a y pidPadre? ¿Y al final? ¿qué valores ve proceso padre al final de su ejecución? ¿Cómo explicas este comportamiento?
+	El proceso hijo ve los valores establecidos por el padre en las variables ante de su creación. Al final, ve los datos que ha modificado.
+	El proceso padre, al final, ve los mismos datos que tenía antes de crear al hijo, puesto que su región de memoria es diferente a la del hijo y, por lo tanto, no se ha modificado.
+
+PREGUNTA 73. En el programa thread_compartMem.c, ¿qué valor ve el pthread hijo principio de su ejecución en las variables a y pidPadre? ¿Y al final? ¿qué valores ve proceso padre al final de su ejecución? ¿Cómo explicas este comportamiento?
+	El proceso hijo ve los valores establecidos por el padre en las variables ante de su creación. Al final, ve los datos que ha modificado.
+	El proceso padre, al final, ve los datos que el hijo ha modificado, esto se debe a la compartición de memoria de los threads.
+
+PREGUNTA 74. ¿A qué se debe este error?
+	Se debe a que la variable a no está declarada en la función del thread y tampoco lo está globalmente (la que se declara es local en main) y, por lo tanto, el thread no tiene acceso a dicha variable.
+
+PREGUNTA 75. En la línea marcada como “PUNTO 1” ¿en qué posición de memoria se está guardando el valor 1111? ¿Qué variable ocupa esa posición de memoria? ¿Qué mensajes muestran el padre y el pthread? ¿Sería posible que un pthread acceda a las variables locales de otro pthread? ¿En qué condiciones?
+	Se guarda en 0xbfe111a4. Lo ocupa la variable a.
+
+	I am the parent (pid=5673)
+	I am the child . Value of a=666 (BEFORE)
+	I am the child . Value of a=1111 (AFTER)
+	I am the parent and a=1111
+
+	Un thread podría acceder a las variables locales de otro thread utilizando punteros globales a dichas variables, siempre y cuando dichas variables existan.
+
+PREGUNTA 76. ¿Qué mensajes muestran ahora el padre y el pthread? ¿A qué se debe esta diferencia en el comportamiento?
+	Before pthread_create a=666 p=0xbfcaa0c4
+	I am the parent (pid=5671)
+	I am the parent and a=666
+
+	Ahora el padre no espera al hijo, por lo que el padre podría terminar su ejecución antes que el hijo, liberando la memoria referente a la variable local a y, en consecuencia, el hijo producirá una desreferencia inválida del puntero p, porque a ya no existe.
+
+PREGUNTA 77. ¿El proceso principal imprime siempre el mismo valor? ¿A qué es debido?
+	No. Se debe a que varios threads están accediendo a su función al mismo tiempo y alterando el valor data, de manera que al leer el valor antes de incrementarlo podría ser que otro thread estuviera leyendo el mismo valor.
+
+PREGUNTA 78. Anota en el fichero entrega.txt qué líneas de código forman la región crítica
+   que provoca la condición de carrera.
+	La línea data++.
+
+
+

@@ -1,0 +1,39 @@
+Sesión 6: Análisis de rendimiento
+PREGUNTA 41. Apunta en el fichero entrega.txt el número de unidades de cálculo (cores o CPUS) que tienes en la máquina. 
+	cpu cores       : 2
+
+PREGUNTA 44. ¿Cómo se ve afectado el tiempo de ejecución del proceso?
+ha aumentado considerablemente.
+
+PREGUNTA 45. ¿Qué %CPU ha asignado el sistema a cada proceso? 
+so1={35%,34%,34%,34%,33%}
+alumne={37%}
+
+PREGUNTA 46. La asignación, ¿ha sido por proceso o por usuario? ¿Crees que es posible que 1 usuario sature el sistema con este criterio?
+	por proceso, si que es posible saturar el sistema con este criterio.
+
+PREGUNTA 47. ¿Cómo se ve afectado el tiempo de ejecución de FIB respecto al número de instancias de BAJA_PRIO_FIB?
+	el tiempo de ejecución de FIB respecto el de BAJA_PRIO_FIB es relativamente inferior 
+	cuando hay varios procesos.
+
+PREGUNTA 48. ¿Qué %CPU ha asignado el sistema a cada proceso con 2 y 5 instancias de BAJA_PRIO_FIB?
+	./BAJA_PRIO_FIB = {50%,51%}
+	./BAJA_PRIO_FIB = {20%,19%,19%,19%,19%}
+
+-----------------------------------
+	./FIB 5 1:08.29elapsed 40%CPU,1:08.71elapsed 39%CPU,1:08.94elapsed 39%CPU,1:09.44elapsed 39%CPU,1:09.80elapsed 38%CPU
+	./BAJA_PRIO_FIB 5 1:07.43elapsed 40%CPU,1:08.26elapsed 39%CPU,1:08.89elapsed 39%CPU,1:08.98elapsed 39%CPU,1:09.81elapsed 38%CPU
+	
+
+PREGUNTA 49. ¿Cuánta memoria física tiene el sistema (F) en bytes?
+Mem:    3696766976
+
+alumne@a5s103pc34:~/Desktop/s6/lab$ free -b
+             total       used       free     shared    buffers     cached
+Mem:    3696766976 1230929920 2465837056          0   97132544  439193600
+-/+ buffers/cache:  694603776 3002163200
+Swap:   2097405952          0 2097405952
+
+
+PREGUNTA 50.  Rellena la siguiente tabla, añádela al fichero RendimientoProcesos.ods. ¿En la Ejecución 2 por qué crees que cambia el tiempo de acceso según el número de iteración? 
+

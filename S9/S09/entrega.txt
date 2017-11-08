@@ -1,0 +1,52 @@
+PREGUNTA 67. Contesta a las siguientes preguntas en el fichero “entrega.txt”
+
+-	¿Cual/es de los comandos anteriores han dado error al intentar ejecutarlos?
+	Explica porqué.
+
+	ln ~/A ~/A/H 	Ya que solo puedes linkar dos directorios simbólicamente.
+
+
+-	Explicar el resultado de ejecutar el comando “stat” utilizando como parámetro
+	cada uno de los nombres simbólicos que has creado anteriormente.
+
+	Fichero: «E» -> «/home/hector/A»
+	Tamaño: 14        	Bloques: 0          Bloque E/S: 4096   enlace simbólico
+	Correcto, con ln -s hemos linkeado E con el directorio ~/A.
+
+	Fichero: «F» -> «D»
+	Tamaño: 1         	Bloques: 0          Bloque E/S: 4096   enlace simbólico
+	Igual que en el caso anterior, solo que ahora el linkeo se hace con el archivo D.
+
+	Fichero: «G»
+  	Tamaño: 25        	Bloques: 8          Bloque E/S: 4096   fichero regular
+  	En este caso el linkeo ha sido de tipo hard, por lo que no se observa a priori.
+
+	
+-	¿Cuál sería el contenido de los ficheros D, E, F y G? Comenta las diferencias que
+	observas al utilizar los comandos “more” o “cat” para ver el contenido del fichero
+	y el resultado de utilizar el comando “readlink”.
+	
+	El contenido de aquello a lo que están enlazados.
+	La diferencia reside en que readlink devuelve la ruta enlazada en el caso de los
+	softlinks.
+
+
+-	Escribe en papel los accesos que se realizan cuando se accede a los ficheros:
+	“$HOME/A/F”, “$HOME/A/E” y “$HOME/A/G”. Ahora compáralos con el resultado
+	que obtienes cuando ejecutas el comando “namei” con cada uno de los ficheros
+	anteriores. ¿Si ejecutas “readlink $HOME/A/F” se realizan los mismos accesos?
+	¿Cómo influye el hecho de que en unos casos sea una ruta absoluta a un fichero y
+	en otros una ruta relativa?
+
+	Influye en la cantidad de accesos. En una ruta absoluta se accede a cada directorio
+	de dicha ruta hasta el final. En una relativa ocurre lo mismo, pero se parte del directorio
+	donde se encuentra el link simbólico.
+	
+
+-	Crea un soft link de un fichero a si mismo (un fichero que no exista previamente).
+	Comenta el resultado de mirar su contenido utilizando el comando “cat”. Observa
+	como controla el sistema la existencia de ciclos. Ejecuta el comando “namei” y comenta
+	su resultado.
+
+	Va accediendo al enlace de manera recursiva hasta cierto límite, al alcanzarlo salta un
+	error.

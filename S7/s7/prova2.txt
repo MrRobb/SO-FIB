@@ -1,0 +1,10 @@
+execve("./es1_v2", ["./es1_v2"], [/* 49 vars */]) = -1 ENOEXEC (Exec format error)
+dup(2)                                  = 3
+fcntl64(3, F_GETFL)                     = 0x2 (flags O_RDWR)
+fstat64(3, {st_mode=S_IFCHR|0620, st_rdev=makedev(136, 0), ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb77bb000
+_llseek(3, 0, 0xbfd32560, SEEK_CUR)     = -1 ESPIPE (Illegal seek)
+write(3, "strace: exec: Exec format error\n", 32) = 32
+close(3)                                = 0
+munmap(0xb77bb000, 4096)                = 0
+exit_group(1)                           = ?

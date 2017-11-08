@@ -1,0 +1,41 @@
+¿Qué valor devuelve la llamada read después de pulsar el ^D?
+Un 0, ya que no lee ningún byte.
+
+Apunta el comando utilizado en el fichero “previo.txt”.
+./es1 < es1.dat
+
+¿Cuál es el resultado? ¿Qué operación realiza el comando ‘grep es’?
+-rwxrwxr-x 1 hector hector 8807 nov 14 12:16 es1
+-rw-r--r-- 1 hector hector  223 ene 27  2012 es1.c
+-rw-rw-r-- 1 hector hector   10 nov 14 12:19 es1.dat
+-rw-r--r-- 1 hector hector  758 ene 27  2012 es2.c
+-rw-r--r-- 1 hector hector  345 ene 27  2012 es3.c
+-rw-r--r-- 1 hector hector  429 ene 27  2012 es4.c
+-rw-r--r-- 1 hector hector   22 ene 27  2012 es5.c
+-rw-r--r-- 1 hector hector   99 ene 27  2012 es6.c
+-rw-r--r-- 1 hector hector   93 ene 30  2012 es7.c
+-rw-r--r-- 1 hector hector  552 ene 30  2012 es8.c
+
+El comando grep imprime las líneas que cumplen el patrón pasado como
+parámetro.
+
+¿Cuántos bytes se escriben en cada caso? ¿Qué diferencias observas
+en lo que aparece en pantalla?
+Entero con representación interna - 4 bytes
+Entero en formato string - 5 bytes
+
+En el primer caso solo se observan dos caracteres: B), porque en 
+representación interna hay dos bytes nulos 0000 y, por lo tanto, no
+tiene representación en forma de string.
+
+En el segundo caso se imprime cada dígito del entero (5 * 1 byte).
+
+¿Qué función sirve para implementar el read específico del dispositivo
+gestionado por cada device driver?
+read_driver_1 y read_driver_2
+
+¿Qué son el major y el minor? ¿Para qué sirven? ¿Qué major y minor
+utilizan los dos device drivers?
+El major y el minor son los identificadores del device driver. Se
+utilizan para asociar la lógica del dispositivo con su código de acceso
+específico.

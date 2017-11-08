@@ -1,0 +1,93 @@
+1.
+    a)¿Cómo podéis saber los sistemas de ficheros montados en vuestro sistema y de que tipo son?
+        Haciendo #df -T
+        S.ficheros     Tipo     1K-bloques    Usado Disponible Uso% Montado en
+        /dev/sda5      ext4       16540944  5785048    9925844  37% /
+        udev           devtmpfs    1882752        4    1882748   1% /dev
+        tmpfs          tmpfs        756008      844     755164   1% /run
+        none           tmpfs          5120        0       5120   0% /run/lock
+        none           tmpfs       1890020      884    1889136   1% /run/shm
+        /dev/sda2      fuseblk   292760524 15262936  277497588   6% /media/Datos
+
+    b) ¿Cómo se puede saber el número de inodos libres de un sistema de ficheros?
+        Haciendo #df -i
+
+    c) ¿Cómo se puede saber el espacio libre de un sistema de ficheros?
+        Haciendo #df -h
+
+2.
+    #echo "esto es una prueba" > pr.txt
+    #ln -s pr.txt sl_pr
+    #ln pr.txt hl_pr
+    
+    a) ¿De que tipo es cada uno de los links creados?
+            #stat pr.txt
+            Fichero: «pr.txt»
+			Tipo: Fichero regular.
+            Nodo-i: 679087      Enlaces: 2
+            
+            #stat sl_pr
+            Fichero: «sl_pr» -> «pr.txt»
+            Tipo: Enlace simbólico
+            Nodo-i: 679099      Enlaces: 1
+
+            #stat hl_pr
+            Fichero: «hl_pr»
+            Tipo: Fichero regular
+            Nodo-i: 679087      Enlaces: 2
+
+        ¿Que significa el numero de enlaces?
+           	el numero de apariciones en la tabla de ficheros
+
+        ¿Que significa que pr.txt y hl_pr tengan el mismo inode?
+            Que tienen el mismo inode
+
+    b) Ejecuta cat, namei, readlink sobre sl_pr y hl_pr
+            #cat sl_pr
+            Esto es una prueba
+            #cat hl_pr
+            Esto es una prueba
+
+            #namei sl_pr //Hay diferencia ya que el sl es un enlace, que apunta al pr.txt.
+            f: sl_pr
+             l sl_pr -> pr.txt
+               - pr.txt
+            #namei hl_pr
+            f: hl_pr
+             - hl_pr
+
+            #readlink sl_pr //Hay diferencia en que sl contiene un enlace hacia pr.txt
+            pr.txt
+            #readlink hl_pr
+
+    c) Elimina pr.txt y vuelve a ejecutar
+            #stat sl_pr
+              Fichero: «sl_pr» -> «pr.txt»
+              Tamaño: 6             Bloques: 0          Bloque E/S: 4096   enlace simbólico
+              Dispositivo: 805h/2053d Nodo-i: 679099      Enlaces: 1
+              Acceso: (0777/lrwxrwxrwx)  Uid: ( 1000/    marc)   Gid: ( 1000/    marc)
+            #stat hl_pr
+              Fichero: «hl_pr»
+              Tamaño: 19            Bloques: 8          Bloque E/S: 4096   fichero regular
+              Dispositivo: 805h/2053d Nodo-i: 679087      Enlaces: 1
+              Acceso: (0664/-rw-rw-r--)  Uid: ( 1000/    marc)   Gid: ( 1000/    marc)
+
+            #cat sl_pr
+            cat: sl_pr: No existe el archivo o el directorio
+            #cat hl_pr
+            Esto es una prueba
+
+            #namei sl_pr
+            f: sl_pr
+             l sl_pr -> pr.txt
+            pr.txt - No such file or directory
+            #namei hl_pr
+            f: hl_pr
+             - hl_pr
+
+            #readlink sl_pr
+            pr.txt
+            #readlink hl_pr
+
+            Las diferencias estan en que el sl_pr sigue apuntando al pr.txt, pero cuando intenta acceder no existe.
+

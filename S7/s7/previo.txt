@@ -1,0 +1,20 @@
+1) fin ejecución
+2) ./es1 < previo.txt 
+3)
+#ls -l | grep es
+    Ha listado unicamente los archivos que contenian "es" en el nombre.
+Ejecuta un pipeline que muestre en la salida estándar el PID, el usuario y el nombre de todos los procesos bash que se están ejecutando en el sistema.
+	ps -e u | grep bash
+
+4) En el primer caso (representación interna con 4 bytes).
+    En el segundo caso (representacion en String con 5 bytes).
+
+5) a)
+	myDriver1 --> int read_driver_1 (struct file *f, char __user *buffer, size_t s, loff_t *off);
+	myDriver2 --> int read_driver_2 (struct file *f, char __user *buffer, size_t s, loff_t *off);
+   
+	b) 
+	Major y minor son dos numeros que sirven para: 
+	Major: 249 \ 250, tipo de identificador del dispositivo.
+	Minor: 0 \ 0, tipo de instancia del major.
+

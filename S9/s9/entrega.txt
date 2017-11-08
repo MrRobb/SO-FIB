@@ -1,0 +1,81 @@
+Sesión 9: Sistema de Ficheros
+* ¿Cual/es de los comandos anteriores han dado error al intentar ejecutarlos? Explica porqué.
+	#ln $HOME/A $HOME/A/H
+
+* Explicar el resultado de ejecutar el comando “stat” utilizando como parámetro cada uno de los nombres simbólicos que has creado anteriormente.
+	#stat D
+	File: `D'
+	Size: 25        	Blocks: 8          IO Block: 4096   regular file
+	Device: 801h/2049d	Inode: 3240957     Links: 2
+
+	#stat E
+	File: `E' -> `.'
+	Size: 1         	Blocks: 0          IO Block: 4096   symbolic link
+	Device: 801h/2049d	Inode: 3240958     Links: 1
+
+	#stat F
+	File: `F' -> `D'
+	Size: 1         	Blocks: 0          IO Block: 4096   symbolic link
+	Device: 801h/2049d	Inode: 3240959     Links: 1
+
+	#stat G
+	File: `G'
+	Size: 25        	Blocks: 8          IO Block: 4096   regular file
+	Device: 801h/2049d	Inode: 3240957     Links: 2
+
+* ¿Cuál sería el contenido de los ficheros D, E, F y G? Comenta las diferencias que observas al utilizar los comandos “more” o “cat” para ver el contenido del fichero y el resultado de utilizar el comando “readlink”.
+	#cat D
+	estoy en el directorio A
+
+	#cat E
+	cat: E: Is a directory
+
+	#cat F
+	estoy en el directorio A
+
+	#cat G
+	estoy en el directorio A
+
+	#readlink D
+
+	#readlink E
+	.
+
+	#readlink F
+	D
+
+	#readlink G
+
+
+* Escribe en papel los accesos que se realizan cuando se accede a los ficheros: “$HOME/A/F”, “$HOME/A/E” y “$HOME/A/G”. Ahora compáralos con el resultado que obtienes cuando ejecutas el comando “namei” con cada uno de los ficheros anteriores. ¿Si ejecutas “readlink $HOME/A/F” se realizan los mismos accesos? ¿Cómo influye el hecho de que en unos casos sea una ruta absoluta a un fichero y en otros una ruta relativa?
+	#namei F
+	f: F
+	 l F -> D
+	   - D
+	#namei E
+	f: E
+	 l E -> .
+	   d .
+	#namei G
+	f: G
+	 - G
+
+	#readlink F
+	D
+
+* Crea un soft link de un fichero a si mismo (un fichero que no exista previamente). Comenta el resultado de mirar su contenido utilizando el comando “cat”. Observa como controla el sistema la existencia de ciclos en el sistema de ficheros. Ejecuta el comando “namei” y comenta su resultado.
+	#ln -s sl_sl sl_sl
+
+	#cat sl_sl 
+	cat: sl_sl: Too many levels of symbolic links
+
+	#namei sl_sl
+	namei: failed to stat: sl_sl: Too many levels of symbolic links
+
+
+
+PREGUNTA 68. Entrega el fichero append.c.
+
+PREGUNTA 69. Entrega el fichero invirtiendo_fichero.c.
+
+PREGUNTA 70. Entrega el fichero insertarx2.c.
