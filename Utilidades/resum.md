@@ -725,4 +725,24 @@ Tiene que ser una **potencia de 2**. Normalmente **4Kb**. A medida que crece el 
 
 ### Segmentacion
 
-- Se divide el espacio lógico teniendo en cuenta el tipo de contenido.
+![Espacio ocupado](https://github.com/MrRobb/SO-FIB/blob/master/Utilidades/img%20resum/img9.png?raw=true)
+
+#### Esquema
+
+- Se divide el espacio lógico **teniendo en cuenta el tipo de contenido**.
+- **Aproxima la gestión de memoria** a la visión del usuario
+- Tamaño variable -> **segmentos**
+- Como **mínimo** un segmento para datos, otro para pila y otro para código
+
+Para cada segmento:
+1. **Busca** una partición en la que quepa el segmento
+2. Aplica la **política**:
+    - ```first fit```(primero que encuentra)
+    - ```best fit```(en el que mejor encaje)
+    - ```worst fit``` (el que más espacio extra tenga)
+3. Selecciona la **cantidad de memoria necesaria** para el segmento y el **resto** continúa en la lista de **particiones libres**
+
+#### PROBLEMAS
+
+Puede haber fragmentación externa.
+No todos los trozos libres son igual de buenos.
