@@ -420,9 +420,9 @@ Ningún proceso espera más de (N - 1) * Q milisegundos. Donde N es el número d
 - Q grande -> es como si fuesen **orden secuencial**
 - Q pequeño -> produce **overhead** si no es muy grande comparado con el cambio de contexto.
 
-# KERNEL
+## KERNEL
 
-## FORK
+### FORK
 
 1. Busca **PCB libre** y lo **reserva**
 2. **Inicializar** datos (PID...)
@@ -430,31 +430,103 @@ Ningún proceso espera más de (N - 1) * Q milisegundos. Donde N es el número d
 4. Se actualizan las estructuras de **Gestión de E/S**
 5. (RR) Se añade a la cola de **READY**
 
-## EXEC
+### EXEC
 
 1. **Código / Datos / Pila** -> NUEVO
 2. Se inicializan las **tablas de signals**, contexto, ...
 3. Se actualizan las **variables de entorno, argv**, registros, ...
 
-## EXIT
+### EXIT
 
 1. Se **liberan los recursos** del proceso
 2. Se guarda el **estado de finalización** en el PCB
 3. Se **elimina de la cola de READY**
 4. Se aplica la **política de planificación**
 
-## WAITPID
+### WAITPID
 
 1. Se **busca el proceso en la lista de PCB's** para conseguir su **estado de finalización**
 2. **Si está ZOMBIE** -> **el PCB se libera** y se **devuelve el estado de finalización** al padre
 3. **Si NO está ZOMBIE** -> el proceso **padre pasa de RUN -> BLOCKED**
 4. Se aplica la **política de planificación**
 
-# PROTECCIÓN
+## PROTECCIÓN
 
-## Niveles de seguridad
+### Niveles de seguridad
 
 1. **Físico** -> Poner las máquinas en habitaciones / edificios seguros.
 2. **Humanos** -> Controlar quien accede al sistema
 3. **SO** -> evitar que un proceso sature el sistema, asegurar que siempre funcione, asegurar que ciertos puertos de acceso no están operativos, controlar que los procesos no se salgan de su espacio de direcciones.
 4. **RED** -> Es el más atacado
+
+# Memoria
+
+La CPU sólo puede acceder a la memoria y a los registros, por lo tanto, **las intrucciones y datos deben estar cargados en memoria** para poder referenciarse.
+
+### Tipos de memoria
+
+- **Memoria física** -> posición ocupada en memoria
+- **Memoria lógica** -> referencia emitida por la CPU
+
+No tienen por qué coincidir si existe un "traducción" (lo veremos más tarde).
+
+- @ del procesador
+- @ lógicas de un proceso (el kernel dice si son válidas)
+- @ físicas de un proceso (las decide el kernel)
+
+### Traducción
+
+**@ lógicas <--> @ física**
+
+- Cuando se **carga** el programa: El kernel decide donde poner un proceso y se traducen las direcciones cuando las copias en memoria (@ físicas --> @ lógicas).
+
+- Cuando se **ejecuta** el programa: se traduce cada dirección que se genera (@ lógicas --> @ física). Lo hace la MMU + kernel.
+
+La traducción es importante porque facilita la **ejecución concurrente** (en paralelo) de programas cargados en memoria (1 CPU pero N en MF) y facilita el **cambio de contexto** (no necesitamos cargar de nuevo en memoria el proceso).
+
+SO debe garantizar protección:
+- Cada proceso accede a su memoria, no a la de los demás
+- MMU detecta accesos ilegales, SO configura la MMU
+
+![MMU Diagrama](https://github.com/MrRobb/SO-FIB/blob/master/Utilidades/img%20resum/img1.png?raw=true)
+
+Asignación de instrucciones y datos se realizan en **tiempo de ejecución**
+
+### MMU
+
+Ofrece soporte para la traducción y a la protección.
+**SO** -> configura la MMU
+MMU hace **@lógica --> @física**
+MMU envia excepción si @lógica **no existe** o **no tiene una @física asociada**
+SO -> gestiona las excepciones de la MMU
+
+#### Cuando SO cambia la traducción de direcciones?
+
+- Asignar nueva memoria
+- Pedir / Liberar memoria
+- Cambios de contexto
+
+
+#### Protección
+
+- @lógicas inválidas
+- @lógicas válidas con acceso incorrecto (escribir en zona de lectura)
+- @lógicas válidas con acceso incorrecto porque el SO hace alguna optimización
+    - COW
+
+En cualquiera de estos casos, la MMU manda una excepción al SO
+
+## SERVICIOS DEL SO
+
+### Carga de programas
+
+**Ejecutable DISCO -> Memoria Física**
+
+SO:
+1. **Lee** el ejecutable
+2. **Prepara esquema** del proceso en memoria lógica
+    1. Estructuras de datos
+    2. Inicializa la MMU
+3. Lee secciones del programa
+4. Las escribe en memoria
+5. Carga el PC con el inicio del programa
