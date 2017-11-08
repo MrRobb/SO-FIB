@@ -7,12 +7,10 @@ Un sistema operativo tiene que ser:
 > - Seguro: el sistema no puede caer si tenemos algún fallo (pondrá un mensaje de error)
 > - Eficiente: cada proceso quiere tener una sensación exclusiva, es decir, que la CPU solo trabaja para él.
 
-----------
 Hay dos modos de acceder al Kernel:
 > - USER MODE:  Por ejemplo, cuando hacemos llamamadas al sistema
 > - KERNEL MODE: Privilegiado. Por ejemplo, cuando ejecutamos llamadas al sistema (síncronas), cuando tenemos excepciones (asíncronas), interrupciones (síncronas), etc.
 
----------
 ### LLamadas al sistema
 #### Para el programador:
 Se hacen desde el código (C, C++, ...). Éste lo envía al kernel para que lo ejecute.
@@ -29,8 +27,6 @@ Necesitan que entren parámetros y salgan unos valores. (write -> stdOut)
 
 > Nota: **trap** es el mismo proceso pero de diferente contexto.
 
-
-----------
 Procesos
 ===================
 ### Conceptos básicos
@@ -52,8 +48,6 @@ Procesos
 >- Identidad: PID, credenciales (USERID, GROUPID)
 >- Entorno: parámetros (argv, HOME, PATH,...)
 >- Contexto: estado, recursos, ... (durante ejecución)
-
-----------
 
 Gestión de procesos
 ===================
