@@ -13,25 +13,27 @@ Hay dos modos de acceder al Kernel:
 > - KERNEL MODE: Privilegiado. Por ejemplo, cuando ejecutamos llamadas al sistema (síncronas), cuando tenemos excepciones (asíncronas), interrupciones (síncronas), etc.
 
 ---------
-###LLamadas al sistema
-####Para el programador:
+### LLamadas al sistema
+#### Para el programador:
 Se hacen desde el código (C, C++, ...). Éste lo envía al kernel para que lo ejecute.
 Son en USER MODE.
 Son simples de usar (en principio)
 Contexto NO modificable (los parámetros de cada función no son modificables)
 Ej: write(...)
-####Para el Kernel:
+#### Para el Kernel:
 Solo se ejecuta la llamada al sistema, recibida del código.
 Son en KERNEL MODE.
 Necesitan que entren parámetros y salgan unos valores. (write -> stdOut)
+
 ![Llamadas al sistema](https://github.com/MrRobb/SO-FIB/blob/master/Utilidades/img%20resum/img4.png)
+
 > Nota: **trap** es el mismo proceso pero de diferente contexto.
 
 
 ----------
 Procesos
 ===================
-###Conceptos básicos
+### Conceptos básicos
 **Proceso:** representación del S.O. de un programa en ejecución. Este es nuevo cada vez que ejecutamos.
 **Programa ejecutándose:**  tiene código, pila y datos, inicializa los reg de la CPU, da acceso a dispositivos (para el Kernel).
 **PCB (process control bank): ** gestiona la información de cada proceso. La PCB contiene 3 partes:
@@ -43,7 +45,9 @@ Procesos
 
 **Concurrencia:** cuando dos procesos son concurrentes es que se ejecutan en paralelo. Aunque haya una sola CPU, hará el efecto virtual, ya que irá dando poco a poco a los procesos lo que necesitan, de forma que parezca que solo "trabaja" para uno.
 **Estados:** un proceso puede tener diferentes estados (en zombie se queda el contxto):
+
 ![Estados de un proceso](https://github.com/MrRobb/SO-FIB/blob/master/Utilidades/img%20resum/img6.png)
+
 **Propiedades del PCB:**
 >- Identidad: PID, credenciales (USERID, GROUPID)
 >- Entorno: parámetros (argv, HOME, PATH,...)
