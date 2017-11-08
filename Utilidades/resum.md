@@ -531,7 +531,7 @@ SO:
 4. Las **escribe en memoria**
 5. **Carga el PC** con el inicio del programa
 
-### Formato ejecutable
+### Formato ejecutable (PASO 1)
 
 La mayoría de sistemas POSIX usan ELF
 
@@ -539,7 +539,78 @@ La mayoría de sistemas POSIX usan ELF
 
 > Para verlo puedes usar ```objdump -h ejecutable```
 
+### Esquema (PASO 2)
+
+![Esquema](https://github.com/MrRobb/SO-FIB/blob/master/Utilidades/img%20resum/img3.png?raw=true)
+
+### Cargar
+
+1. Reservar memoria
+2. Copiar el binario
+3. Actualizar MMU
+
 ## Optimizaciones
 
 - **Carga bajo demanda**
+    - **Una rutina no se carga hasta que se llama.**
+    - En las estructuras de datos del SO dicen que la zona de memoria es válida pero en MMU no se le asigna traducción.
+    - Cuando el proceso accede a la @lógica, la MMU le dice al SO que no sabe como traducir (excepción). El SO mira en sus estructuras de datos, ve que es una posición válida, provoca una carga y continua la ejecución.
 - **Librerías compartidas** y **enlace dinámico**
+    - **Los ejecutables no contienen el código de las librerías, sólo un enlace**
+    - Se retrasa el enlace hasta el momento de ejecución
+    - Ahorra espacio en memoria
+    - Facilita la actualización de librerías (sin recompilar)
+    - **El binario contiene un stub** un tipo de rutina que hace puente a la que contiene el código realmente.
+
+## Liberar / Reservar memoria
+
+memoria dinámica se almacena en el heap y puedes ajustar su medida a lo que necesites.
+
+```c
+// Anterior = posición del puntero antes de aumentar el heap
+int anterior;
+// Tienes que multiplicarlo por el sizeof del elemento que quieras almacenar
+int nuevo = 6;
+// Nuevo = cuántos elementos quiero almacenar
+anterior = sbrk(nuevo * sizeof(int));
+```
+
+> con sbrk no puedes eliminar una variable que esté en medio del heap
+
+Para ello usamos:
+
+- **malloc**: hace lo mismo que el sbrk pero no siempre aumenta el heap porque no aumenta el tamaño que tu le digas, aumenta más tamaño por si luego necesitas más espacio.
+- **free**: no mezclar sbrk's con malloc / free
+
+## Errores comunes
+
+```c
+// ...
+for (int i = 0; i < 10; i++)
+    ptr = malloc(SIZE);
+
+// Uso de la Memoria
+// ...
+
+for (int i = 0; i < 10; i++)
+    free(ptr);
+// ...
+```
+
+En la segunda iteración del bucle fallará puesto que si hemos vaciado ptr, ptr será NULL y por lo tanto no podemos hacer free(NULL).
+
+```c
+int *x;
+int *ptr;
+
+// ...
+ptr = malloc(SIZE);
+// ...
+x = ptr;
+// ...
+free(ptr);
+
+sprintf(buffer, "%d", *x);
+```
+
+Aquí tienes dos punteros que apuntan al mismo sitio por lo tanto si liberas la memoria de uno, el otro apuntará a una posición de memoria no válida y producirá error.
