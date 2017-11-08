@@ -36,16 +36,16 @@ Procesos
 
 **Programa ejecutándose:**  tiene código, pila y datos, inicializa los reg de la CPU, da acceso a dispositivos (para el Kernel).
 
-**PCB (process control bank): ** gestiona la información de cada proceso. La PCB contiene 3 partes:
+**PCB (process control bank):** gestiona la información de cada proceso. La PCB contiene 3 partes:
 
 **Espacio de direcciones:**
-**1.** Código, pila y datos
+**1.** de código, pila y datos
 **Contexto:**
 **2.** Software: pid, planificación, ppid, ...
 **3.** Hardware: tabla de páginas, ...
 
 **Concurrencia:** cuando dos procesos son concurrentes es que se ejecutan en paralelo. Aunque haya una sola CPU, hará el efecto virtual, ya que irá dando poco a poco a los procesos lo que necesitan, de forma que parezca que solo "trabaja" para uno.
-**Estados:** un proceso puede tener diferentes estados (en zombie se queda el contxto):
+**Estados:** un proceso puede tener diferentes estados (en zombie se queda el contxto, NO espacio de direcciones):
 
 ![Estados de un proceso](https://github.com/MrRobb/SO-FIB/blob/master/Utilidades/img%20resum/img6.png)
 
