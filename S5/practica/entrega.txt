@@ -115,3 +115,8 @@ Es decir, tiene el mismo tamaño que el inicial dado que se cuando haces free, s
 		tamaño: 0x00064000
 
 Cambia el tamaño dado que sbrk aumenta el heap siempre.
+
+41. 
+El error esta al intentar acceder a un puntero fuera del heap. Segmentation fault (core dumped)
+El programa no falla en las primeras iteraciones porque esta dentro del tamaño reservado.
+La alternativa seria dentro del bucle ir reservando más espacio para así nunca llegar al limite.
