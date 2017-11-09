@@ -865,7 +865,7 @@ Se intenta que siempre haya un marco libre.
 
 ## Prefetch
 
-Queremos **minimizar el número de fallos** de páginas -> **Anticipamos** laas páginas que va a necesitar el proceso y las **cargamos**.
+Queremos **minimizar el número de fallos** de páginas -> **Anticipamos** las páginas que va a necesitar el proceso y las **cargamos**.
 
 **Parámetros:**
 - Distancia: con qué antelación hay que cargar las páginas
