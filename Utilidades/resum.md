@@ -831,6 +831,7 @@ Cuando intentas modificar la MMU lanza una excepción y el SO compara sus estruc
 #### Reemplazos
 
 **Reemplazo de memoria** -> el SO necesita liberar marcos
+
     1. **MMU**: elimina la traducción de la página víctima
     2. **Guarda** el contenido de la página víctima en el **área de swap**.
     3. **Asigna el espacio (página) que deja libre** la página víctima a la página que necesita estar en memoria
@@ -838,6 +839,7 @@ Cuando intentas modificar la MMU lanza una excepción y el SO compara sus estruc
 Cuando se intenta acceder a una página que está en el área de swap -> se produce un **fallo de página** de la MMU.
 
 **Mover de SWAP -> Memoria Física**: SO necesita:
+
     1. mira que el acceso sea **válido**
     2. **Asigna un marco libre** para la página **(reemplaza si es necesario)**
     3. **Localiza el área de swap** del contenido
