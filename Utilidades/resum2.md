@@ -143,7 +143,7 @@ int read_drive_1 (struct file* file, char user* buffer, size_t s, loff_t *off) {
     return size;
 }
 
-// Completar...
+// TO-DO: completar...
 ```
 
 #### Contenido del DD (Device Driver)
@@ -180,8 +180,58 @@ Sirven para **compartir información** entre procesos.
 
 ### Socket
 
-// Completar...
+// TO-DO: completar...
 
 ### Sistema de ficheros
 
 #### Tipos de ficheros
+
+#### Estructuras ... (se las salta)
+
+#### Llamadas al sistema
+
+- Escribir por pantalla -> no bloqueante
+- Escribir una pipe -> no bloqueante
+
+- Escribir al disco -> bloqueante
+
+![Llamadas al sistema]()
+
+### OPEN
+
+```c
+int fd = open("path_al_fichero", modo_de_acceso, [flags]);
+/*
+Path -> dirección al fichero
+Modo de acceso:
+    - O_RDONLY -> solo lectura
+
+TO-DO: completar...
+*/
+```
+
+### READ
+
+```c
+int fd = open(...);
+char buffer[64] // del tamaño que quieras
+int num_bytes_leidos = read(fd, buffer, num_bytes_a_leer); // bytes a leer que quieras
+
+// TO-DO: completar...
+```
+
+### WRITE
+
+TO-DO: completar
+
+### DUP
+
+TO-DO: completar
+
+### DUP2
+
+TO-DO: completar
+
+### CLOSE
+
+TO-DO: completar
