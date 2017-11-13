@@ -94,4 +94,94 @@ Aporta:
 4. espera o no a que termine
 5. Devuelve los resultados o informa de algún error
 
+Lo dispositivo se identifican con:
+- Tipo: **block/character**
+- **Major** -> indica el tipo de dispositivo
+- **Minor** -> instáncia concreta según el major
+
 ### Drivers
+
+#### Nivel Físico
+**Aumentan la funcionalidad** del sistema operativo.
+
+Con el **MAJOR** y el **MINOR** (son int) identifican el dispositivo dentro del kernel.
+
+![dispositivo]()
+
+#### Nivel Lógico
+
+```c
+open(nombre);
+```
+El nombre del open, se lo va a dar el sistema lógico, ya que este asocia el nombre al dispositivo (con la syscall mknod).
+
+> [man mknod](http://www.tldp.org/pub/Linux/docs/ldp-archived/system-admin-guide/translations/es/html/ch05s02.html)
+
+**mknod** genera el **file descriptor**: Es el número que le pones al write.
+
+Normalmente se hace:
+```c
+int fd = open("path_al_fichero");
+write(fd, "hola\n", 5);
+close(fd);
+```
+
+Para añadir un dispositivo nuevo puedes:
+- **Recompilar el kernel**
+- Añadir dispositivos **sin recompilar (solo si es sistema lo permite)**
+
+#### Estructura
+
+```c
+struct file_operations fops_drive_1 = {
+    owner: THIS_MODULE,
+    read: read_drive_1
+}; // Estructura que define las operaciones que soporta el driver
+
+int read_drive_1 (struct file* file, char user* buffer, size_t s, loff_t *off) {
+    ...
+    return size;
+}
+
+// Completar...
+```
+
+#### Contenido del DD (Device Driver)
+- **Información general** del DD (nombre, autor...)
+- Implementación de las **funciones genéricas**
+    - open
+    - read
+    - write
+    - ...
+- Funciones de **inicialización**
+- Funciones de **desinstalación**
+
+#### Pasos a seguir
+
+##### Físico
+- Compilar el DD en ```.ko```
+- **Instalar las rutinas** del driver (se decide el major y minor)
+
+##### Lógico
+- Crear un dispositivo lógico (con mknod)
+
+##### Virtual
+- Crear el dispositivo virtual (con open)
+
+### Pipe
+
+Implementa un **buffer temporal** con funcionamiento FIFO. **Los datos de la pipe se borran a medida que se leen**.
+
+Sirven para **compartir información** entre procesos.
+
+- Pipe **sin nombre**, solo accesible via herencia
+- Pipe **con nombre**, cualquiera que tenga permiso puede acceder al dispositivo
+
+
+### Socket
+
+// Completar...
+
+### Sistema de ficheros
+
+#### Tipos de ficheros
