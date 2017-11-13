@@ -831,18 +831,20 @@ Cuando intentas modificar la MMU lanza una excepción y el SO compara sus estruc
 #### Reemplazos
 
 **Reemplazo de memoria** -> el SO necesita liberar marcos
-    1. **MMU**: elimina la traducción de la página víctima
-    2. **Guarda** el contenido de la página víctima en el **área de swap**.
-    3. **Asigna el espacio (página) que deja libre** la página víctima a la página que necesita estar en memoria
+
+1. **MMU**: elimina la traducción de la página víctima
+2. **Guarda** el contenido de la página víctima en el **área de swap**.
+3. **Asigna el espacio (página) que deja libre** la página víctima a la página que necesita estar en memoria
 
 Cuando se intenta acceder a una página que está en el área de swap -> se produce un **fallo de página** de la MMU.
 
 **Mover de SWAP -> Memoria Física**: SO necesita:
-    1. mira que el acceso sea **válido**
-    2. **Asigna un marco libre** para la página **(reemplaza si es necesario)**
-    3. **Localiza el área de swap** del contenido
-    4. La **escribe** en el marco
-    5. **Actualiza la MMU**
+
+1. mira que el acceso sea **válido**
+2. **Asigna un marco libre** para la página **(reemplaza si es necesario)**
+3. **Localiza el área de swap** del contenido
+4. La **escribe** en el marco
+5. **Actualiza la MMU**
 
 ![Acceso a memoria](https://github.com/MrRobb/SO-FIB/blob/master/Utilidades/img%20resum/img11.png?raw=true)
 
@@ -865,7 +867,7 @@ Se intenta que siempre haya un marco libre.
 
 ## Prefetch
 
-Queremos **minimizar el número de fallos** de páginas -> **Anticipamos** laas páginas que va a necesitar el proceso y las **cargamos**.
+Queremos **minimizar el número de fallos** de páginas -> **Anticipamos** las páginas que va a necesitar el proceso y las **cargamos**.
 
 **Parámetros:**
 - Distancia: con qué antelación hay que cargar las páginas
