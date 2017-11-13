@@ -235,3 +235,7 @@ TO-DO: completar
 ### CLOSE
 
 TO-DO: completar
+
+### Pipe
+
+TO-DO: completar
