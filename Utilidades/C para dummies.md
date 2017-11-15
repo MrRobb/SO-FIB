@@ -50,7 +50,7 @@ Las podemos usar en cualquier función del programa
     // Si ejecutamos ./program
 
     int main(int argc, char *argv[]) {
-        // argc -> 2
+        // argc -> 1
         // argv[0] -> "./program"
         return 0;
     }
