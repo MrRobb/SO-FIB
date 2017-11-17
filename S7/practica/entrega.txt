@@ -1,0 +1,125 @@
+53.
+
+	1. ps
+	2. ./es1 > /dev/pts/4
+	3. ./es1 | ./es1
+	4. 
+	5.  strace –o salida_v2 –e read ./es1_v2 < es2.c
+	 	strace –o salida_v1 –e read ./es1 < es2.c
+
+Que la versión 1 ejecuta muchas más llamadas al sistema ya que solamente lee un char cada vez que lee. En cambio, el otro lee 256 cada vez.
+
+La 1 ejecuta 1420 llamadas a sistema.
+La 2 ejecuta 8 llamadas a sistema.
+
+Para cada llamada del sistema el proceso se arriesga a perder el control de la CPU. Al leer tienes que leer como mínimo el chunk size del disco, por lo tanto, es mejor hacerlo de la medida del chunk size ya que siempre leerá y escribirá en el disco basandose en esa medida.
+
+
+54.
+
+0 -> Escribe la salida en ascii
+1 -> Escribe la salida en formato integer
+
+55.
+
+El programa es3 interpreta la entrada en formato integer por lo tanto cuando le pasas el archivo en ese formato, lo escribe bien, en cambio cuando le pasas el archivo en formato ascii funciona incorrectamente.
+
+
+56.
+
+El programa es4 interpreta la entrada en ascii por lo tanto hace la "inversa" del es3.
+
+La salida es diferente para cada programa porque interpreta de manera diferente los datos. Y la entrada es susceptible a como la interprete el programa ya que se pasa como un void*.
+
+
+57. 
+
+./showCpuTime.sh ./es5 ./es1 ha mostrado por salida:
+
+CMD                         %CPU     TIME
+./es5                       99.6 00:01:04
+./es1                        0.0 00:00:00
+./es5                       99.6 00:01:06
+./es1                        0.0 00:00:00
+./es5                       99.7 00:01:08
+./es1                        0.0 00:00:00
+./es5                       99.7 00:01:10
+./es1                        0.0 00:00:00
+./es5                       99.7 00:01:12
+./es1                        0.0 00:00:00
+./es5                       99.7 00:01:14
+./es1                        0.0 00:00:00
+
+La diferencia es que el ./es1 ha gastado 0s de CPU y ./es5 ha usado un 99.7 de la CPU durante el tiempo de ejecución del programa.
+
+Eso quiere decir que la llamada al sistema read ha hecho que es1 se bloquee y por lo tanto ha dejado de usar la cpu. En cambio, la espera activa del ./es5 ha estado funcionando casi todo el rato.
+
+es1 para en el read.
+
+es5 para en while(1);
+
+
+58.
+
+A. No escribe nada porque no ha leído nada.
+
+B. Se para la llamada a sistema y escribe:
+
+read interrupido por signal
+
+
+59.
+
+Que seguiría intentando leer.
+
+A. No escribe nada porque no ha leído nada.
+
+B. Se para la llamada a sistema, se escribe "read interrupido por signal" y repite la llamada a sistema, por lo tanto seguiría intentando leer.
+
+
+60.
+
+Sí, 249 lo estaba usando bsg y 250 lo estaba usando watchdog.
+
+
+61.
+
+myDriver2              16384  0
+myDriver1              16384  0
+
+
+62.
+
+sudo mknod myDevice c 230 0
+
+
+63.
+
+................................................
+Este programa escribe por la salida std todo lo que lee de la entrada std. Si no has redirigido la salida, lo que escribas en el teclado saldra por la pantalla
+Para acabar CtrlD
+................................................
+Driver 1 read operation
+Sponsored by Laboratorios Gelocatas SL
+fin ejecución
+
+
+si haces cat myDevice imprime:
+Driver 1 read operation
+Sponsored by Laboratorios Gelocatas SL
+
+Que es el driver, las operaciones que tiene y el autor.
+
+
+64.
+
+................................................
+Este programa escribe por la salida std todo lo que lee de la entrada std. Si no has redirigido la salida, lo que escribas en el teclado saldra por la pantalla
+Para acabar CtrlD
+................................................
+DRIVER 2 READ OPERATION
+SPONSORED BY LABORATORIOS GELOCATAS SL
+fin ejecución
+
+
+Obviamente tienen diferente resultado ya que sus operaciones read son diferentes.
