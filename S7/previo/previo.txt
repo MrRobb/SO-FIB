@@ -1,0 +1,36 @@
+1. Qué valor devuelve read después de pulsar el Ctrl + D?
+
+Devuelve 0 en caso de encontrarse con un end of file.
+
+2. Apunta el comando utilizado para redireccionar la entrada de un fichero al programa.
+
+./es1 < my_file.txt
+
+3. Ejecuta un pipeline que muestre en la salida estándar el PID, el usuario y el nombre de
+todos los procesos bash que se están ejecutando en el sistema. Para ello utiliza los comandos ps y grep combinados con una pipe.
+
+El comando que he usado ha sido:
+
+ps -eo pid,user,command | grep '[b]ash'
+
+5. ¿Cúantos bytes se escriben en cada caso?¿Qué diferencias observas en lo que aparece en pantalla?
+
+Se escriben 4 bytes en representación interna de la máquina y 5 bytes cuando se pasa a string. Ya que un entero ocupa 4 bytes y para el string escribe un byte para cada carácter.
+
+En la representación interna se ven los bytes del número transformado a ascii (se ven menos de 4 bytes porque hay algunos que son "no visibles") y en la string el número se imprime correctamente (en el sentido de que se ve como un número).
+
+6a. ¿Qué función sirve para implementar el read específico del dispositivo gestionado por cada device driver?
+
+La función read_driver_1 para el driver 1 y la función read_driver_2 para el driver 2.
+
+6b. ¿Qué son el major y el minor? ¿Para qué sirven? ¿Qué major y minor utilizan los dos device drivers?
+
+El major y el minor son identificadores del driver. NORMALMENTE, el major indica el tipo de driver y el minor indica el driver en si.
+
+DRIVER 1:
+	MAJOR: 249
+	MINOR: 0
+
+DRIVER 2:
+	MAJOR: 250
+	MINOR: 0
