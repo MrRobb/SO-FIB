@@ -663,7 +663,38 @@ ESTRUCTURA INODO:
 |-------------|------|-----------------|
 
 Proceso: (TC)
-SO
-- TFA (open/close)
-- T.inodos (caché inodos de ficheros en uso)
-- Buffer - caché: c
+> En el SO:
+>- TFA (open/close)
+>- T.inodos (caché inodos de ficheros en uso)
+>- Buffer-cache: cache de bloques (Inodos + bloques)
+
+----
+
+### Syscalls, estructuras de datos y accesos al disco
+
+##### OPEN
+- Ruta: `/home/alumne/S7/a.c`
+- Navegación (con el siguiente ejemplo): Inodo `/` + bloque `/` + inodo 8 + bloque `/` `HOME`
+
+|  Nombre  |      Inodos     |
+|:--------:|:---------------:|
+|    .     |        0        |
+|   . .    |        0        |
+|   ...    |       ...       |
+|  `HOME`  |        8        |
+
+Open: acaba al traer a memoria el inodo de `a.c`.
+
+> **No carga bloques de datos.**
+
+    Mete el inodo en la TI (si no estaba).
+    + 1 entrada en la TFA (según parámetros)
+    + 1 entrada en la TC
+
+##### CREAR
+- Ruta: `/home/alumne/` ~~b.c~~
+
+1. Crear un nuevo inodo
+2. 
+
+hay que modificar el bloque de alumné
