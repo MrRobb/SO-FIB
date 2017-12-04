@@ -205,7 +205,34 @@ Modo de acceso:
 */
 ```
 
-##### Creación:
+##### Abrir un fichero:
+```c
+ret = open("ruta/nombre", modo, flags);
+//flags = 0 aquí
+//Devuelve:
+      //ret = -1 error
+      //ret = canal
+```
+
+##### Crear un fichero:
+```c
+ret = open("ruta/nombre", O_CREAT| O_WRONLY | O_RDWR | O_TRUNC, permisos);
+//2o parámetro:
+  //o_trunc -> (si existe)se sobrescribe
+  //o_creat -> creat("ruta/nombre", permisos);
+//3r parámetro:
+  //user, grupo, otros
+  //rwx,  rwx,   rwx
+  //mejor empexar por 0
+```
+
+##### Preguntar existencia fichero:
+```c
+ret = open("ruta/nombre", O_CREAT | O_EXCL, permisos);
+//si existe, ret = 1 i errno = EEXIST
+```
+
+##### Creación (diapositivas):
 >- ficheros especiales tienen que existir antes de acceder a ellos
 >- especificar los `permision_flags` (or de S_IRWXU, S_IRUSR...)
 >- crear ---> añadir O_CREAT (con or de bits) en acces_mode
@@ -266,7 +293,7 @@ n = write(fd, buffer, count);
 Funcionamiento:
 > Pide la escritura de count chars al dispositivo asociado a fd.
 >- Si hay espacio para count ---> escribe count.
->- Si hay menos que count ---> escribe los que quepan.  
+>- Si hay menos que count ---> escribe los que quepan.
 >- Si no hay espacio ---> depende de dispositivo (bloqueo, return 0, ...).
 
 > La posicion l/e avanza automáticamente (kernel en write) tantas posiciones como bytes escritos
@@ -432,3 +459,211 @@ write(pipe,...);
 - Si no hay lectores ---> recibo el SIGPIPE (default: **acabar**)
 
 > Dependiendo del fabricante, se bloquea hasta que le cabe toda la consigna o se bloquea hasta que haya algún byte libre.
+
+### LSEEK
+
+**Def** La posición de l/e (lectura/escritura) se modifica manualmente por el usuario. Permite hacer accesos directos a posiciones concretas de ficheros de datos (o ficheros de dispositivos con accesos secuenciales).
+
+> Como:
+>- Se inicializa a 0 open
+>- Se incrementa automáticamente al hacer read/write
+>- Lo podemos mover manualmente con LSEEK
+
+```c
+new_pos = lseek(fd, desplazamiento, SEEK_...)
+```
+> SEEK_...: (desplazamiento puede ser negativo)
+>- SEEK_SET: desde inicio del fichero   `posicio_l/e=desplaçament`
+>- SEEK_CUR: desde posición actual P(l/e) `posicio_l/e=posicio_l/e+desplaçament`
+>- SEEK_END: desde final fichero (end of file) `posicio_l/e=file_size+desplaçament`
+
+
+## VIRTUAL FILE SYSTEM
+
+###Disco inmanejable
+1. Acceso a datos compartimentados (nombre)
+2. Organización -> directorio
+
+###Directorio
+Fichero especial (no accesible mediante syscalls)
+Liga nombres -> contenido
+
+`ls -l`:
+| tipo | permisos | nº links | usuario | grupo | ... | nombre |
+|------|----------|----------|---------|-------|-----|:------:|
+| d    |          |          |         |       |     |        |
+| p    |          |          |         |       |     |        |
+| s    |          |          |         |       |     |        |
+| ...  |          |          |         |       |     |        |
+
+
+Nombres e inodos:
+
+|    nombre    |      inodo     |
+|:------------:|:--------------:|
+|       .      | ref a él mismo |
+|      . .      |  ref al padre  |
+| fitchero.txt |        7       |
+| directorio   |       25       |
+
+`.` y `..` : generar jerarquía (árbol invertido)
+
+Punto de entrada ---> RAÍZ (`/`) (inodos: tanto `.` como `..` valen 0 en ubuntu)
+
+- Acceso absoluto: empieza por `/`. `/(...)/(...)/(...)/(...).txt`
+- Acceso relativo: a partir de CWD (current working directory) ---> nunca empieza por `/`. `./(...)`, `../(...)`
+
+#### Directorios en grafo
+**Def** Árbol de directorios + nombre ---> GRAFO (cíclico)
+
+>- **Hardlinks:** acceso es a contenido (fichero) -> acíclico
+>- **Softlinks:** acceso es a otro nombre (acceso directo) -> cíclico
+
+| nombre |      inodo     | `// Comentarios` |
+|:------:|:--------------:|:----------------:|
+|    .   | ref a él mismo |       ---        |
+|   . .  |  ref al padre  |       ---        |
+|    A   |        7       |     Hardlink     |
+|    B   |        7       |     Hardlink     |
+|    C   |       25       |     Softlink     |
+
+[foto]
+
+#### DESCRIPTOR FICHERO: inodo
+- Tipo: c/b/p/l... (soft)
+- Tamaño
+- Nº enlaces ---> nº Hardlinks
+- Atributos (rwx)
+- Acceso a `ops dependiente`
+
+#### BORRADO DE FICHERO, BORRADO DE HL
+- Acceder al inodo a partir del nombre
+- `#enlaces`(inodo): Si es 0, se borra inodo, contenido y nombre.
+
+
+#### DISCOS ORGANIZADOS EN PARTICIONES
+```c
+/FAT32 pendrive
+/ISO9660 DVD/CD
+```
+>- **Sector:** unidad de transferencia del fabricante. (512, ...)
+[foto ari 1]
+
+>- **Bloque:** unidad de transferencia del sistema operativo
+
+>- **Particiones:** VFS(virtual file system)
+> [foto ari 2]
+> Los discos se montan en puntos a partir de la raíz global
+
+#### PARTICIONES EN LINUX
+- **SuperBloque:**
+  - Metadatos del SF
+    - formateado
+    - joliet
+    - gestión de espacio de la partición
+      - lista inodos libres/ocupados
+      - lista bloques de datos libres/ocupados
+      - referencias inodos
+    - tamaño
+    - ...
+  - Sección de Inodos
+    - Lista de inodos reservados en la partición (ocupados o no)
+    - Todos los inodos de SF (/ es el inodo 0)
+  - Sección de datos
+    - Bloques con contenido ficheros
+
+Resumen:
+- Metadatos ---> SuperBloque
+- Descriptores inodos ---> disp, directorio, fichero...
+- Datos
+  - contenido de ficheros
+  - contenido de directorios (espacios de nombres jerarquía)
+
+| --- | Apunta al inodo |
+|:---:|:---------------:|
+|  .  |        0        |
+| . . |        0        |
+|  A  |        1        |
+|  B  |        2        |
+|  C  |        3        |   el señor ya mirará su foto
+
+#### ASIGNACIÓN DE ESPACIO A DATOS
+
+Hay dos formas de hacerlo:
+
+- **Contiguo:**  (CD/DVD) ---> solo lectura (joliet, ISO 9660)
+
+| F1 | F2 | F3 | F4 | ... |
+|:--:|:--:|:--:|:--:|:---:|
+
+- **NO Contiguo:**  ---> con un fichero FREE. ????
+
+| FAT (File access table) | Fichero 1 | Fichero 2 | Fichero 3 | ... |
+|:-----------------------:|:---------:|:---------:|:---------:|:---:|
+
+
+#### LINUX (UNIX)
+[foto diapositiva 1.91]
+
+`nombre - inodo (en lista de inodos)`:
+> **tamaño inodo** = tamaño bloque (4kB) * 10 enlaces directos a datos * 1 enlace indirecto * 1 enlace indirecto doble * 1 enlace indirecto triple
+
+[foto diapositiva 1.94]
+
+### ESTRUCTURAS EN MEMORIA PARA REDUCIR ACCESOS A DISCO
+- Tabla de ficheros abiertor ---> modo + Puntero l/e
+- Tabla de inodos ---> caché de lista de inodos del disco ---> inodos en uso
+- Buffer chache (cache de bloques) ---> almacena bloques (inodos y bloques)
+
+----
+### Sistema de ficheros
+
+Jerarquía: DIRECTORIOS
+
+Grafo (nombres):
+>- Hardlinks: si apuntan al mismo inodo (desde entradas de directorio).
+>- Softlinks: fichero marcado como "link" (marca en inodo) y su contenido (bloque de datos) es la ruta a otro fichero.
+
+|Boot | SuperBloque |Inodos| Bloques de datos|
+|-----|-------------|------|-----------------|
+
++Ficheros/dispositivos
+
+Raíz Directorio ---> `/` (inodo 0)
+
+Directorio ---> 1 Inodo + 1 (al menos) Bloque de DATOS
+
+|  Nombre  |      Inodos     |
+|:--------:|:---------------:|
+|    .     |        0        |
+|  . .     |        0        |
+|  A       |        1        |
+|  B (hardlink)|    1        |
+|  SL (softlink)|   8        |
+|   ...    |       ...       |
+
+Dispositivo ---> 1 Inodo
+
+Ficheros "normales"
+- 1 Inodo + 0 ó más BLOQUES DE DATOS
+
+ESTRUCTURA INODO:
+- Info Admin:
+    - Tamaño
+    - Fecha de creación
+    - Propietario
+    - ...
+- Enlaces a llamadas DEP
+- Si NORMAL o DIRECTORIO
+- Enlaces a bloques de datos
+
+##### Disco Sistema de Ficheros
+
+| SuperBloque |Inodos| Bloques de datos|
+|-------------|------|-----------------|
+
+Proceso: (TC)
+SO
+- TFA (open/close)
+- T.inodos (caché inodos de ficheros en uso)
+- Buffer - caché: c
