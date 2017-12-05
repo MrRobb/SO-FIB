@@ -695,6 +695,20 @@ Open: acaba al traer a memoria el inodo de `a.c`.
 - Ruta: `/home/alumne/` ~~b.c~~
 
 1. Crear un nuevo inodo
-2. 
+2. Añadirlo al directorio
+3. Modificar el bloque de datos del directorio y el tamaño del directorio
+4. Modificar el inodo del directorio
 
-hay que modificar el bloque de alumné
+> Actualizar **salvo que esté en disco**
+
+
+##### READ
+`ret = read(___, ___, long)`
+> (tr. a bloques) + P(l/e) ---> P(l/e) agumenta en ret
+
+
+
+// TO-DO: ejemplos (relación syscalls - estructuras de datos) diapo 1.102
+
+##### LSEEK
+**No afecta a disco.** Lseek solo cambia el puntero de l/e en tabla de ficheros abiertos (TFA)
