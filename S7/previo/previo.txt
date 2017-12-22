@@ -6,6 +6,13 @@ Devuelve 0 en caso de encontrarse con un end of file.
 
 ./es1 < my_file.txt
 
+2.2. Resultado de ejecutar #ls -l | grep es
+
+drwxrwxr-x@   3 alumne  staff    96 18 dic 09:16 Creative Cloud Fil(es)
+drwx------@  16 alumne  staff   512 21 dic 00:27 D(es)ktop
+drwx------+   3 alumne  staff    96  2 sep 19:59 Movi(es)
+drwx------+   5 alumne  staff   160 26 sep 13:43 Pictur(es)
+
 3. Ejecuta un pipeline que muestre en la salida estándar el PID, el usuario y el nombre de
 todos los procesos bash que se están ejecutando en el sistema. Para ello utiliza los comandos ps y grep combinados con una pipe.
 
