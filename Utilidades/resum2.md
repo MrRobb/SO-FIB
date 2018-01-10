@@ -489,8 +489,9 @@ Fichero especial (no accesible mediante syscalls)
 Liga nombres -> contenido
 
 `ls -l`:
+
 | tipo | permisos | nº links | usuario | grupo | ... | nombre |
-|------|----------|----------|---------|-------|-----|:------:|
+|------|----------|----------|---------|-------|-----|--------|
 | d    |          |          |         |       |     |        |
 | p    |          |          |         |       |     |        |
 | s    |          |          |         |       |     |        |
