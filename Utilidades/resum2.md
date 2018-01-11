@@ -134,7 +134,7 @@ Para añadir un dispositivo nuevo puedes:
 
 #### Estructura
 
-Un fichero con un device driver para un dispositivo “inventado”. Para no tener que recompilar el kernel, insertamos el driver usando un módulo.
+Un fichero con un device driver para un dispositivo “inventado”. Para no tener que recompilar el kernel, insertamos el driver usando un módulo.
 
 ```c
 // Estructura que define las operaciones que soporta el driver
@@ -480,11 +480,11 @@ new_pos = lseek(fd, desplazamiento, SEEK_...)
 
 ## VIRTUAL FILE SYSTEM
 
-###Disco inmanejable
+### Disco inmanejable
 1. Acceso a datos compartimentados (nombre)
 2. Organización -> directorio
 
-###Directorio
+### Directorio
 Fichero especial (no accesible mediante syscalls)
 Liga nombres -> contenido
 
@@ -528,21 +528,19 @@ Punto de entrada ---> RAÍZ (`/`) (inodos: tanto `.` como `..` valen 0 en ubuntu
 |    B   |        7       |     Hardlink     |
 |    C   |       25       |     Softlink     |
 
-[foto]
-
-#### DESCRIPTOR FICHERO: inodo
+#### DESCRIPTOR FICHERO: inodo
 - Tipo: c/b/p/l... (soft)
 - Tamaño
 - Nº enlaces ---> nº Hardlinks
 - Atributos (rwx)
 - Acceso a `ops dependiente`
 
-#### BORRADO DE FICHERO, BORRADO DE HL
+#### BORRADO DE FICHERO, BORRADO DE HL
 - Acceder al inodo a partir del nombre
 - `#enlaces`(inodo): Si es 0, se borra inodo, contenido y nombre.
 
 
-#### DISCOS ORGANIZADOS EN PARTICIONES
+#### DISCOS ORGANIZADOS EN PARTICIONES
 ```c
 /FAT32 pendrive
 /ISO9660 DVD/CD
@@ -711,5 +709,6 @@ Open: acaba al traer a memoria el inodo de `a.c`.
 
 // TO-DO: ejemplos (relación syscalls - estructuras de datos) diapo 1.102
 
-##### LSEEK
-**No afecta a disco.** Lseek solo cambia el puntero de l/e en tabla de ficheros abiertos (TFA)
+##### LSEEK
+**No afecta a disco.** 
+> Lseek solo cambia el puntero de l/e en tabla de ficheros abiertos (TFA)
