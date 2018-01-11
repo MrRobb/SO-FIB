@@ -1,0 +1,53 @@
+A. ¿Qué	línea	de	comandos	tienes	que		ejecutar	desde	el	terminal?
+
+Hay que ejecutar:
+kill -SIGHUP pid_del_proceso_padre
+
+B. ¿Qué	fichero	consultarías	para	comprobar	el	estado	del	proceso	padre	y	los	hijos?	Anota	el	comando	realizado	y	el	estado	que	has	comprobado.
+
+Consultaría el fichero /proc/pid_de_padre_o_hijos/status.
+
+He hecho:
+ps -> para saber los procesos que tenía abiertos y sus pid
+cat /proc/pid_de_padre_y_hijos/status
+
+y he comprobado donde ponía State: y salía el estado de cada uno. Al ir muy rápido todo, la primera vez he visto running pero luego ya había muerto el proceso padre.
+
+C. ¿Qué	 fichero	 consultarías	 para	 ver	 las	 regiones	 de	 memoria	 de	 un	 proceso?	 Anota	 el	 comando	 que	utilizarías	para	verlo	y	el	contenido	de	las	regiones	del	proceso	padre.	
+
+Consultaría el fichero /proc/pid_de_padre_o_hijos/maps.
+
+He hecho:
+./mem00 sleep 30 & -> para ejecutar el programa y poder mirar dentro de proc
+cd /proc/pid_del_padre
+cat maps
+
+y me ha salido esto:
+
+00400000-00402000 r-xp 00000000 08:05 450617                             /home/alumne/Desktop/exam/mem00
+00601000-00602000 r--p 00001000 08:05 450617                             /home/alumne/Desktop/exam/mem00
+00602000-00603000 rw-p 00002000 08:05 450617                             /home/alumne/Desktop/exam/mem00
+02190000-021b1000 rw-p 00000000 00:00 0                                  [heap]
+7f46b4597000-7f46b4757000 r-xp 00000000 08:05 78815                      /lib/x86_64-linux-gnu/libc-2.23.so
+7f46b4757000-7f46b4957000 ---p 001c0000 08:05 78815                      /lib/x86_64-linux-gnu/libc-2.23.so
+7f46b4957000-7f46b495b000 r--p 001c0000 08:05 78815                      /lib/x86_64-linux-gnu/libc-2.23.so
+7f46b495b000-7f46b495d000 rw-p 001c4000 08:05 78815                      /lib/x86_64-linux-gnu/libc-2.23.so
+7f46b495d000-7f46b4961000 rw-p 00000000 00:00 0 
+7f46b4961000-7f46b4987000 r-xp 00000000 08:05 78793                      /lib/x86_64-linux-gnu/ld-2.23.so
+7f46b4b68000-7f46b4b6b000 rw-p 00000000 00:00 0 
+7f46b4b84000-7f46b4b86000 rw-p 00000000 00:00 0 
+7f46b4b86000-7f46b4b87000 r--p 00025000 08:05 78793                      /lib/x86_64-linux-gnu/ld-2.23.so
+7f46b4b87000-7f46b4b88000 rw-p 00026000 08:05 78793                      /lib/x86_64-linux-gnu/ld-2.23.so
+7f46b4b88000-7f46b4b89000 rw-p 00000000 00:00 0 
+7ffc2af36000-7ffc2af57000 rw-p 00000000 00:00 0                          [stack]
+7ffc2afc6000-7ffc2afc8000 r--p 00000000 00:00 0                          [vvar]
+7ffc2afc8000-7ffc2afca000 r-xp 00000000 00:00 0                          [vdso]
+ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0                  [vsyscall]
+
+
+
+D. Relaciona	cada	una	de	las	variables	globales	de	tu	programa	con	las	regiones	que	has	observado,	anota	el	rango	de	direcciones	a	las	que	pertenecen	las	variables.		
+
+Tengo 4 variables globales:
+hijos, message y count está en datos, es decir la tercera línea. (de 00602000 a 00603000)
+vector está en el heap, es decir en la región que se señala como heap. (de 02190000 a 021b1000)

@@ -1,0 +1,33 @@
+1.
+
+df -i
+
+IFree te indica los inodos libres. Es decir 3035447 inodos en / 
+
+Filesystem      Inodes  IUsed   IFree IUse% Mounted on
+udev           1002835    641 1002194    1% /dev
+tmpfs          1007854    864 1006990    1% /run
+/dev/sda5      3276800 241353 3035447    8% /
+tmpfs          1007854     28 1007826    1% /dev/shm
+tmpfs          1007854      5 1007849    1% /run/lock
+tmpfs          1007854     16 1007838    1% /sys/fs/cgroup
+tmpfs          1007854     30 1007824    1% /run/user/1001
+
+2.
+
+ls -id /
+
+Y sale número de inodo 2.
+
+3.
+
+ls -la
+
+drwxr-xr-x  24 root root  4096 jul 19  2016 .
+drwxr-xr-x  24 root root  4096 jul 19  2016 ..
+
+Por lo tanto, 24 links.
+
+4.
+
+strace -c ls -la
