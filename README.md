@@ -40,6 +40,7 @@
 
 ##### Templates
 - Utilidades -> [Template para signals](https://github.com/MrRobb/SO-FIB/blob/master/Utilidades/signals_template.c)
+- Utilidades -> [Template para Usage y Errores](https://github.com/MrRobb/SO-FIB/blob/master/Utilidades/UsageYErrores.c)
 
 ### Pull requests are always welcome
 
