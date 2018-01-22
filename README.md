@@ -18,6 +18,12 @@
 - Resumen -> [resum.md (T1, T2 y T3)](https://github.com/MrRobb/SO-FIB/blob/master/Resumen/resum.md)
 - Resumen -> [resum2.md (T4)](https://github.com/MrRobb/SO-FIB/blob/master/Resumen/resum2.md)
 
+##### Problemas
+- Problemas -> [Problemas Resueltos](https://github.com/MrRobb/SO-FIB/blob/master/Problemas/Soluciones%20Algunos%20Problemas%20T1%20-%20T2%20-%20T3.pdf)
+
+##### Exámenes de Lab
+- Exams Laboratorio -> [Exámenes de Lab](https://github.com/MrRobb/SO-FIB/tree/master/Exams%20Laboratorio)
+
 ## Para el pendrive
 
 ##### Resumen
