@@ -7,15 +7,33 @@
 
 ## Para estudiar
 
+##### Mini resumen de C
 - Utilidades -> [C para dummies](https://github.com/MrRobb/SO-FIB/blob/master/Utilidades/C%20para%20dummies.md)
+
+##### Comandos de la asignatura
 - Comandos -> [comandos.pdf](https://github.com/MrRobb/SO-FIB/blob/master/comandos/comandos.pdf)
-- Comandos2 -> [comandos2.md](https://github.com/MrRobb/SO-FIB/blob/master/comandos/comandos2.pdf)
+- Comandos -> [comandos2.md](https://github.com/MrRobb/SO-FIB/blob/master/comandos/comandos2.pdf)
+
+##### Resumen
 - Resumen -> [resum.md (T1, T2 y T3)](https://github.com/MrRobb/SO-FIB/blob/master/Resumen/resum.md)
-- Resumen2 -> [resum2.md (T4)](https://github.com/MrRobb/SO-FIB/blob/master/Resumen/resum2.md)
+- Resumen -> [resum2.md (T4)](https://github.com/MrRobb/SO-FIB/blob/master/Resumen/resum2.md)
 
 ## Para el pendrive
 
+##### Resumen
+- Resumen -> [resum.md (T1, T2 y T3)](https://github.com/MrRobb/SO-FIB/blob/master/Resumen/resum.md)
+- Resumen2 -> [resum2.md (T4)](https://github.com/MrRobb/SO-FIB/blob/master/Resumen/resum2.md)
 
+##### Comandos más usados
+- Comandos -> [Comandos más comunes](https://github.com/MrRobb/SO-FIB/tree/master/comandos/common_pdf)
+- Comandos -> [Comnados de Linux](https://github.com/MrRobb/SO-FIB/tree/master/comandos/linux_pdf)
+
+##### Comandos de la asignatura
+- Comandos -> [comandos.pdf](https://github.com/MrRobb/SO-FIB/blob/master/comandos/comandos.pdf)
+- Comandos -> [comandos2.pdf](https://github.com/MrRobb/SO-FIB/blob/master/comandos/comandos2.pdf)
+
+##### Templates
+- Utilidades -> [Template para signals](https://github.com/MrRobb/SO-FIB/blob/master/Utilidades/signals_template.c)
 
 ### Pull requests are always welcome
 
