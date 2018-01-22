@@ -8,19 +8,14 @@
 ## Para estudiar
 
 - Utilidades -> [C para dummies](https://github.com/MrRobb/SO-FIB/blob/master/Utilidades/C%20para%20dummies.md)
-- Utilidades -> [comandos.txt](https://github.com/MrRobb/SO-FIB/blob/master/Utilidades/comandos.txt)
-- Utilidades -> [resum.md (T1, T2 y T3)](https://github.com/MrRobb/SO-FIB/blob/master/Utilidades/resum.md)
+- Comandos -> [comandos.pdf](https://github.com/MrRobb/SO-FIB/blob/master/comandos/comandos.pdf)
+- Comandos2 -> [comandos2.md](https://github.com/MrRobb/SO-FIB/blob/master/comandos/comandos2.pdf)
+- Resumen -> [resum.md (T1, T2 y T3)](https://github.com/MrRobb/SO-FIB/blob/master/Resumen/resum.md)
+- Resumen2 -> [resum2.md (T4)](https://github.com/MrRobb/SO-FIB/blob/master/Resumen/resum2.md)
 
 ## Para el pendrive
 
-- Utilidades -> [libc.pdf](https://github.com/MrRobb/SO-FIB/blob/master/Utilidades/libc.pdf)
-    - También disponible en html (dentro de la carpeta hay que abrir index.html, no se requiere internet)
-    - Hay que leer mucho
-- Utilidades -> [C in a nutshell](https://github.com/MrRobb/SO-FIB/blob/master/Utilidades/C-in-a-nutshell.pdf)
-    - Más rápida de buscar dudas sobre C
-- Clone de mi [repo sobre c](https://github.com/MrRobb/42_piscine):
-    - Puedes encontrar muchas funciones de C ya implementadas (entre ellas atoi, strcmp ...)
-    - Tendrás que buscar en el repo (¯\\_(ツ)_/¯)
+
 
 ### Pull requests are always welcome
 
