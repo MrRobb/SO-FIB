@@ -5,6 +5,19 @@
 [![GitHub repo size in bytes](https://img.shields.io/github/repo-size/mrrobb/SO-FIB.svg)](https://github.com/MrRobb/SO-FIB)
 [![GitHub forks](https://img.shields.io/github/forks/mrrobb/SO-FIB.svg?style=social&label=Fork)](https://github.com/MrRobb/SO-FIB/fork)
 
+## Cómo pasar los apuntes a PDF
+
+1. Descarga el repositorio y guárdalo donde quieras
+2. Instala [mdpdf](https://github.com/BlueHatbRit/mdpdf) ejecutando en terminal:
+```sh
+npm install mdpdf -g
+```
+3. Para convertir un archivo, ejecuta:
+```sh
+mdpdf nombre_del_archivo.md
+```
+4. Se te guardará como `nombre_del_archivo.pdf`
+
 ## Para estudiar
 
 ##### Mini resumen de C
