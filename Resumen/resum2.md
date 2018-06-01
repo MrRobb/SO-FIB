@@ -117,7 +117,7 @@ open(nombre);
 ```
 El nombre del open, se lo va a dar el sistema lógico, ya que este asocia el nombre al dispositivo (con la syscall mknod).
 
-> [comandos2.md ---> mknod](https://github.com/MrRobb/SO-FIB/blob/master/Utilidades/comandos2.md#sessió-7-gestió-dentrada--sortida)
+> [comandos2.md ---> mknod](https://github.com/MrRobb/SO-FIB/blob/master/comandos/comandos2.md#sessió-7-gestió-dentrada--sortida)
 
 **mknod** genera el **file descriptor**: Es el número que le pones al write.
 
