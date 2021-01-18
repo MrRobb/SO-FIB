@@ -386,7 +386,7 @@ Sirven para **compartir información** entre procesos.
 - Pipe **con nombre**, cualquiera que tenga permiso puede acceder al dispositivo
 
 ```
-mknod p nombre
+mknod nombre p
 ```
 ```c
 open(nombre, R);
